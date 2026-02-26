@@ -15,11 +15,9 @@ public class InputManager : GlobalSingleton<InputManager>
 
     private Dictionary<ActionMaps, InputHandler> handlers;
     private ActionMaps activeLayers;
-
-    public IReadOnlyDictionary<ActionMaps, InputHandler> Maps => handlers;
     #endregion
 
-    #region 초기화
+    #region Unity API
     protected override void Awake()
     {
         base.Awake();
@@ -30,6 +28,13 @@ public class InputManager : GlobalSingleton<InputManager>
         }
     }
 
+    private void OnDestroy()
+    {
+        handlers.Clear();
+    }
+    #endregion
+
+    #region 초기화
     /// <summary>
     /// InputActionAsset DI용 초기화 메서드
     /// </summary>
@@ -56,13 +61,6 @@ public class InputManager : GlobalSingleton<InputManager>
                 Logger.LogWarning($"InputActionMap '{map.name}'과 대응되는 InputState 없음");
             }
         }
-    }
-    #endregion
-
-    #region Unity API
-    private void OnDestroy()
-    {
-        handlers.Clear();
     }
     #endregion
 
@@ -139,6 +137,12 @@ public class InputManager : GlobalSingleton<InputManager>
         handlers[actionMaps].BindInput(actions, action);
     }
 
+    /// <summary>
+    /// ActionMaps의 Actions에 바인딩된 키를 newPath로 변경
+    /// </summary>
+    /// <param name="actionMaps"></param>
+    /// <param name="actions"></param>
+    /// <param name="newPath"></param>
     public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath)
     {
         handlers[actionMaps].ApplyBindingOverride(actions, newPath);
