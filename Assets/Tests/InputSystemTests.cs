@@ -1,0 +1,190 @@
+using InputEnum;
+using NUnit.Framework;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class InputSystemTests : InputTestFixture
+{
+    private Keyboard keyboard;
+    private Mouse mouse;
+    private InputManager manager;
+
+    private bool attackCalled;
+    private bool inventoryCalled;
+    private Vector2 moveValue;
+
+    public override void Setup()
+    {
+        base.Setup();
+
+        keyboard = InputSystem.AddDevice<Keyboard>();
+        mouse = InputSystem.AddDevice<Mouse>();
+
+        InputActionAsset asset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(
+                "Assets/20_InputActions/InputActions.inputactions");
+        Assert.IsNotNull(asset);
+
+        var go = new GameObject("InputManager");
+        manager = go.AddComponent<InputManager>();
+        manager.Initialize(asset);
+
+        BindActions();
+    }
+
+    private void BindActions()
+    {
+        // Bind
+        var attack = manager.Maps[ActionMaps.Gameplay].FindAction(Actions.Attack.ToString());
+        attack.performed += ctx =>
+        {
+            attackCalled = true;
+            Debug.Log("[LOG] Attack triggered");
+        };
+
+        var move = manager.Maps[ActionMaps.Gameplay].FindAction(Actions.Move.ToString());
+        move.performed += ctx =>
+        {
+            moveValue = ctx.ReadValue<Vector2>();
+            Debug.Log($"[LOG] Move value: {moveValue}");
+        };
+
+        var inventory = manager.Maps[ActionMaps.UI].FindAction(Actions.Inventory.ToString());
+        inventory.performed += _ =>
+        {
+            inventoryCalled = true;
+        };
+    }
+
+    public override void TearDown()
+    {
+        Object.DestroyImmediate(manager.gameObject);
+        base.TearDown();
+    }
+
+    // -----------------------------
+    // 1. 좌클릭 바인딩 확인
+    // -----------------------------
+    [Test]
+    public void Attack_Should_Work_With_LeftClick()
+    {
+        attackCalled = false;
+
+        manager.SetLayer(ActionMaps.Gameplay);
+
+        Press(mouse.leftButton);
+        InputSystem.Update();
+
+        Assert.IsTrue(attackCalled, "좌클릭 바인딩이 동작하지 않음");
+    }
+
+    // -----------------------------
+    // 2. 이동 입력 확인
+    // -----------------------------
+    [Test]
+    public void Move_Input_Should_Work()
+    {
+        moveValue = Vector2.zero;
+
+        manager.SetLayer(ActionMaps.Gameplay);
+
+        Press(keyboard.wKey);
+        InputSystem.Update();
+
+        Assert.AreEqual(Vector2.up, moveValue);
+    }
+
+    // -----------------------------
+    // 3. Asset 연결 확인
+    // -----------------------------
+    [Test]
+    public void Asset_Should_Be_Connected()
+    {
+        Assert.IsNotNull(manager.Maps);
+        foreach (ActionMaps maps in System.Enum.GetValues(typeof(ActionMaps)))
+        {
+            if (maps == ActionMaps.None) continue;
+            Assert.IsTrue(manager.Maps.ContainsKey(maps), $"ActionMap '{maps}'가 매니저에 없음");
+        }
+    }
+
+    // -----------------------------
+    // 4. Layer Lock 확인
+    // -----------------------------
+    [Test]
+    public void Layer_Lock_Should_Block_Input()
+    {
+        attackCalled = false;
+
+        manager.SetLayer(ActionMaps.None);
+
+        Press(mouse.leftButton);
+        InputSystem.Update();
+
+        Assert.IsFalse(attackCalled);
+    }
+
+    // -----------------------------
+    // 5. AddLayer 확인
+    // -----------------------------
+    [Test]
+    public void AddLayer_Should_Enable_Input()
+    {
+        attackCalled = false;
+
+        manager.SetLayer(ActionMaps.None);
+        manager.AddLayer(ActionMaps.Gameplay);
+
+        Press(mouse.leftButton);
+        InputSystem.Update();
+
+        Assert.IsTrue(attackCalled);
+    }
+
+    // -----------------------------
+    // 6. RemoveLayer 확인
+    // -----------------------------
+    [Test]
+    public void RemoveLayer_Should_Disable_Input()
+    {
+        attackCalled = false;
+
+        manager.SetLayer(ActionMaps.Gameplay);
+        manager.RemoveLayer(ActionMaps.Gameplay);
+
+        Press(mouse.leftButton);
+        InputSystem.Update();
+
+        Assert.IsFalse(attackCalled);
+    }
+
+    // -----------------------------
+    // 7. 리바인딩 테스트
+    // 좌클릭 → F 키로 변경
+    // -----------------------------
+    [Test]
+    public void Rebinding_Should_Work()
+    {
+        attackCalled = false;
+
+        manager.SetLayer(ActionMaps.Gameplay);
+
+        var attack = manager.Maps[ActionMaps.Gameplay]
+            .FindAction(Actions.Attack.ToString());
+
+        // 좌클릭 제거하고 F로 변경
+        attack.ApplyBindingOverride("<Keyboard>/f");
+
+        // 기존 좌클릭은 동작하면 안됨
+        Press(mouse.leftButton);
+        InputSystem.Update();
+
+        Assert.IsFalse(attackCalled);
+
+        // 새 바인딩 F는 동작해야 함
+        Press(keyboard.fKey);
+        InputSystem.Update();
+
+        Assert.IsTrue(attackCalled);
+    }
+}
