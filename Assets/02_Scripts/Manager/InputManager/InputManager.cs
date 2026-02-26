@@ -46,9 +46,9 @@ public class InputManager : GlobalSingleton<InputManager>
 
         foreach (var map in inputAssets.actionMaps)
         {
-            if (Enum.TryParse(map.name, out ActionMaps state))
+            if (Enum.TryParse(map.name, out ActionMaps actionMaps))
             {
-                maps.Add(state, map);
+                maps.Add(actionMaps, map);
                 map.Disable(); // 초기 비활성화
             }
             else
@@ -59,30 +59,47 @@ public class InputManager : GlobalSingleton<InputManager>
     }
     #endregion
 
-    #region [public] 레이어 설정
-    public void SetLayer(ActionMaps layers)
+    #region 레이어 설정
+    /// <summary>
+    /// 기존 레이어 설정 모두 제거, 새로운 레이어 설정
+    /// 게임 초기화 시 사용 권장
+    /// </summary>
+    /// <param name="actionMaps"></param>
+    public void SetLayer(ActionMaps actionMaps)
     {
-        activeLayers = layers;
+        activeLayers = actionMaps;
         UpdateMaps();
     }
 
-    public void AddLayer(ActionMaps layer)
+    /// <summary>
+    /// 특정 레이어 추가
+    /// </summary>
+    /// <param name="actionMaps"></param>
+    public void AddLayer(ActionMaps actionMaps)
     {
-        activeLayers |= layer;
+        activeLayers |= actionMaps;
         UpdateMaps();
     }
 
-    public void RemoveLayer(ActionMaps layer)
+    /// <summary>
+    /// 특정 레이어 제거
+    /// </summary>
+    /// <param name="actionMaps"></param>
+    public void RemoveLayer(ActionMaps actionMaps)
     {
-        activeLayers &= ~layer;
+        activeLayers &= ~actionMaps;
         UpdateMaps();
     }
 
-    public bool HasLayer(ActionMaps layer)
+    /// <summary>
+    /// 레이어 보유 여부 확인
+    /// </summary>
+    /// <param name="actionMaps"></param>
+    /// <returns></returns>
+    public bool HasLayer(ActionMaps actionMaps)
     {
-        return (activeLayers & layer) != 0;
+        return (activeLayers & actionMaps) != 0;
     }
-    #endregion
 
     private void UpdateMaps()
     {
@@ -98,6 +115,7 @@ public class InputManager : GlobalSingleton<InputManager>
             }
         }
     }
+    #endregion
 
     #region 에디터 전용
 #if UNITY_EDITOR
