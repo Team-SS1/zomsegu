@@ -13,10 +13,10 @@ public class InputManager : GlobalSingleton<InputManager>
     #region 필드
     [SerializeField] private InputActionAsset inputAssets;
 
-    private Dictionary<ActionMaps, InputActionMap> maps;
+    private Dictionary<ActionMaps, InputHandler> handlers;
     private ActionMaps activeLayers;
 
-    public IReadOnlyDictionary<ActionMaps, InputActionMap> Maps => maps;
+    public IReadOnlyDictionary<ActionMaps, InputHandler> Maps => handlers;
     #endregion
 
     #region 초기화
@@ -42,13 +42,13 @@ public class InputManager : GlobalSingleton<InputManager>
 
     private void InitializeMaps()
     {
-        maps = new();
+        handlers = new();
 
         foreach (var map in inputAssets.actionMaps)
         {
             if (Enum.TryParse(map.name, out ActionMaps actionMaps))
             {
-                maps.Add(actionMaps, map);
+                handlers.Add(actionMaps, new InputHandler(map));
                 map.Disable(); // 초기 비활성화
             }
             else
@@ -56,6 +56,13 @@ public class InputManager : GlobalSingleton<InputManager>
                 Logger.LogWarning($"InputActionMap '{map.name}'과 대응되는 InputState 없음");
             }
         }
+    }
+    #endregion
+
+    #region Unity API
+    private void OnDestroy()
+    {
+        handlers.Clear();
     }
     #endregion
 
@@ -103,7 +110,7 @@ public class InputManager : GlobalSingleton<InputManager>
 
     private void UpdateMaps()
     {
-        foreach (var kvp in maps)
+        foreach (var kvp in handlers)
         {
             if ((activeLayers & kvp.Key) != 0)
             {
@@ -114,6 +121,27 @@ public class InputManager : GlobalSingleton<InputManager>
                 kvp.Value.Disable();
             }
         }
+    }
+    #endregion
+
+    #region 바인딩
+    /// <summary>
+    /// ActionMaps의 Actions에 함수 바인딩하기
+    /// </summary>
+    /// <param name="actionMaps"></param>
+    /// <param name="actions"></param>
+    /// <param name="action"></param>
+    public void BindInput(
+        ActionMaps actionMaps,
+        Actions actions,
+        Action<InputAction.CallbackContext> action)
+    {
+        handlers[actionMaps].BindInput(actions, action);
+    }
+
+    public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath)
+    {
+        handlers[actionMaps].ApplyBindingOverride(actions, newPath);
     }
     #endregion
 
