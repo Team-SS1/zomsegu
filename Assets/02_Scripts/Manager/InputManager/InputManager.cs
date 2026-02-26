@@ -13,14 +13,30 @@ public class InputManager : GlobalSingleton<InputManager>
     #region 필드
     [SerializeField] private InputActionAsset inputAssets;
 
-    private Dictionary<InputLayer, InputActionMap> maps;
-    private InputLayer activeLayers;
+    private Dictionary<ActionMaps, InputActionMap> maps;
+    private ActionMaps activeLayers;
+
+    public IReadOnlyDictionary<ActionMaps, InputActionMap> Maps => maps;
     #endregion
 
     #region 초기화
     protected override void Awake()
     {
         base.Awake();
+
+        if (inputAssets != null)
+        {
+            InitializeMaps();
+        }
+    }
+
+    /// <summary>
+    /// InputActionAsset DI용 초기화 메서드
+    /// </summary>
+    /// <param name="asset"></param>
+    public void Initialize(InputActionAsset asset)
+    {
+        inputAssets = asset;
         InitializeMaps();
     }
 
@@ -30,9 +46,10 @@ public class InputManager : GlobalSingleton<InputManager>
 
         foreach (var map in inputAssets.actionMaps)
         {
-            if (Enum.TryParse(map.name, out InputLayer state))
+            if (Enum.TryParse(map.name, out ActionMaps state))
             {
                 maps.Add(state, map);
+                map.Disable(); // 초기 비활성화
             }
             else
             {
@@ -43,25 +60,25 @@ public class InputManager : GlobalSingleton<InputManager>
     #endregion
 
     #region [public] 레이어 설정
-    public void SetLayer(InputLayer layers)
+    public void SetLayer(ActionMaps layers)
     {
         activeLayers = layers;
         UpdateMaps();
     }
 
-    public void AddLayer(InputLayer layer)
+    public void AddLayer(ActionMaps layer)
     {
         activeLayers |= layer;
         UpdateMaps();
     }
 
-    public void RemoveLayer(InputLayer layer)
+    public void RemoveLayer(ActionMaps layer)
     {
         activeLayers &= ~layer;
         UpdateMaps();
     }
 
-    public bool HasLayer(InputLayer layer)
+    public bool HasLayer(ActionMaps layer)
     {
         return (activeLayers & layer) != 0;
     }
