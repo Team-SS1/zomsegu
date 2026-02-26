@@ -66,7 +66,7 @@ public class InputSystemTests : InputTestFixture
     // 1. 좌클릭 바인딩 확인
     // -----------------------------
     [Test]
-    public void Attack_Should_Work_With_LeftClick()
+    public void _1_바인딩_확인_GamePlay_Attack_좌클릭()
     {
         attackCalled = false;
 
@@ -82,7 +82,7 @@ public class InputSystemTests : InputTestFixture
     // 2. 이동 입력 확인
     // -----------------------------
     [Test]
-    public void Move_Input_Should_Work()
+    public void _2_입력_확인_GamePlay_Move()
     {
         moveValue = Vector2.zero;
 
@@ -98,7 +98,7 @@ public class InputSystemTests : InputTestFixture
     // 3. Asset 연결 확인
     // -----------------------------
     [Test]
-    public void Asset_Should_Be_Connected()
+    public void _3_전체_InputAsset_연결_확인()
     {
         Assert.IsNotNull(manager.Maps);
         foreach (ActionMaps maps in System.Enum.GetValues(typeof(ActionMaps)))
@@ -112,7 +112,7 @@ public class InputSystemTests : InputTestFixture
     // 4. Layer Lock 확인
     // -----------------------------
     [Test]
-    public void Layer_Lock_Should_Block_Input()
+    public void _4_레이어_전체_입력_잠금()
     {
         attackCalled = false;
 
@@ -128,7 +128,7 @@ public class InputSystemTests : InputTestFixture
     // 5. AddLayer 확인
     // -----------------------------
     [Test]
-    public void AddLayer_Should_Enable_Input()
+    public void _5_레이어_추가_Gameplay()
     {
         attackCalled = false;
 
@@ -145,7 +145,7 @@ public class InputSystemTests : InputTestFixture
     // 6. RemoveLayer 확인
     // -----------------------------
     [Test]
-    public void RemoveLayer_Should_Disable_Input()
+    public void _6_레이어_제거_Gameplay()
     {
         attackCalled = false;
 
@@ -163,7 +163,7 @@ public class InputSystemTests : InputTestFixture
     // 좌클릭 → F 키로 변경
     // -----------------------------
     [Test]
-    public void Rebinding_Should_Work()
+    public void _7_입력_리바인드_Gameplay_Attack()
     {
         attackCalled = false;
 
