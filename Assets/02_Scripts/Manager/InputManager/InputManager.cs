@@ -14,7 +14,7 @@ public class InputManager : GlobalSingleton<InputManager>
     [SerializeField] private InputActionAsset inputAssets;
 
     private Dictionary<ActionMaps, InputHandler> handlers;
-    private ActionMaps activeLayers;
+    private ActionMaps activeLayers = ActionMaps.None;
     #endregion
 
     #region Unity API
@@ -24,13 +24,13 @@ public class InputManager : GlobalSingleton<InputManager>
 
         if (inputAssets != null)
         {
-            InitializeMaps();
+            InitializeHandlers();
         }
     }
 
     private void OnDestroy()
     {
-        handlers.Clear();
+        DisposeHandlers();
     }
     #endregion
 
@@ -42,11 +42,12 @@ public class InputManager : GlobalSingleton<InputManager>
     public void Initialize(InputActionAsset asset)
     {
         inputAssets = asset;
-        InitializeMaps();
+        InitializeHandlers();
     }
 
-    private void InitializeMaps()
+    private void InitializeHandlers()
     {
+        DisposeHandlers();
         handlers = new();
 
         foreach (var map in inputAssets.actionMaps)
@@ -60,6 +61,18 @@ public class InputManager : GlobalSingleton<InputManager>
             {
                 Logger.LogWarning($"InputActionMap '{map.name}'과 대응되는 InputState 없음");
             }
+        }
+    }
+
+    private void DisposeHandlers()
+    {
+        if (handlers != null)
+        {
+            foreach (var handler in handlers.Values)
+            {
+                handler.Dispose();
+            }
+            handlers.Clear();
         }
     }
     #endregion
@@ -146,6 +159,26 @@ public class InputManager : GlobalSingleton<InputManager>
     public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath)
     {
         handlers[actionMaps].ApplyBindingOverride(actions, newPath);
+    }
+    #endregion
+
+    #region 키 설정 저장 & 불러오기
+    /// <summary>
+    /// DataManager에서 가져가서 사용
+    /// </summary>
+    /// <returns></returns>
+    public string ExportBindingJson()
+    {
+        return inputAssets.SaveBindingOverridesAsJson();
+    }
+
+    /// <summary>
+    /// Datamanager에서 가져온 키 설정 JSON을 InputActionAsset에 적용
+    /// </summary>
+    /// <param name="json"></param>
+    public void ImportBindingJson(string json)
+    {
+        inputAssets.LoadBindingOverridesFromJson(json);
     }
     #endregion
 
