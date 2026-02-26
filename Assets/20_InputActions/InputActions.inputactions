@@ -505,6 +505,12 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Cutscene",
+            "id": "a278772e-8889-4143-9b2b-dbc51e27bb04",
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": []

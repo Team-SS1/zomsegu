@@ -7,8 +7,9 @@ namespace InputEnum
         None = 0,
         Gameplay = 1 << 0,
         UI = 1 << 1,
-        System = 1 << 2,
-        Cutscene = 1 << 3,
+        Dialogue = 1 << 2,
+        System = 1 << 3,
+        Cutscene = 1 << 4,
     }
 
     public enum Actions
