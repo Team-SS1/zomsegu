@@ -9,6 +9,7 @@ public class InputSystemTests : InputTestFixture
     private Keyboard keyboard;
     private Mouse mouse;
     private InputManager manager;
+    private InputActionAsset asset;
 
     private bool attackCalled;
     private bool inventoryCalled;
@@ -21,7 +22,7 @@ public class InputSystemTests : InputTestFixture
         keyboard = InputSystem.AddDevice<Keyboard>();
         mouse = InputSystem.AddDevice<Mouse>();
 
-        InputActionAsset asset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(
+        asset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(
                 "Assets/20_InputActions/InputActions.inputactions");
         Assert.IsNotNull(asset);
 
@@ -73,8 +74,6 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 바인딩_확인_GamePlay_Attack_좌클릭()
     {
-        attackCalled = false;
-
         manager.SetLayer(ActionMaps.Gameplay);
 
         Press(mouse.leftButton);
@@ -86,8 +85,6 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 입력_확인_GamePlay_Move()
     {
-        moveValue = Vector2.zero;
-
         manager.SetLayer(ActionMaps.Gameplay);
 
         Press(keyboard.wKey);
@@ -115,8 +112,6 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 레이어_전체_입력_잠금()
     {
-        attackCalled = false;
-
         manager.SetLayer(ActionMaps.None);
 
         Press(mouse.leftButton);
@@ -128,8 +123,6 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 레이어_추가_Gameplay()
     {
-        attackCalled = false;
-
         manager.SetLayer(ActionMaps.None);
         manager.AddLayer(ActionMaps.Gameplay);
 
@@ -142,8 +135,6 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 레이어_제거_Gameplay()
     {
-        attackCalled = false;
-
         manager.SetLayer(ActionMaps.Gameplay);
         manager.RemoveLayer(ActionMaps.Gameplay);
 
@@ -154,16 +145,17 @@ public class InputSystemTests : InputTestFixture
     }
 
     [Test]
-    public void 입력_리바인드_Gameplay_Attack_LeftButtonToF()
+    public void 입력_리바인딩_Attack()
     {
-        attackCalled = false;
-
         manager.SetLayer(ActionMaps.Gameplay);
+
+        string previousBinding = Mouse.current.leftButton.path;
+        string newBinding = Keyboard.current.fKey.path;
 
         manager.ApplyBindingOverride(
             ActionMaps.Gameplay,
             Actions.Attack,
-            Keyboard.current.fKey.path);
+            newBinding);
 
         // 기존 좌클릭은 동작하면 안됨
         Press(mouse.leftButton);
@@ -176,5 +168,45 @@ public class InputSystemTests : InputTestFixture
         InputSystem.Update();
 
         Assert.IsTrue(attackCalled, "새 바인딩 동작 안함");
+
+        // 테스트 후 원래 바인딩으로 복구
+        asset.RemoveAllBindingOverrides();
+    }
+
+    [Test]
+    public void 키_바인딩_Save_Load()
+    {
+        manager.SetLayer(ActionMaps.Gameplay);
+
+        string newPath = keyboard.fKey.path;
+
+        // 1. 리바인딩
+        manager.ApplyBindingOverride(ActionMaps.Gameplay, Actions.Attack, newPath);
+
+        // 2. JSON 추출
+        string savedJson = manager.ExportBindingJson();
+        Assert.IsFalse(string.IsNullOrEmpty(savedJson), "저장 안됨");
+
+        // 3. 완전 재초기화
+        manager.Initialize(asset);
+
+        // 4. JSON 복원
+        manager.ImportBindingJson(savedJson);
+        manager.SetLayer(ActionMaps.Gameplay);
+
+        bool triggered = false;
+        manager.BindInput(ActionMaps.Gameplay, Actions.Attack, _ => triggered = true);
+
+        // 기존 키는 동작하면 안됨
+        Press(mouse.leftButton);
+        InputSystem.Update();
+        Assert.IsFalse(triggered);
+
+        // F키는 동작해야 함
+        Press(keyboard.fKey);
+        InputSystem.Update();
+        Assert.IsTrue(triggered);
+
+        asset.RemoveAllBindingOverrides();
     }
 }
