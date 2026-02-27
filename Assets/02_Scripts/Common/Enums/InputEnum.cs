@@ -17,23 +17,35 @@ namespace InputEnum
         // === Gameplay ===
         Move,
         Run,
-        QuietWalk,
+        Crouch,
         Attack,
+        Interact,
+        ExtraInteract,
+        Reload,
+        Aim,
         QuickSlot1,
         QuickSlot2,
         QuickSlot3,
         QuickSlot4,
         QuickSlot5,
-        TemporaryDwelling,
+        TemporaryShelter_Sleep,
         Check,
+        Zoom,
 
         // === UI ===
         Inventory,
+        Phone,
+        Diary,
+        Close,
+        MiniMenu,
+        Map,
 
         // === Dialogue ===
-        Advance,
+        Next,
+        Previous,
         Navigate,
         Select,
+        Skip,
 
         // === System ===
         StopGame,

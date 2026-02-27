@@ -12,7 +12,6 @@ public class InputSystemTests : InputTestFixture
     private InputActionAsset asset;
 
     private bool attackCalled;
-    private bool inventoryCalled;
     private Vector2 moveValue;
 
     public override void Setup()
@@ -33,7 +32,6 @@ public class InputSystemTests : InputTestFixture
         BindActions();
 
         attackCalled = false;
-        inventoryCalled = false;
         moveValue = Vector2.zero;
     }
 
@@ -42,26 +40,25 @@ public class InputSystemTests : InputTestFixture
         // Bind
         manager.BindInput(ActionMaps.Gameplay, Actions.Attack, OnAttack);
         manager.BindInput(ActionMaps.Gameplay, Actions.Move, OnMove);
-        manager.BindInput(ActionMaps.UI, Actions.Inventory, OnInventory);
     }
 
     #region 인풋 바인드 테스트용
     private void OnAttack(InputAction.CallbackContext context)
     {
-        attackCalled = true;
-        Debug.Log("[LOG] Attack triggered");
-    }
-
-    private void OnInventory(InputAction.CallbackContext context)
-    {
-        inventoryCalled = true;
-        Debug.Log("[LOG] Inventory triggered");
+        if (context.phase == InputActionPhase.Started)
+        {
+            attackCalled = true;
+            Debug.Log("[LOG] Attack triggered");
+        }
     }
 
     private void OnMove(InputAction.CallbackContext context)
     {
-        moveValue = context.ReadValue<Vector2>();
-        Debug.Log($"[LOG] Move value: {moveValue}");
+        if (context.phase == InputActionPhase.Performed)
+        {
+            moveValue = context.ReadValue<Vector2>();
+            Debug.Log($"[LOG] Move value: {moveValue}");
+        }
     }
     #endregion
 
@@ -118,6 +115,42 @@ public class InputSystemTests : InputTestFixture
         InputSystem.Update();
 
         Assert.IsFalse(attackCalled);
+    }
+
+    [Test]
+    public void 레이어_입력_잠금_입력_확인()
+    {
+        manager.SetLayer(ActionMaps.Gameplay);
+
+        // 1. 처음 입력
+        Press(mouse.leftButton);
+        InputSystem.Update();
+        Assert.IsTrue(attackCalled);
+
+        Release(mouse.leftButton);
+        InputSystem.Update();
+
+        // 2. 레이어 제거 후 입력 차단
+        attackCalled = false;
+        manager.RemoveLayer(ActionMaps.Gameplay);
+
+        Press(mouse.leftButton);
+        InputSystem.Update();
+        Assert.IsFalse(attackCalled);
+
+        Release(mouse.leftButton);
+        InputSystem.Update();
+
+        // 3. 레이어 다시 추가 후 입력 복구
+        attackCalled = false;
+        manager.AddLayer(ActionMaps.Gameplay);
+
+        Press(mouse.leftButton);
+        InputSystem.Update();
+        Assert.IsTrue(attackCalled, "레이어 다시 입력 안됨");
+
+        Release(mouse.leftButton);
+        InputSystem.Update();
     }
 
     [Test]
