@@ -281,7 +281,9 @@ public partial class SheetParsing : EditorWindow
     // TSV 데이터 파싱
     private List<string> ParseTSVData(string data)
     {
-        return data.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        return data.Split('\n')
+           .Select(l => l.TrimEnd('\r'))
+           .ToList();
     }
 
     // DB_IGNORE 열 필터링
