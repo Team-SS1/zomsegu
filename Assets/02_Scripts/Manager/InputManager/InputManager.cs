@@ -13,7 +13,7 @@ public class InputManager : GlobalSingleton<InputManager>
     #region 필드
     [SerializeField] private InputActionAsset inputAssets;
 
-    private Dictionary<ActionMaps, InputHandler> handlers;
+    private readonly Dictionary<ActionMaps, InputHandler> handlers = new();
     private ActionMaps activeActionMaps = ActionMaps.None;
     #endregion
 
@@ -48,7 +48,6 @@ public class InputManager : GlobalSingleton<InputManager>
     private void InitializeHandlers()
     {
         DisposeHandlers();
-        handlers = new();
 
         foreach (var map in inputAssets.actionMaps)
         {
@@ -67,14 +66,11 @@ public class InputManager : GlobalSingleton<InputManager>
 
     private void DisposeHandlers()
     {
-        if (handlers != null)
+        foreach (var handler in handlers.Values)
         {
-            foreach (var handler in handlers.Values)
-            {
-                handler.Dispose();
-            }
-            handlers.Clear();
+            handler.Dispose();
         }
+        handlers.Clear();
     }
     #endregion
 
@@ -125,8 +121,6 @@ public class InputManager : GlobalSingleton<InputManager>
 
     private void SyncAllMaps()
     {
-        if (handlers == null) return;
-
         foreach (var kvp in handlers)
         {
             if ((activeActionMaps & kvp.Key) != 0) kvp.Value.Enable();
@@ -136,8 +130,6 @@ public class InputManager : GlobalSingleton<InputManager>
 
     private void SyncChangedMaps(ActionMaps prev, ActionMaps next)
     {
-        if (handlers == null) return;
-
         var changed = prev ^ next;
         if (changed == 0) return;
 
@@ -223,6 +215,7 @@ public class InputManager : GlobalSingleton<InputManager>
     public void ImportBindingJson(string json)
     {
         inputAssets.LoadBindingOverridesFromJson(json);
+        SyncAllMaps();  // 상태 초기화
     }
     #endregion
 

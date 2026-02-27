@@ -6,13 +6,12 @@ using UnityEngine.InputSystem;
 public class InputHandler
 {
     private InputActionMap map;
-    private Dictionary<InputAction, Action<InputAction.CallbackContext>> bindings;
+    private readonly Dictionary<InputAction, Action<InputAction.CallbackContext>> bindings = new();
 
     #region 생명주기
     public InputHandler(InputActionMap map)
     {
         this.map = map;
-        bindings = new();
     }
 
     public void Dispose()
@@ -76,7 +75,6 @@ public class InputHandler
             throw new ArgumentOutOfRangeException(nameof(bindingIndex),
                 $"bindingIndex 범위 오류: {inputAction.name} bindings.Count={inputAction.bindings.Count}, index={bindingIndex}");
 
-        inputAction.RemoveBindingOverride(bindingIndex);
         inputAction.ApplyBindingOverride(bindingIndex, newPath);
     }
 
