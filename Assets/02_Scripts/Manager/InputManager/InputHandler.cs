@@ -42,11 +42,16 @@ public class InputHandler
 
         if (bindings.TryGetValue(inputAction, out var prev))
         {
+            inputAction.started -= prev;
             inputAction.performed -= prev;
+            inputAction.canceled -= prev;
         }
 
         bindings[inputAction] = action;
+
+        inputAction.started += action;
         inputAction.performed += action;
+        inputAction.canceled += action;
     }
 
     public void ApplyBindingOverride(Actions actions, string newPath)
