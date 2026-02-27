@@ -1,0 +1,64 @@
+name: Notify Discord via Bot
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Message
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          ACTOR="${{ github.actor }}"
+          MESSAGE="${{ github.event.head_commit.message }}"
+          URL="${{ github.event.head_commit.url }}"
+          REPO="${{ github.repository }}"
+
+          if [ "$BRANCH" = "main" ]; then
+            COLOR=15158332   # 빨강
+            MENTION="@everyone"
+            PARSE='["everyone"]'
+          else
+            COLOR=3447003    # 파랑
+            MENTION=""
+            PARSE='[]'
+          fi
+
+          payload=$(jq -n \
+            --arg branch "$BRANCH" \
+            --arg actor "$ACTOR" \
+            --arg msg "$MESSAGE" \
+            --arg url "$URL" \
+            --arg repo "$REPO" \
+            --arg mention "$MENTION" \
+            --argjson color "$COLOR" \
+            --argjson parse "$PARSE" \
+            '{
+              content: $mention,
+              embeds: [{
+                title: "🚀 브랜치 업데이트",
+                color: $color,
+                fields: [
+                  {name: "📦 Repository", value: $repo, inline: true},
+                  {name: "🌿 Branch", value: $branch, inline: true},
+                  {name: "👤 Author", value: $actor, inline: true},
+                  {name: "📝 Commit", value: $msg},
+                  {name: "🔗 Link", value: $url}
+                ],
+                footer: {
+                  text: "GitHub → Discord 자동 알림"
+                },
+                timestamp: now | todate
+              }],
+              allowed_mentions: {parse: $parse}
+            }')
+
+          curl -X POST "https://discord.com/api/v10/channels/${{ secrets.DISCORD_CHANNEL_ID }}/messages" \
+            -H "Authorization: Bot ${{ secrets.DISCORD_BOT_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$payload"
