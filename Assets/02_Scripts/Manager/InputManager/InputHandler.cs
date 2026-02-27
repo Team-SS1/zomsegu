@@ -19,7 +19,9 @@ public class InputHandler
     {
         foreach (var kvp in bindings)
         {
+            kvp.Key.started -= kvp.Value;
             kvp.Key.performed -= kvp.Value;
+            kvp.Key.canceled -= kvp.Value;
         }
         bindings.Clear();
     }
