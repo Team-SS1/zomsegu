@@ -71,7 +71,7 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 바인딩_확인_GamePlay_Attack_좌클릭()
     {
-        manager.SetLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.Gameplay);
 
         Press(mouse.leftButton);
         InputSystem.Update();
@@ -82,7 +82,7 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 입력_확인_GamePlay_Move()
     {
-        manager.SetLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.Gameplay);
 
         Press(keyboard.wKey);
         InputSystem.Update();
@@ -101,7 +101,7 @@ public class InputSystemTests : InputTestFixture
 
             Assert.DoesNotThrow(() =>
             {
-                manager.SetLayer(map);
+                manager.SetMaps(map);
             }, $"ActionMap '{map}'이 존재하지 않음");
         }
     }
@@ -109,7 +109,7 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 레이어_전체_입력_잠금()
     {
-        manager.SetLayer(ActionMaps.None);
+        manager.SetMaps(ActionMaps.None);
 
         Press(mouse.leftButton);
         InputSystem.Update();
@@ -120,7 +120,7 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 레이어_입력_잠금_입력_확인()
     {
-        manager.SetLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.Gameplay);
 
         // 1. 처음 입력
         Press(mouse.leftButton);
@@ -132,7 +132,7 @@ public class InputSystemTests : InputTestFixture
 
         // 2. 레이어 제거 후 입력 차단
         attackCalled = false;
-        manager.RemoveLayer(ActionMaps.Gameplay);
+        manager.RemoveMaps(ActionMaps.Gameplay);
 
         Press(mouse.leftButton);
         InputSystem.Update();
@@ -143,7 +143,7 @@ public class InputSystemTests : InputTestFixture
 
         // 3. 레이어 다시 추가 후 입력 복구
         attackCalled = false;
-        manager.AddLayer(ActionMaps.Gameplay);
+        manager.AddMaps(ActionMaps.Gameplay);
 
         Press(mouse.leftButton);
         InputSystem.Update();
@@ -156,8 +156,8 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 레이어_추가_Gameplay()
     {
-        manager.SetLayer(ActionMaps.None);
-        manager.AddLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.None);
+        manager.AddMaps(ActionMaps.Gameplay);
 
         Press(mouse.leftButton);
         InputSystem.Update();
@@ -168,8 +168,8 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 레이어_제거_Gameplay()
     {
-        manager.SetLayer(ActionMaps.Gameplay);
-        manager.RemoveLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.Gameplay);
+        manager.RemoveMaps(ActionMaps.Gameplay);
 
         Press(mouse.leftButton);
         InputSystem.Update();
@@ -180,7 +180,7 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 입력_리바인딩_Attack()
     {
-        manager.SetLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.Gameplay);
 
         string previousBinding = Mouse.current.leftButton.path;
         string newBinding = Keyboard.current.fKey.path;
@@ -209,7 +209,7 @@ public class InputSystemTests : InputTestFixture
     [Test]
     public void 키_바인딩_Save_Load()
     {
-        manager.SetLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.Gameplay);
 
         string newPath = keyboard.fKey.path;
 
@@ -225,7 +225,7 @@ public class InputSystemTests : InputTestFixture
 
         // 4. JSON 복원
         manager.ImportBindingJson(savedJson);
-        manager.SetLayer(ActionMaps.Gameplay);
+        manager.SetMaps(ActionMaps.Gameplay);
 
         bool triggered = false;
         manager.BindInput(ActionMaps.Gameplay, Actions.Attack, _ => triggered = true);
