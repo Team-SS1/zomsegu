@@ -12,7 +12,6 @@ public class InputSystemTests : InputTestFixture
     private InputActionAsset asset;
 
     private bool attackCalled;
-    private bool inventoryCalled;
     private Vector2 moveValue;
 
     public override void Setup()
@@ -33,7 +32,6 @@ public class InputSystemTests : InputTestFixture
         BindActions();
 
         attackCalled = false;
-        inventoryCalled = false;
         moveValue = Vector2.zero;
     }
 
@@ -42,7 +40,6 @@ public class InputSystemTests : InputTestFixture
         // Bind
         manager.BindInput(ActionMaps.Gameplay, Actions.Attack, OnAttack);
         manager.BindInput(ActionMaps.Gameplay, Actions.Move, OnMove);
-        manager.BindInput(ActionMaps.UI, Actions.Inventory, OnInventory);
     }
 
     #region 인풋 바인드 테스트용
@@ -52,15 +49,6 @@ public class InputSystemTests : InputTestFixture
         {
             attackCalled = true;
             Debug.Log("[LOG] Attack triggered");
-        }
-    }
-
-    private void OnInventory(InputAction.CallbackContext context)
-    {
-        if (context.phase == InputActionPhase.Started)
-        {
-            inventoryCalled = true;
-            Debug.Log("[LOG] Inventory triggered");
         }
     }
 
