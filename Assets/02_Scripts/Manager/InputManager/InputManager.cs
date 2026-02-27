@@ -59,7 +59,7 @@ public class InputManager : GlobalSingleton<InputManager>
             }
             else
             {
-                Logger.LogWarning($"InputActionMap '{map.name}'과 대응되는 InputState 없음");
+                Logger.LogWarning($"InputActionMap.'{map.name}' 없음");
             }
         }
     }
@@ -147,7 +147,12 @@ public class InputManager : GlobalSingleton<InputManager>
         Actions actions,
         Action<InputAction.CallbackContext> action)
     {
-        handlers[actionMaps].BindInput(actions, action);
+        if (!handlers.TryGetValue(actionMaps, out InputHandler handler))
+        {
+            Logger.LogWarning($"ActionMap.'{actionMaps}' 핸들러 없음");
+            return;
+        }
+        handler.BindInput(actions, action);
     }
 
     /// <summary>
@@ -158,7 +163,12 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <param name="newPath"></param>
     public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath)
     {
-        handlers[actionMaps].ApplyBindingOverride(actions, newPath);
+        if (!handlers.TryGetValue(actionMaps, out InputHandler handler))
+        {
+            Logger.LogWarning($"ActionMap.'{actionMaps}' 핸들러 없음");
+            return;
+        }
+        handler.ApplyBindingOverride(actions, newPath);
     }
     #endregion
 
