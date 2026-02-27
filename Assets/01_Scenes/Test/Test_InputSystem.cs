@@ -29,11 +29,11 @@ public class Test_InputSystem : MonoBehaviour
 
     private void OnMove(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Performed)
+        if (context.performed)
         {
             inputVec = context.ReadValue<Vector2>();
         }
-        else if (context.phase == InputActionPhase.Canceled)
+        else if (context.canceled)
         {
             inputVec = Vector2.zero;
         }
@@ -45,22 +45,22 @@ public class Test_InputSystem : MonoBehaviour
 
     public void Example_Open_Dialogue_Block_Gameplay()
     {
-        mg.SetLayer(InputEnum.ActionMaps.Gameplay);
+        mg.SetMaps(InputEnum.ActionMaps.Gameplay);
 
-        mg.AddLayer(InputEnum.ActionMaps.Dialogue);
-        mg.RemoveLayer(InputEnum.ActionMaps.Gameplay);
+        mg.AddMaps(InputEnum.ActionMaps.Dialogue);
+        mg.RemoveMaps(InputEnum.ActionMaps.Gameplay);
 
         dialoguePanel.SetActive(true);
     }
 
     private void OnNext(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Started)
+        if (context.started)
         {
             dialoguePanel.SetActive(false);
 
-            mg.RemoveLayer(InputEnum.ActionMaps.Dialogue);
-            mg.AddLayer(InputEnum.ActionMaps.Gameplay);
+            mg.RemoveMaps(InputEnum.ActionMaps.Dialogue);
+            mg.AddMaps(InputEnum.ActionMaps.Gameplay);
         }
     }
     #endregion
@@ -70,14 +70,14 @@ public class Test_InputSystem : MonoBehaviour
     {
         Enum.TryParse(text, out InputEnum.ActionMaps actionMaps);
 
-        if (mg.HasLayer(actionMaps))
+        if (mg.HasMaps(actionMaps))
         {
-            mg.RemoveLayer(actionMaps);
+            mg.RemoveMaps(actionMaps);
             Logger.Log($"{actionMaps} 꺼짐");
         }
         else
         {
-            mg.AddLayer(actionMaps);
+            mg.AddMaps(actionMaps);
             Logger.Log($"{actionMaps} 켜짐");
         }
     }

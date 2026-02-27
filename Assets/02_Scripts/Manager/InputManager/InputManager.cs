@@ -14,7 +14,7 @@ public class InputManager : GlobalSingleton<InputManager>
     [SerializeField] private InputActionAsset inputAssets;
 
     private Dictionary<ActionMaps, InputHandler> handlers;
-    private ActionMaps activeLayers = ActionMaps.None;
+    private ActionMaps activeActionMaps = ActionMaps.None;
     #endregion
 
     #region Unity API
@@ -54,14 +54,15 @@ public class InputManager : GlobalSingleton<InputManager>
         {
             if (Enum.TryParse(map.name, out ActionMaps actionMaps))
             {
-                handlers.Add(actionMaps, new InputHandler(map));
-                map.Disable(); // 초기 비활성화
+                handlers[actionMaps] = new InputHandler(map);
             }
             else
             {
-                Logger.LogWarning($"InputActionMap '{map.name}'과 대응되는 InputState 없음");
+                Logger.LogWarning($"InputActionMap.'{map.name}' 없음");
             }
         }
+
+        SyncAllMaps();
     }
 
     private void DisposeHandlers()
@@ -79,51 +80,72 @@ public class InputManager : GlobalSingleton<InputManager>
 
     #region 레이어 설정
     /// <summary>
-    /// 기존 레이어 설정 모두 제거, 새로운 레이어 설정
+    /// 기존 Input Action Maps 설정 모두 제거, 새로운 설정
     /// 게임 초기화 시 사용 권장
     /// </summary>
     /// <param name="actionMaps"></param>
-    public void SetLayer(ActionMaps actionMaps)
+    public void SetMaps(ActionMaps actionMaps)
     {
-        activeLayers = actionMaps;
-        UpdateMaps();
+        ActionMaps prev = activeActionMaps;
+        activeActionMaps = actionMaps;
+        SyncChangedMaps(prev, activeActionMaps);
     }
 
     /// <summary>
-    /// 특정 레이어 추가
+    /// 특정 Input Action Maps 추가
     /// </summary>
     /// <param name="actionMaps"></param>
-    public void AddLayer(ActionMaps actionMaps)
+    public void AddMaps(ActionMaps actionMaps)
     {
-        activeLayers |= actionMaps;
-        UpdateMaps();
+        ActionMaps prev = activeActionMaps;
+        activeActionMaps |= actionMaps;
+        SyncChangedMaps(prev, activeActionMaps);
     }
 
     /// <summary>
-    /// 특정 레이어 제거
+    /// 특정 Input Action Maps 제거
     /// </summary>
     /// <param name="actionMaps"></param>
-    public void RemoveLayer(ActionMaps actionMaps)
+    public void RemoveMaps(ActionMaps actionMaps)
     {
-        activeLayers &= ~actionMaps;
-        UpdateMaps();
+        ActionMaps prev = activeActionMaps;
+        activeActionMaps &= ~actionMaps;
+        SyncChangedMaps(prev, activeActionMaps);
     }
 
     /// <summary>
-    /// 레이어 보유 여부 확인
+    /// Input Action Maps 보유 여부 확인
     /// </summary>
     /// <param name="actionMaps"></param>
     /// <returns></returns>
-    public bool HasLayer(ActionMaps actionMaps)
+    public bool HasMaps(ActionMaps actionMaps)
     {
-        return (activeLayers & actionMaps) != 0;
+        return (activeActionMaps & actionMaps) != 0;
     }
 
-    private void UpdateMaps()
+    private void SyncAllMaps()
     {
+        if (handlers == null) return;
+
         foreach (var kvp in handlers)
         {
-            if ((activeLayers & kvp.Key) != 0)
+            if ((activeActionMaps & kvp.Key) != 0) kvp.Value.Enable();
+            else kvp.Value.Disable();
+        }
+    }
+
+    private void SyncChangedMaps(ActionMaps prev, ActionMaps next)
+    {
+        if (handlers == null) return;
+
+        var changed = prev ^ next;
+        if (changed == 0) return;
+
+        foreach (var kvp in handlers)
+        {
+            if ((changed & kvp.Key) == 0) continue;
+
+            if ((next & kvp.Key) != 0)
             {
                 kvp.Value.Enable();
             }
@@ -147,7 +169,18 @@ public class InputManager : GlobalSingleton<InputManager>
         Actions actions,
         Action<InputAction.CallbackContext> action)
     {
-        handlers[actionMaps].BindInput(actions, action);
+        if (!IsSingleFlag(actionMaps))
+        {
+            Logger.LogWarning($"ActionMaps.'{actionMaps}'는 단일 플래그가 아님");
+            return;
+        }
+
+        if (!handlers.TryGetValue(actionMaps, out InputHandler handler))
+        {
+            Logger.LogWarning($"ActionMap.'{actionMaps}' 핸들러 없음");
+            return;
+        }
+        handler.BindInput(actions, action);
     }
 
     /// <summary>
@@ -156,9 +189,20 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <param name="actionMaps"></param>
     /// <param name="actions"></param>
     /// <param name="newPath"></param>
-    public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath)
+    public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath, int bindingIndex = 0)
     {
-        handlers[actionMaps].ApplyBindingOverride(actions, newPath);
+        if (!IsSingleFlag(actionMaps))
+        {
+            Logger.LogWarning($"ActionMaps.'{actionMaps}'는 단일 플래그가 아님");
+            return;
+        }
+
+        if (!handlers.TryGetValue(actionMaps, out InputHandler handler))
+        {
+            Logger.LogWarning($"ActionMap.'{actionMaps}' 핸들러 없음");
+            return;
+        }
+        handler.ApplyBindingOverride(actions, newPath, bindingIndex);
     }
     #endregion
 
@@ -179,6 +223,13 @@ public class InputManager : GlobalSingleton<InputManager>
     public void ImportBindingJson(string json)
     {
         inputAssets.LoadBindingOverridesFromJson(json);
+    }
+    #endregion
+
+    #region Utils
+    public static bool IsSingleFlag(ActionMaps value)
+    {
+        return value != 0 && (value & (value - 1)) == 0;
     }
     #endregion
 
