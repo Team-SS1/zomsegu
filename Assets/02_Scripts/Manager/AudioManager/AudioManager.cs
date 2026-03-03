@@ -143,6 +143,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         audioDatabase = AssetLoader.FindAndLoadByName<AudioDatabase>("AudioDatabase");
         origin = AssetLoader.FindAndLoadByName("AudioSource").GetComponent<AudioSource>();
+        audioMixer = AssetLoader.FindAndLoadByName<AudioMixer>("AudioMixer");
     }
 #endif
     #endregion
