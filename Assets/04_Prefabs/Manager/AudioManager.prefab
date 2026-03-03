@@ -45,3 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioDatabase: {fileID: 11400000, guid: 0758fd17f45177946b261d957329d647, type: 2}
+  minDistance: 3
+  maxDistance: 15
+  sfxPoolSize: 10
+  origin: {fileID: 7182008941494196748, guid: 2507306f2f2013746a613fba3184f446, type: 3}
