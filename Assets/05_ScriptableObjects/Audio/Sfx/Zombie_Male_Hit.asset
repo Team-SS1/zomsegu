@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c6721ce63232b408c7264e852c9354, type: 3}
   m_Name: Zombie_Male_Hit
   m_EditorClassIdentifier: 
-  audioType: 1
-  audioClips: []
+  audioCategory: 1
+  audioEntries: []

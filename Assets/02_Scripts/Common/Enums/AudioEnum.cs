@@ -96,5 +96,9 @@ namespace AudioEnum
         // 연출용
         Car_Shaking,
         Zombie_Scream,
+
+        // === Test ===
+        Test_Bgm,
+        Test_Sfx,
     }
 }

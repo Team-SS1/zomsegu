@@ -25,6 +25,11 @@ public class AudioDataEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
+
+        SerializedProperty categoryProp = serializedObject.FindProperty("audioCategory");
+        EditorGUILayout.PropertyField(categoryProp);
+        EditorGUILayout.Space();
+
         list.DoLayoutList();
         HandleDragAndDrop();
         serializedObject.ApplyModifiedProperties();
