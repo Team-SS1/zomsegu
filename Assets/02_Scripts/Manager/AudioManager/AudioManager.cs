@@ -33,11 +33,12 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     public void InitializeDict()
     {
-        audioDatabase.GetDatabase<AudioData>().ForEach(audioData =>
+        foreach (var audioData in audioDatabase.GetDatabase<AudioData>())
         {
             if (!Enum.TryParse(audioData.name, out AudioName audioName))
             {
                 Logger.LogWarning($"{audioData.name} 이름 오류");
+                continue;
             }
 
             switch (audioData.AudioCategory)
@@ -49,7 +50,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
                     sfxDict.Add(audioName, audioData.AudioEntries);
                     break;
             }
-        });
+        }
     }
     #endregion
 
