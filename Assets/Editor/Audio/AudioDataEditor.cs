@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -25,22 +26,11 @@ public class AudioDataEditor : Editor
     {
         serializedObject.Update();
         list.DoLayoutList();
+        HandleDragAndDrop();
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void EnsurePreviewSource()
-    {
-        if (previewSource != null) return;
-
-        GameObject go = EditorUtility.CreateGameObjectWithHideFlags(
-            "AudioPreview",
-            HideFlags.HideAndDontSave,
-            typeof(AudioSource)
-        );
-
-        previewSource = go.GetComponent<AudioSource>();
-    }
-
+    #region 리스트 관리
     private void InitReorderableList()
     {
         SerializedProperty listProp = serializedObject.FindProperty("audioEntries");
@@ -52,7 +42,7 @@ public class AudioDataEditor : Editor
             EditorGUI.LabelField(rect, "Audio Entries");
         };
 
-        // 🔹 높이 자동 계산
+        // 높이 자동 계산
         list.elementHeightCallback = index =>
         {
             var element = listProp.GetArrayElementAtIndex(index);
@@ -86,6 +76,15 @@ public class AudioDataEditor : Editor
             Rect playRect = new Rect(volumeRect.xMax + spacing, rect.y, buttonWidth, EditorGUIUtility.singleLineHeight);
             Rect stopRect = new Rect(playRect.xMax + spacing, rect.y, buttonWidth, EditorGUIUtility.singleLineHeight);
 
+            EditorGUI.BeginChangeCheck();
+            EditorGUI.PropertyField(clipRect, clipProp, GUIContent.none);
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+                SortEntries(list.serializedProperty);
+                return; // 재정렬 후 다시 그리기
+            }
+
             EditorGUI.PropertyField(clipRect, clipProp, GUIContent.none);
             EditorGUI.PropertyField(volumeRect, volumeProp, GUIContent.none);
 
@@ -95,6 +94,125 @@ public class AudioDataEditor : Editor
             if (GUI.Button(stopRect, stopIcon))
                 StopAll();
         };
+
+        list.onAddCallback = l =>
+        {
+            int index = l.serializedProperty.arraySize;
+            l.serializedProperty.InsertArrayElementAtIndex(index);
+
+            var element = l.serializedProperty.GetArrayElementAtIndex(index);
+            element.FindPropertyRelative("audioClip").objectReferenceValue = null;
+            element.FindPropertyRelative("volume").floatValue = 1f;
+
+            serializedObject.ApplyModifiedProperties();
+        };
+    }
+
+    private void HandleDragAndDrop()
+    {
+        Event evt = Event.current;
+
+        if (evt.type != EventType.DragPerform && evt.type != EventType.DragUpdated)
+            return;
+
+        Rect dropArea = GUILayoutUtility.GetLastRect();
+
+        if (!dropArea.Contains(evt.mousePosition))
+            return;
+
+        if (evt.type == EventType.DragUpdated)
+        {
+            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+            evt.Use();
+        }
+
+        if (evt.type == EventType.DragPerform)
+        {
+            DragAndDrop.AcceptDrag();
+
+            SerializedProperty listProp = serializedObject.FindProperty("audioEntries");
+
+            foreach (UnityEngine.Object obj in DragAndDrop.objectReferences)
+            {
+                if (obj is AudioClip clip)
+                {
+                    if (ContainsClip(listProp, clip))
+                        continue;
+
+                    int index = listProp.arraySize;
+                    listProp.InsertArrayElementAtIndex(index);
+
+                    var element = listProp.GetArrayElementAtIndex(index);
+                    element.FindPropertyRelative("audioClip").objectReferenceValue = clip;
+                    element.FindPropertyRelative("volume").floatValue = 1f;
+                }
+            }
+
+            SortEntries(listProp);
+
+            serializedObject.ApplyModifiedProperties();
+            evt.Use();
+        }
+    }
+
+    private bool ContainsClip(SerializedProperty listProp, AudioClip clip)
+    {
+        for (int i = 0; i < listProp.arraySize; i++)
+        {
+            var element = listProp.GetArrayElementAtIndex(i);
+            var clipProp = element.FindPropertyRelative("audioClip");
+
+            if (clipProp.objectReferenceValue == clip)
+                return true;
+        }
+        return false;
+    }
+
+    private void SortEntries(SerializedProperty listProp)
+    {
+        var entries = new System.Collections.Generic.List<(AudioClip clip, float volume)>();
+
+        for (int i = 0; i < listProp.arraySize; i++)
+        {
+            var element = listProp.GetArrayElementAtIndex(i);
+            entries.Add((
+                element.FindPropertyRelative("audioClip").objectReferenceValue as AudioClip,
+                element.FindPropertyRelative("volume").floatValue
+            ));
+        }
+
+        entries.Sort((a, b) =>
+        {
+            if (a.clip == null) return 1;
+            if (b.clip == null) return -1;
+            return string.Compare(a.clip.name, b.clip.name, StringComparison.Ordinal);
+        });
+
+        listProp.ClearArray();
+
+        for (int i = 0; i < entries.Count; i++)
+        {
+            listProp.InsertArrayElementAtIndex(i);
+            var element = listProp.GetArrayElementAtIndex(i);
+            element.FindPropertyRelative("audioClip").objectReferenceValue = entries[i].clip;
+            element.FindPropertyRelative("volume").floatValue = entries[i].volume;
+        }
+    }
+    #endregion
+
+    #region clip preview
+
+    private void EnsurePreviewSource()
+    {
+        if (previewSource != null) return;
+
+        GameObject go = EditorUtility.CreateGameObjectWithHideFlags(
+            "AudioPreview",
+            HideFlags.HideAndDontSave,
+            typeof(AudioSource)
+        );
+
+        previewSource = go.GetComponent<AudioSource>();
     }
 
     private void PlayClip(AudioClip clip, float volume)
@@ -112,4 +230,5 @@ public class AudioDataEditor : Editor
     {
         previewSource.Stop();
     }
+    #endregion
 }
