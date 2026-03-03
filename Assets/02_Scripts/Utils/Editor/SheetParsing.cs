@@ -269,7 +269,7 @@ public partial class SheetParsing : EditorWindow
         Debug.Log($"[SheetParsing] keys.Count={keys.Count}, types.Count={types.Count}, dbIgnoreColumns.Count={dbIgnoreColumns.Count}");
 #endif
 
-        // 안전 파싱: 각 데이터 행이 keys보다 짧으면 채워넣기(빈 값)
+        // 각 데이터 행이 keys보다 짧으면 채워넣기(빈 값)
         JArray jArray = new JArray();
         for (int i = 3; i < rows.Count; i++)
         {
