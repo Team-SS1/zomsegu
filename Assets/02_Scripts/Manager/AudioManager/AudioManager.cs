@@ -21,8 +21,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     [SerializeField] private AudioSource origin;
 
     private IAudioInstance bgmAudioInstance;    // BGM
-    private IAudioSourcePool uiPool;            // SFX - UI
-    private IAudioSourcePool spatialPool;       // SFX - 거리 기반
+    private IAudioSourcePool pool;            // SFX 풀
 
     private AudioService audioPlayer;
     #endregion
@@ -57,8 +56,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     private void SetAudioSources()
     {
         bgmAudioInstance = new AudioInstance(gameObject.AddComponent<AudioSource>());
-        uiPool = new AudioSourcePool(origin, transform, sfxPoolSize);
-        spatialPool = new AudioSourcePool(origin, transform, sfxPoolSize);
+        pool = new AudioSourcePool(origin, transform, sfxPoolSize);
     }
     #endregion
 
@@ -76,8 +74,8 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfx2D(AudioName audioName, int idx = 0, bool loop = false, float pitch = 1f)
     {
-        IAudioInstance instance = uiPool.Get();
-        audioPlayer.Play(AudioCategory.Sfx, audioName, instance, uiPool, idx, loop, pitch);
+        IAudioInstance instance = pool.Get();
+        audioPlayer.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch);
     }
 
     /// <summary>
@@ -86,9 +84,9 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfx3D(AudioName audioName, Vector3 position, int idx = -1, bool loop = false, float pitch = 1f)
     {
-        IAudioInstance instance = spatialPool.Get();
+        IAudioInstance instance = pool.Get();
         instance.SetPosition(position);
-        audioPlayer.Play(AudioCategory.Sfx, audioName, instance, spatialPool, idx, loop, pitch, is3D: true);
+        audioPlayer.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch, is3D: true);
     }
 
     /// <summary>
@@ -97,10 +95,10 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfx3D(AudioName audioName, Transform transform, int idx = -1, bool loop = false, float pitch = 1f)
     {
-        IAudioInstance instance = spatialPool.Get();
+        IAudioInstance instance = pool.Get();
         instance.SetPosition(transform.position);
         PlayingAudio activeAudio = audioPlayer
-            .Play(AudioCategory.Sfx, audioName, instance, spatialPool, idx, loop, pitch, is3D: true);
+            .Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch, is3D: true);
 
         if (activeAudio != null)
         {
@@ -117,16 +115,14 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     public void StopAllSfx()
     {
-        uiPool.ReleaseAll();
-        spatialPool.ReleaseAll();
+        pool.ReleaseAll();
         audioPlayer.Actives.Clear();
     }
 
     public void StopAll()
     {
         bgmAudioInstance.Stop();
-        uiPool.ReleaseAll();
-        spatialPool.ReleaseAll();
+        pool.ReleaseAll();
         audioPlayer.Actives.Clear();
     }
     #endregion
