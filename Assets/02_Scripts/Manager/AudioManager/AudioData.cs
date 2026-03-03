@@ -22,6 +22,9 @@ public class AudioData : ScriptableObject
         EditorApplication.delayCall += TrySetAudioType;
     }
 
+    /// <summary>
+    /// 폴더 이름으로 audioType 자동 설정
+    /// </summary>
     private void TrySetAudioType()
     {
         EditorApplication.delayCall -= TrySetAudioType;
@@ -36,7 +39,7 @@ public class AudioData : ScriptableObject
         {
             if (audioType == parsed) return;
 
-            audioType = parsed;   // ← 직접 접근
+            audioType = parsed;
             EditorUtility.SetDirty(this);
         }
     }
