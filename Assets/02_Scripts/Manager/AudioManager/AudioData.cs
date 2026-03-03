@@ -10,10 +10,10 @@ using System.IO;
 public class AudioData : ScriptableObject
 {
     [SerializeField] private AudioEnum.AudioType audioType;
-    [SerializeField] private List<AudioClip> audioClips;
+    [SerializeField] private List<AudioEntry> audioEntries;
 
     public AudioEnum.AudioType AudioType => audioType;
-    public IReadOnlyList<AudioClip> AudioClips => audioClips;
+    public IReadOnlyList<AudioEntry> AudioEntries => audioEntries;
 
     #region 에디터 전용
 #if UNITY_EDITOR
@@ -45,4 +45,14 @@ public class AudioData : ScriptableObject
     }
 #endif
     #endregion
+}
+
+[System.Serializable]
+public class AudioEntry
+{
+    [SerializeField] private AudioClip audioClip;
+    [Range(0f, 1f)][SerializeField] private float volume = 1f;
+
+    public AudioClip AudioClip => audioClip;
+    public float Volume => volume;
 }
