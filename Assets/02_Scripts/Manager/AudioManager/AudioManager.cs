@@ -35,17 +35,17 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         audioDatabase.GetDatabase<AudioData>().ForEach(audioData =>
         {
-            if (!Enum.TryParse(audioData.name, out AudioEnum.AudioName audioName))
+            if (!Enum.TryParse(audioData.name, out AudioName audioName))
             {
                 Logger.LogWarning($"{audioData.name} 이름 오류");
             }
 
-            switch (audioData.AudioType)
+            switch (audioData.AudioCategory)
             {
-                case AudioEnum.AudioType.Bgm:
+                case AudioCategory.Bgm:
                     bgmDict.Add(audioName, audioData.AudioEntries);
                     break;
-                case AudioEnum.AudioType.Sfx:
+                case AudioCategory.Sfx:
                     sfxDict.Add(audioName, audioData.AudioEntries);
                     break;
             }

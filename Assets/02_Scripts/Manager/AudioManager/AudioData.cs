@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using AudioEnum;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,10 +11,10 @@ using System.IO;
 [CreateAssetMenu(fileName = "AudioData", menuName = "SO/Audio/AudioData")]
 public class AudioData : ScriptableObject
 {
-    [SerializeField] private AudioEnum.AudioType audioType;
+    [SerializeField] private AudioCategory audioType;
     [SerializeField] private List<AudioEntry> audioEntries;
 
-    public AudioEnum.AudioType AudioType => audioType;
+    public AudioCategory AudioCategory => audioType;
     public List<AudioEntry> AudioEntries => audioEntries;
 
     #region 에디터 전용
@@ -35,7 +37,7 @@ public class AudioData : ScriptableObject
 
         string folderName = Path.GetFileName(Path.GetDirectoryName(path));
 
-        if (System.Enum.TryParse(folderName, out AudioEnum.AudioType parsed))
+        if (System.Enum.TryParse(folderName, out AudioEnum.AudioCategory parsed))
         {
             if (audioType == parsed) return;
 

@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using AudioEnum;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -33,7 +34,7 @@ public class AudioDatabaseEditor : Editor
                     !data.name.ToLower().Contains(searchText.ToLower()))
                     continue;
 
-                if (data.AudioType == AudioEnum.AudioType.Bgm)
+                if (data.AudioCategory == AudioCategory.Bgm)
                     bgmList.Add(data);
                 else
                     sfxList.Add(data);

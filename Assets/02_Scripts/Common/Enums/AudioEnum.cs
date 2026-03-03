@@ -1,6 +1,6 @@
 namespace AudioEnum
 {
-    public enum AudioType
+    public enum AudioCategory
     {
         Bgm,
         Sfx

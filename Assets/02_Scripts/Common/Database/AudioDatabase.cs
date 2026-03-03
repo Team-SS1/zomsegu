@@ -13,9 +13,9 @@ public class AudioDatabase : SoDatabase
         AssetLoader.FindAndLoadAllByType<AudioData>().ForEach(AudioClip => List.Add(AudioClip));
         List.Sort((a, b) =>
         {
-            if (((AudioData)a).AudioType != ((AudioData)b).AudioType)
+            if (((AudioData)a).AudioCategory != ((AudioData)b).AudioCategory)
             {
-                return ((AudioData)a).AudioType.CompareTo(((AudioData)b).AudioType);
+                return ((AudioData)a).AudioCategory.CompareTo(((AudioData)b).AudioCategory);
             }
             return a.name.CompareTo(b.name);
         });
@@ -33,8 +33,8 @@ public class AudioDatabase : SoDatabase
             AudioData aData = a as AudioData;
             AudioData bData = b as AudioData;
 
-            if (aData.AudioType != bData.AudioType)
-                return aData.AudioType.CompareTo(bData.AudioType);
+            if (aData.AudioCategory != bData.AudioCategory)
+                return aData.AudioCategory.CompareTo(bData.AudioCategory);
 
             return a.name.CompareTo(b.name);
         });
