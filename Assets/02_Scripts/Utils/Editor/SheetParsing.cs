@@ -23,6 +23,39 @@ public partial class SheetParsing : EditorWindow
     private int selectedSheetIndex = 0;
     private bool isFetching = false;
 
+    private static readonly HashSet<string> CSharpKeywords = new HashSet<string>
+{
+    "class","namespace","public","private","protected","internal","static","void",
+    "int","float","double","string","bool","new","return","null","true","false",
+    "if","else","switch","case","for","foreach","while","do","break","continue",
+    "this","base","using","try","catch","finally","throw","out","ref","in","is","as"
+};
+    
+    /// <summary>
+    /// TSV 필드명을 C#에서 사용 가능한 식별자로 변환한다.
+    /// 특수문자 제거, 숫자 시작 방지, 예약어 처리 등을 수행한다.
+    /// </summary>
+    /// <param name="raw">원본 필드명</param>
+    /// <returns>정제된 식별자 문자열</returns>
+    private string SanitizeIdentifier(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return "_field";
+
+        // 1) 공백/특수문자 -> '_'로 바꾸기
+        string s = Regex.Replace(raw.Trim(), @"[^a-zA-Z0-9_]", "_");
+
+        // 2) 숫자로 시작하면 '_' 붙이기
+        if (char.IsDigit(s[0])) s = "_" + s;
+
+        // 3) 연속된 '_' 정리
+        s = Regex.Replace(s, @"_+", "_");
+
+        // 4) 예약어면 '_' 붙이기 (또는 @class 같은 방식도 가능)
+        if (CSharpKeywords.Contains(s)) s = "_" + s;
+
+        return s;
+    }
+
     [MenuItem("Tools/Google Sheet Parsing Tool")]
     public static void ShowWindow()
     {
@@ -71,33 +104,12 @@ public partial class SheetParsing : EditorWindow
             }
         }
     }
-    private static readonly HashSet<string> CSharpKeywords = new HashSet<string>
-{
-    "class","namespace","public","private","protected","internal","static","void",
-    "int","float","double","string","bool","new","return","null","true","false",
-    "if","else","switch","case","for","foreach","while","do","break","continue",
-    "this","base","using","try","catch","finally","throw","out","ref","in","is","as"
-};
 
-    private string SanitizeIdentifier(string raw)
-    {
-        if (string.IsNullOrWhiteSpace(raw)) return "_field";
-
-        // 1) 공백/특수문자 -> '_'로 바꾸기
-        string s = Regex.Replace(raw.Trim(), @"[^a-zA-Z0-9_]", "_");
-
-        // 2) 숫자로 시작하면 '_' 붙이기
-        if (char.IsDigit(s[0])) s = "_" + s;
-
-        // 3) 연속된 '_' 정리
-        s = Regex.Replace(s, @"_+", "_");
-
-        // 4) 예약어면 '_' 붙이기 (또는 @class 같은 방식도 가능)
-        if (CSharpKeywords.Contains(s)) s = "_" + s;
-
-        return s;
-    }
-
+    
+    /// <summary>
+    /// Apps Script API에서 스프레드시트 목록(JSON)을 요청하여 가져온다.
+    /// 요청이 성공하면 ProcessSheetsData를 통해 시트 목록을 파싱한다.
+    /// </summary>
     private IEnumerator FetchSheetsData()
     {
         isFetching = true;
@@ -119,6 +131,11 @@ public partial class SheetParsing : EditorWindow
         Repaint();
     }
 
+
+    /// <summary>
+    /// Apps Script로부터 전달받은 JSON 문자열을 SheetDataList로 역직렬화하여
+    /// 내부 sheets 리스트에 시트 정보를 저장한다.
+    /// </summary>
     private void ProcessSheetsData(string json)
     {
         var sheetsData = JsonUtility.FromJson<SheetDataList>(json);
@@ -131,6 +148,11 @@ public partial class SheetParsing : EditorWindow
         }
     }
 
+
+    /// <summary>
+    /// 현재 선택된 시트를 기준으로 Google Sheets TSV 데이터를 요청하고
+    /// JSON 파일 생성 및 데이터 클래스 생성을 시작한다.
+    /// </summary>
     private void ParseSelectedSheet()
     {
         var selectedSheet = sheets[selectedSheetIndex];
@@ -142,11 +164,20 @@ public partial class SheetParsing : EditorWindow
         EditorCoroutineUtility.StartCoroutine(ParseGoogleSheet(jsonFileName, selectedSheet.sheetId.ToString()), this);
     }
 
+
     private string RemoveSpecialCharacters(string sheetName)
     {
         return Regex.Replace(sheetName, @"[^a-zA-Z0-9\s]", "").Replace(" ", "_");
     }
 
+    /// <summary>
+    /// 선택된 시트의 TSV 데이터를 다운로드하여 파싱한다.
+    /// DB_IGNORE 및 타입 정보를 기반으로 JSON 데이터를 생성하고,
+    /// Resources/JsonFiles 경로에 저장한 후 대응되는 C# 데이터 클래스를 생성한다.
+    /// </summary>
+    /// <param name="jsonFileName">저장할 JSON 파일 및 클래스 이름</param>
+    /// <param name="gid">Google Sheet의 시트 GID</param>
+    /// <param name="notice">완료 시 성공 다이얼로그 표시 여부</param>
     private IEnumerator ParseGoogleSheet(string jsonFileName, string gid, bool notice = true)
     {
         // Build export URL explicitly (sheeturl already = https://docs.google.com/spreadsheets/d/ID)
@@ -278,7 +309,12 @@ public partial class SheetParsing : EditorWindow
     }
 
 
-    // TSV 데이터 파싱
+    /// <summary>
+    /// TSV 문자열을 줄 단위로 분리하여 각 행을 리스트로 반환한다.
+    /// 줄바꿈(\r\n, \n)을 기준으로 분리한다.
+    /// </summary>
+    /// <param name="data">TSV 전체 문자열</param>
+    /// <returns>행 단위 문자열 리스트</returns>
     private List<string> ParseTSVData(string data)
     {
         return data
@@ -286,7 +322,13 @@ public partial class SheetParsing : EditorWindow
             .ToList();
     }
 
-    // DB_IGNORE 열 필터링
+
+    /// <summary>
+    /// 첫 번째 행에서 "DB_IGNORE"로 표시된 컬럼 인덱스를 수집하여 반환한다.
+    /// 해당 컬럼은 JSON 및 클래스 생성 시 제외된다.
+    /// </summary>
+    /// <param name="headerRow">TSV의 첫 번째 행 문자열</param>
+    /// <returns>무시해야 할 컬럼 인덱스 집합</returns>
     private HashSet<int> GetDBIgnoreColumns(string headerRow)
     {
         var dbIgnoreColumns = new HashSet<int>();
@@ -306,7 +348,16 @@ public partial class SheetParsing : EditorWindow
         return dbIgnoreColumns;
     }
 
-    // 개별 행 파싱
+
+    /// <summary>
+    /// 하나의 TSV 행을 키와 타입 정보를 기준으로 JObject로 변환한다.
+    /// DB_IGNORE 컬럼은 제외되며, 값은 타입에 맞게 ConvertValue로 변환된다.
+    /// </summary>
+    /// <param name="keys">필드명 리스트</param>
+    /// <param name="types">타입명 리스트</param>
+    /// <param name="rowData">현재 행의 데이터 리스트</param>
+    /// <param name="dbIgnoreColumns">무시할 컬럼 인덱스 집합</param>
+    /// <returns>변환된 JObject (유효 데이터가 없으면 null)</returns>
     private JObject ParseRow(List<string> keys, List<string> types, List<string> rowData, HashSet<int> dbIgnoreColumns)
     {
         var rowObject = new JObject();
@@ -336,7 +387,15 @@ public partial class SheetParsing : EditorWindow
         return rowObject.HasValues ? rowObject : null;
     }
 
-    // 값을 적절한 형식으로 변환하는 메서드
+
+    /// <summary>
+    /// 문자열 값을 지정된 타입에 맞게 변환하여 JToken으로 반환한다.
+    /// 기본 타입(int, float, bool 등)과 배열 타입을 지원한다.
+    /// 변환 실패 시 기본값을 반환한다.
+    /// </summary>
+    /// <param name="value">변환할 문자열 값</param>
+    /// <param name="type">타입 문자열</param>
+    /// <returns>변환된 JToken 값</returns>
     private JToken ConvertValue(string value, string type)
     {
         switch (type.Trim()) // 불필요한 공백 제거
@@ -388,7 +447,13 @@ public partial class SheetParsing : EditorWindow
         }
     }
 
-    // JSON 파일 저장 메서드
+
+    /// <summary>
+    /// 생성된 JArray 데이터를 Resources/JsonFiles 경로에 JSON 파일로 저장한다.
+    /// 폴더가 없으면 자동으로 생성한다.
+    /// </summary>
+    /// <param name="jsonFileName">저장할 파일 이름 (확장자 제외)</param>
+    /// <param name="jArray">저장할 JSON 배열 데이터</param>
     private void SaveJsonToFile(string jsonFileName, JArray jArray)
     {
         string directoryPath = Path.Combine(Application.dataPath, "Resources", "JsonFiles");
@@ -407,7 +472,17 @@ public partial class SheetParsing : EditorWindow
 #endif
     }
 
-    // C# 클래스 생성 메서드
+
+    /// <summary>
+    /// TSV의 키 및 타입 정보를 기반으로 C# 데이터 클래스를 생성한다.
+    /// DB_IGNORE 컬럼은 제외되며,
+    /// Resources/DataClass 경로에 .cs 파일로 저장된다.
+    /// </summary>
+    /// <param name="fileName">생성할 클래스 이름</param>
+    /// <param name="keys">필드명 리스트</param>
+    /// <param name="types">타입명 리스트</param>
+    /// <param name="dbIgnoreColumns">무시할 컬럼 인덱스 집합</param>
+    /// <returns>생성된 클래스 이름</returns>
     private string CreateDataClass(string fileName, List<string> keys, List<string> types, HashSet<int> dbIgnoreColumns)
     {
         string className = fileName; // 파일 이름을 클래스 이름으로 사용
@@ -460,6 +535,13 @@ public partial class SheetParsing : EditorWindow
         return className; // 생성된 클래스 이름을 반환
     }
 
+
+    /// <summary>
+    /// 문자열 타입 정보를 C# 타입 문자열로 변환한다.
+    /// 지원하지 않는 타입은 기본적으로 string으로 처리한다.
+    /// </summary>
+    /// <param name="type">타입 문자열</param>
+    /// <returns>C# 타입 문자열</returns>
     private string ConvertTypeToCSharp(string type)
     {
         switch (type.Trim()) // 불필요한 공백 제거
@@ -479,20 +561,5 @@ public partial class SheetParsing : EditorWindow
             default: return "string"; // 기본적으로 string으로 처리
         }
     }
-}
-
-// SheetData 클래스
-[System.Serializable]
-public class SheetData
-{
-    public string sheetName;
-    public int sheetId;
-}
-
-// SheetDataList 클래스
-[System.Serializable]
-public class SheetDataList
-{
-    public SheetData[] sheetData;
 }
 #endif
