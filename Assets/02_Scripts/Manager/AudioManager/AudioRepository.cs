@@ -3,15 +3,15 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// AudioDatabase 관리 및 조회용 어댑터
+/// AudioDatabase 관리용
 /// </summary>
-public class AudioDatabaseAdapter
+public class AudioRepository
 {
     private readonly Dictionary<AudioName, List<AudioEntry>> bgmDict = new();
     private readonly Dictionary<AudioName, List<AudioEntry>> sfxDict = new();
     private readonly IRandom random;
 
-    public AudioDatabaseAdapter(AudioDatabase audioDatabase, IRandom random)
+    public AudioRepository(AudioDatabase audioDatabase, IRandom random)
     {
         this.random = random ?? new UnityRandom();
         if (audioDatabase == null) throw new ArgumentNullException("AudioDatabase 없음");

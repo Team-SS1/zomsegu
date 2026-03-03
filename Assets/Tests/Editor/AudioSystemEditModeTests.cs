@@ -7,7 +7,7 @@ public class AudioSystemEditModeTests
 {
     #region Fake Objects
 
-    private class FakeHandle : IAudioHandle
+    private class FakeInstance : IAudioInstance
     {
         public bool IsPlaying { get; private set; }
         public object Clip { get; private set; }
@@ -31,19 +31,19 @@ public class AudioSystemEditModeTests
     private class FakePool : IAudioSourcePool
     {
         public int ReleaseCallCount = 0;
-        public List<IAudioHandle> Handles = new();
+        public List<IAudioInstance> Handles = new();
 
-        public IAudioHandle Get()
+        public IAudioInstance Get()
         {
-            var handle = new FakeHandle();
-            Handles.Add(handle);
-            return handle;
+            var instance = new FakeInstance();
+            Handles.Add(instance);
+            return instance;
         }
 
-        public void Release(IAudioHandle handle)
+        public void Release(IAudioInstance instance)
         {
             ReleaseCallCount++;
-            handle.Stop();
+            instance.Stop();
         }
 
         public void ReleaseAll()
@@ -59,25 +59,25 @@ public class AudioSystemEditModeTests
     }
     #endregion
 
-    private AudioDatabaseAdapter CreateTestAdapter()
+    private AudioRepository CreateTestAdapter()
     {
         AudioDatabase db = AssetLoader.FindAndLoadByName<AudioDatabase>("TestAudioDatabase");
-        return new AudioDatabaseAdapter(db, new FakeRandom());
+        return new AudioRepository(db, new FakeRandom());
     }
 
     [Test]
     public void SFX_플레이()
     {
         var adapter = CreateTestAdapter();
-        var player = new AudioPlayer(adapter, 3f, 15f);
+        var player = new AudioService(adapter, 3f, 15f);
 
         var pool = new FakePool();
-        var handle = pool.Get();
+        var instance = pool.Get();
 
         var active = player.Play(
             AudioCategory.Sfx,
             AudioName.Test_Sfx,
-            handle,
+            instance,
             pool,
             idx: 0,
             loop: false,
@@ -86,22 +86,22 @@ public class AudioSystemEditModeTests
 
         Assert.IsNotNull(active);
         Assert.AreEqual(1, player.Actives.Count);
-        Assert.IsTrue(handle.IsPlaying);
+        Assert.IsTrue(instance.IsPlaying);
     }
 
     [Test]
     public void SFX_플레이_완료()
     {
         var adapter = CreateTestAdapter();
-        var player = new AudioPlayer(adapter, 3f, 15f);
+        var player = new AudioService(adapter, 3f, 15f);
 
         var pool = new FakePool();
-        var handle = pool.Get();
+        var instance = pool.Get();
 
         var active = player.Play(
             AudioCategory.Sfx,
             AudioName.Test_Sfx,
-            handle,
+            instance,
             pool,
             0,
             false,
@@ -111,7 +111,7 @@ public class AudioSystemEditModeTests
         Assert.AreEqual(1, player.Actives.Count);
 
         // 강제로 종료 상태 만들기
-        handle.Stop();
+        instance.Stop();
 
         player.Tick();
 
@@ -123,14 +123,14 @@ public class AudioSystemEditModeTests
     public void BGM_플레이_단일_소스_동작_확인()
     {
         var adapter = CreateTestAdapter();
-        var player = new AudioPlayer(adapter, 3f, 15f);
+        var player = new AudioService(adapter, 3f, 15f);
 
-        var handle = new FakeHandle();
+        var instance = new FakeInstance();
 
         var result = player.Play(
             AudioCategory.Bgm,
             AudioName.Test_Bgm,
-            handle,
+            instance,
             null,
             0,
             true,
@@ -139,6 +139,6 @@ public class AudioSystemEditModeTests
 
         Assert.IsNull(result);
         Assert.AreEqual(0, player.Actives.Count);
-        Assert.IsTrue(handle.IsPlaying);
+        Assert.IsTrue(instance.IsPlaying);
     }
 }

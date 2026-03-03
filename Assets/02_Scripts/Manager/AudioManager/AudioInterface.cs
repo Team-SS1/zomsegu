@@ -1,11 +1,11 @@
 public interface IAudioSourcePool
 {
-    public IAudioHandle Get();
-    public void Release(IAudioHandle audioSource);
+    public IAudioInstance Get();
+    public void Release(IAudioInstance audioSource);
     public void ReleaseAll();
 }
 
-public interface IAudioHandle
+public interface IAudioInstance
 {
     public bool IsPlaying { get; }
 

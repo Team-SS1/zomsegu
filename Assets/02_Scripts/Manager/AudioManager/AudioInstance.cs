@@ -1,13 +1,13 @@
 using UnityEngine;
 
 /// <summary>
-/// Unity AudioSource를 감싼 재생 핸들
+/// Unity AudioSource를 감싼 재생 인스턴스
 /// </summary>
-public class AudioHandle : IAudioHandle
+public class AudioInstance : IAudioInstance
 {
     private readonly AudioSource source;
 
-    public AudioHandle(AudioSource source)
+    public AudioInstance(AudioSource source)
     {
         this.source = source;
     }

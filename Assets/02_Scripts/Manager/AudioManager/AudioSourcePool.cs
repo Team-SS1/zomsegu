@@ -9,7 +9,7 @@ public class AudioSourcePool : IAudioSourcePool
 {
     private readonly AudioSource origin;
     private readonly Transform root;
-    private readonly List<IAudioHandle> pool = new();
+    private readonly List<IAudioInstance> pool = new();
     private int index = 0;
 
     public AudioSourcePool(AudioSource origin, Transform root, int size)
@@ -21,11 +21,11 @@ public class AudioSourcePool : IAudioSourcePool
         {
             AudioSource newAudioSource = Object.Instantiate(this.origin, root);
             newAudioSource.gameObject.SetActive(false);
-            pool.Add(new AudioHandle(newAudioSource));
+            pool.Add(new AudioInstance(newAudioSource));
         }
     }
 
-    public IAudioHandle Get()
+    public IAudioInstance Get()
     {
         // index가 풀 사이즈보다 커지면 다시 처음부터 순회
         if (index >= pool.Count)
@@ -39,27 +39,27 @@ public class AudioSourcePool : IAudioSourcePool
         if (pool[index].IsPlaying)
         {
             var newAudioSource = Object.Instantiate(origin, root);
-            pool.Add(new AudioHandle(newAudioSource));
+            pool.Add(new AudioInstance(newAudioSource));
             index = pool.Count - 1;
         }
 
         return pool[index++];
     }
 
-    public void Release(IAudioHandle handle)
+    public void Release(IAudioInstance instance)
     {
-        if (handle.IsPlaying)
+        if (instance.IsPlaying)
         {
-            handle.Stop();
+            instance.Stop();
         }
-        handle.SetClip(null);
+        instance.SetClip(null);
     }
 
     public void ReleaseAll()
     {
-        foreach (var handle in pool)
+        foreach (var instance in pool)
         {
-            Release(handle);
+            Release(instance);
         }
         index = 0;
     }

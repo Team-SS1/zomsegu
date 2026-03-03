@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class ActiveAudio
+public class PlayingAudio
 {
-    public IAudioHandle handle;
+    public IAudioInstance instance;
     public Transform follow;
     public IAudioSourcePool pool;
 }

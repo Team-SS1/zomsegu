@@ -4,10 +4,10 @@ using System.Collections.Generic;
 /// <summary>
 /// 오디오 재생, 볼륨 관리
 /// </summary>
-public class AudioPlayer
+public class AudioService
 {
     #region 필드
-    private AudioDatabaseAdapter adapter;
+    private AudioRepository repository;
 
     // 볼륨
     private float bgmVolume = 1f;
@@ -18,85 +18,85 @@ public class AudioPlayer
     private static readonly string SfxVolumeKey = "SfxVolume";
     private static readonly string MasterVolumeKey = "MasterVolume";
 
-    private List<ActiveAudio> actives = new();
-    public List<ActiveAudio> Actives => actives;
+    private List<PlayingAudio> actives = new();
+    public List<PlayingAudio> Actives => actives;
 
-    private readonly float minDistance;
-    private readonly float maxDistance;
+    private readonly float spatialMinDistance;
+    private readonly float spatialMaxDistance;
     #endregion
 
-    public AudioPlayer(
-        AudioDatabaseAdapter adapter,
+    public AudioService(
+        AudioRepository repository,
         float minDistance,
         float maxDistance)
     {
-        this.adapter = adapter;
-        this.minDistance = minDistance;
-        this.maxDistance = maxDistance;
+        this.repository = repository;
+        this.spatialMinDistance = minDistance;
+        this.spatialMaxDistance = maxDistance;
     }
 
     public void Tick()
     {
         for (int i = actives.Count - 1; i >= 0; i--)
         {
-            ActiveAudio active = actives[i];
+            PlayingAudio active = actives[i];
 
-            if (!active.handle.IsPlaying)
+            if (!active.instance.IsPlaying)
             {
-                active.pool?.Release(active.handle);
+                active.pool?.Release(active.instance);
                 actives.RemoveAt(i);
                 continue;
             }
 
             if (active.follow != null)
             {
-                active.handle.SetPosition(active.follow.position);
+                active.instance.SetPosition(active.follow.position);
             }
         }
     }
 
-    public ActiveAudio Play(
+    public PlayingAudio Play(
         AudioCategory audioCategory,
         AudioName audioName,
-        IAudioHandle handle,
+        IAudioInstance instance,
         IAudioSourcePool pool,
         int idx,
         bool loop,
         float pitch,
         bool is3D = false)
     {
-        if (!adapter.TryGetAudioEntry(audioCategory, audioName, idx, out AudioEntry entry)) { return null; }
+        if (!repository.TryGetAudioEntry(audioCategory, audioName, idx, out AudioEntry entry)) { return null; }
 
-        handle.SetClip(entry.AudioClip);
-        handle.SetLoop(loop);
-        handle.SetPitch(pitch);
+        instance.SetClip(entry.AudioClip);
+        instance.SetLoop(loop);
+        instance.SetPitch(pitch);
 
         float baseVolume = (audioCategory == AudioCategory.Bgm ? bgmVolume : sfxVolume) * entry.Volume;
-        handle.SetVolume(baseVolume * masterVolume);
+        instance.SetVolume(baseVolume * masterVolume);
 
         if (audioCategory == AudioCategory.Bgm)
         {
-            handle.Play();
+            instance.Play();
             return null;
         }
 
-        var newActiveAudio = new ActiveAudio
+        var newActiveAudio = new PlayingAudio
         {
-            handle = handle,
+            instance = instance,
             pool = pool
         };
         actives.Add(newActiveAudio);
 
         if (is3D)
         {
-            handle.Set3D(minDistance, maxDistance);
+            instance.Set3D(spatialMinDistance, spatialMaxDistance);
         }
         else
         {
-            handle.Set2D();
+            instance.Set2D();
         }
 
-        handle.Play();
+        instance.Play();
 
         return newActiveAudio;
     }
