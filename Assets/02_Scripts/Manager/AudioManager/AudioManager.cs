@@ -28,6 +28,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     [SerializeField] private AudioMixer audioMixer;
 
     private AudioService audioService;
+    private AudioMixerController audioMixerController;
     #endregion
 
     #region Unity API
@@ -36,12 +37,12 @@ public class AudioManager : GlobalSingleton<AudioManager>
         base.Awake();
 
         var repository = new AudioRepository(audioDatabase, new UnityRandom());
-        var controller = new AudioMixerController(audioMixer);
-        audioService = new AudioService(repository, controller, spatialMinDistance, spatialMaxDistance);
+        audioMixerController = new AudioMixerController(audioMixer);
+        audioService = new AudioService(repository, audioMixerController, spatialMinDistance, spatialMaxDistance);
 
         SetAudioSources();
 
-        bgmAudioInstance.SetOutputAudioMixerGroup(controller.BgmGroup);
+        bgmAudioInstance.SetOutputAudioMixerGroup(audioMixerController.BgmGroup);
     }
 
     private void Update()
@@ -73,6 +74,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlayBgm(AudioName audioName, int idx = 0, bool loop = true, float pitch = 1f)
     {
+        bgmAudioInstance.Stop();
         audioService.Play(AudioCategory.Bgm, audioName, bgmAudioInstance, null, idx, loop, pitch);
     }
 
@@ -135,6 +137,9 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #endregion
 
     #region 볼륨 조절
+    public void SetMasterVolume(float normalized) => audioMixerController.SetMaster(normalized);
+    public void SetBgmVolume(float normalized) => audioMixerController.SetBgm(normalized);
+    public void SetSfxVolume(float normalized) => audioMixerController.SetSfx(normalized);
     #endregion
 
     #region 에디터 전용

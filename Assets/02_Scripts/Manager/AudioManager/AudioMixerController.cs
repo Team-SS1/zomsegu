@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -19,7 +20,7 @@ public class AudioMixerController
 
     public AudioMixerController(AudioMixer mixer)
     {
-        if (mixer == null) return;
+        if (mixer == null) throw new ArgumentNullException(nameof(mixer));
 
         this.mixer = mixer;
 
