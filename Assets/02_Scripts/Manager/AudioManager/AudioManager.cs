@@ -18,17 +18,27 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     [Header("풀 세팅")]
     [SerializeField] private int sfxPoolSize = 10;
+    [SerializeField] private AudioSource origin;
 
     private AudioSource bgmAudioSource; // BGM
     private AudioSourcePool pool2D;     // SFX - UI
     private AudioSourcePool pool3D;     // SFX - 거리 기반
 
-    private List<ActiveAudio> active3D = new();
+    private List<ActiveAudio> actives = new();
+
+    private float bgmVolume = 1f;
+    private float sfxVolume = 1f;
+    private float masterVolume = 1f;
+
+    private static readonly string BgmVolumeKey = "BgmVolume";
+    private static readonly string SfxVolumeKey = "SfxVolume";
+    private static readonly string MasterVolumeKey = "MasterVolume";
 
     private class ActiveAudio
     {
         public AudioSource audioSource;
         public Transform follow;
+        public AudioSourcePool pool;
     }
 
     #endregion
@@ -44,14 +54,14 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     private void Update()
     {
-        for (int i = active3D.Count - 1; i >= 0; i--)
+        for (int i = actives.Count - 1; i >= 0; i--)
         {
-            ActiveAudio active = active3D[i];
+            ActiveAudio active = actives[i];
 
             if (!active.audioSource.isPlaying)
             {
-                pool3D.Release(active.audioSource);
-                active3D.RemoveAt(i);
+                active.pool.Release(active.audioSource);
+                actives.RemoveAt(i);
                 continue;
             }
 
@@ -86,10 +96,10 @@ public class AudioManager : GlobalSingleton<AudioManager>
             switch (audioData.AudioCategory)
             {
                 case AudioCategory.Bgm:
-                    bgmDict.Add(audioName, audioData.AudioEntries);
+                    bgmDict[audioName] = audioData.AudioEntries;
                     break;
                 case AudioCategory.Sfx:
-                    sfxDict.Add(audioName, audioData.AudioEntries);
+                    sfxDict[audioName] = audioData.AudioEntries;
                     break;
             }
         }
@@ -98,8 +108,8 @@ public class AudioManager : GlobalSingleton<AudioManager>
     private void SetAudioSources()
     {
         bgmAudioSource = gameObject.AddComponent<AudioSource>();
-        pool2D = new(new(), transform, sfxPoolSize);
-        pool3D = new(new(), transform, sfxPoolSize);
+        pool2D = new(origin, transform, sfxPoolSize);
+        pool3D = new(origin, transform, sfxPoolSize);
     }
     #endregion
 
@@ -128,8 +138,8 @@ public class AudioManager : GlobalSingleton<AudioManager>
     public void PlaySfx3D(AudioName audioName, Vector3 position, int idx = -1, bool loop = false, float pitch = 1f)
     {
         AudioSource audioSource = pool3D.Get();
-        PlayInternal(AudioCategory.Sfx, audioName, audioSource, idx, loop, pitch, is3D: true);
         audioSource.transform.position = position;
+        PlayInternal(AudioCategory.Sfx, audioName, audioSource, idx, loop, pitch, is3D: true);
     }
 
     /// <summary>
@@ -139,17 +149,16 @@ public class AudioManager : GlobalSingleton<AudioManager>
     public void PlaySfx3D(AudioName audioName, Transform transform, int idx = -1, bool loop = false, float pitch = 1f)
     {
         AudioSource audioSource = pool3D.Get();
-        PlayInternal(AudioCategory.Sfx, audioName, audioSource, idx, loop, pitch, is3D: true);
         audioSource.transform.position = transform.position;
+        ActiveAudio activeAudio = PlayInternal(AudioCategory.Sfx, audioName, audioSource, idx, loop, pitch, is3D: true);
 
-        active3D.Add(new ActiveAudio
+        if (activeAudio != null)
         {
-            audioSource = audioSource,
-            follow = transform
-        });
+            activeAudio.follow = transform;
+        }
     }
 
-    private void PlayInternal(
+    private ActiveAudio PlayInternal(
         AudioCategory audioCategory,
         AudioName audioName,
         AudioSource audioSource,
@@ -158,10 +167,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
         float pitch,
         bool is3D = false)
     {
-        bool flowControl = (idx < 0)
-            ? TryGetRandomAudioEntry(audioName, out AudioEntry entry)
-            : TryGetAudioEntry(audioName, idx, out entry);
-        if (!flowControl) return;
+        if (!TryGetAudioEntry(audioCategory, audioName, idx, out AudioEntry entry)) { return null; }
 
         audioSource.clip = entry.AudioClip;
         audioSource.loop = loop;
@@ -170,12 +176,27 @@ public class AudioManager : GlobalSingleton<AudioManager>
         float baseVolume = (audioCategory == AudioCategory.Bgm ? bgmVolume : sfxVolume) * entry.Volume;
         audioSource.volume = baseVolume * masterVolume;
 
+        if (audioCategory == AudioCategory.Bgm)
+        {
+            audioSource.Play();
+            return null;
+        }
+
+        var newActiveAudio = new ActiveAudio
+        {
+            audioSource = audioSource,
+            pool = is3D ? pool3D : pool2D
+        };
+        actives.Add(newActiveAudio);
+
         if (is3D)
         {
             Configure3D(audioSource);
         }
 
         audioSource.Play();
+
+        return newActiveAudio;
     }
     #endregion
 
@@ -189,7 +210,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         pool2D.ReleaseAll();
         pool3D.ReleaseAll();
-        active3D.Clear();
+        actives.Clear();
     }
 
     public void StopAll()
@@ -197,7 +218,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
         bgmAudioSource.Stop();
         pool2D.ReleaseAll();
         pool3D.ReleaseAll();
-        active3D.Clear();
+        actives.Clear();
     }
     #endregion
 
@@ -205,34 +226,20 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #endregion
 
     #region Utils
-    private bool TryGetRandomAudioEntry(AudioName audioName, out AudioEntry entry)
+    private bool TryGetAudioEntry(AudioCategory audioCategory, AudioName audioName, int idx, out AudioEntry entry)
     {
         entry = null;
 
-        if (!bgmDict.TryGetValue(audioName, out List<AudioEntry> entries))
+        Dictionary<AudioName, List<AudioEntry>> dict = (audioCategory == AudioCategory.Bgm) ? bgmDict : sfxDict;
+        if (!dict.TryGetValue(audioName, out List<AudioEntry> entries) || entries == null || entries.Count == 0)
         {
             Logger.LogWarning($"{audioName} 오디오 데이터 없음");
             return false;
         }
 
-        entry = entries[UnityEngine.Random.Range(0, entries.Count)];
-        return true;
-    }
-
-    private bool TryGetAudioEntry(AudioName audioName, int idx, out AudioEntry entry)
-    {
-        entry = null;
-
-        if (!bgmDict.TryGetValue(audioName, out List<AudioEntry> entries))
+        if (idx >= entries.Count || idx < 0)
         {
-            Logger.LogWarning($"{audioName} 오디오 데이터 없음");
-            return false;
-        }
-
-        if (idx >= entries.Count)
-        {
-            Logger.LogWarning("index 벗어남");
-            return false;
+            idx = UnityEngine.Random.Range(0, entries.Count);
         }
 
         entry = entries[idx];

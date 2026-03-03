@@ -12,9 +12,9 @@ public class AudioSourcePool
     private readonly List<AudioSource> pool = new();
     private int index = 0;
 
-    public AudioSourcePool(GameObject origin, Transform root, int poolSize)
+    public AudioSourcePool(AudioSource origin, Transform root, int poolSize)
     {
-        this.origin = origin.GetComponent<AudioSource>();
+        this.origin = origin;
         this.root = root;
 
         for (int i = 0; i < poolSize; i++)
@@ -36,7 +36,7 @@ public class AudioSourcePool
         // 현재 인덱스의 오디오 소스가 활성화되어 있다면
         // 1. 새로 생성 후 풀에 추가
         // 2. 해당 index로 이동
-        if (pool[index].enabled)
+        if (pool[index].gameObject.activeSelf)
         {
             var newAudioSource = GameObject.Instantiate(origin, root);
             pool.Add(newAudioSource);
