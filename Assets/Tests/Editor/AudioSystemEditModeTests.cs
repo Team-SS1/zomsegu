@@ -2,6 +2,7 @@ using AudioEnum;
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioSystemEditModeTests
 {
@@ -24,8 +25,10 @@ public class AudioSystemEditModeTests
         public void SetPitch(float pitch) => Pitch = pitch;
         public void SetVolume(float volume) => Volume = volume;
         public void SetPosition(Vector3 position) => Position = position;
+        public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup) { }
         public void Set2D() { }
         public void Set3D(float minDistance, float maxDistance) { }
+
     }
 
     private class FakePool : IAudioSourcePool
@@ -69,7 +72,7 @@ public class AudioSystemEditModeTests
     public void SFX_플레이()
     {
         var adapter = CreateTestAdapter();
-        var player = new AudioService(adapter, 3f, 15f);
+        var player = new AudioService(adapter, null, 3f, 15f);
 
         var pool = new FakePool();
         var instance = pool.Get();
@@ -93,7 +96,7 @@ public class AudioSystemEditModeTests
     public void SFX_플레이_완료()
     {
         var adapter = CreateTestAdapter();
-        var player = new AudioService(adapter, 3f, 15f);
+        var player = new AudioService(adapter, null, 3f, 15f);
 
         var pool = new FakePool();
         var instance = pool.Get();
@@ -123,7 +126,7 @@ public class AudioSystemEditModeTests
     public void BGM_플레이_단일_소스_동작_확인()
     {
         var adapter = CreateTestAdapter();
-        var player = new AudioService(adapter, 3f, 15f);
+        var player = new AudioService(adapter, null, 3f, 15f);
 
         var instance = new FakeInstance();
 

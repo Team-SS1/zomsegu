@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 /// <summary>
 /// Unity AudioSource를 감싼 재생 인스턴스
@@ -34,6 +35,11 @@ public class AudioInstance : IAudioInstance
     public void SetPitch(float pitch) => source.pitch = pitch;
     public void SetVolume(float volume) => source.volume = volume;
     public void SetPosition(Vector3 position) => source.transform.position = position;
+
+    public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup)
+    {
+        source.outputAudioMixerGroup = audioMixerGroup;
+    }
 
     public void Set2D()
     {

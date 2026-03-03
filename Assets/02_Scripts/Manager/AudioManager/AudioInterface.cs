@@ -1,3 +1,5 @@
+using UnityEngine.Audio;
+
 public interface IAudioSourcePool
 {
     public IAudioInstance Get();
@@ -17,6 +19,7 @@ public interface IAudioInstance
     public void SetPitch(float pitch);
     public void SetVolume(float volume);
     public void SetPosition(UnityEngine.Vector3 position);
+    public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup);
     public void Set2D();
     public void Set3D(float minDistance, float maxDistance);
 }

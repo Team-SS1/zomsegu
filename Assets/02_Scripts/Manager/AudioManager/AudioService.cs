@@ -7,18 +7,10 @@ using System.Collections.Generic;
 public class AudioService
 {
     #region 필드
-    private AudioRepository repository;
+    private readonly AudioRepository repository;
+    private readonly AudioMixerController mixerController;
 
-    // 볼륨
-    private float bgmVolume = 1f;
-    private float sfxVolume = 1f;
-    private float masterVolume = 1f;
-
-    private static readonly string BgmVolumeKey = "BgmVolume";
-    private static readonly string SfxVolumeKey = "SfxVolume";
-    private static readonly string MasterVolumeKey = "MasterVolume";
-
-    private List<PlayingAudio> actives = new();
+    private readonly List<PlayingAudio> actives = new();
     public List<PlayingAudio> Actives => actives;
 
     private readonly float spatialMinDistance;
@@ -27,12 +19,14 @@ public class AudioService
 
     public AudioService(
         AudioRepository repository,
-        float minDistance,
-        float maxDistance)
+        AudioMixerController mixerController,
+        float minDist,
+        float maxDist)
     {
         this.repository = repository;
-        this.spatialMinDistance = minDistance;
-        this.spatialMaxDistance = maxDistance;
+        this.mixerController = mixerController;
+        spatialMinDistance = minDist;
+        spatialMaxDistance = maxDist;
     }
 
     public void Tick()
@@ -70,9 +64,11 @@ public class AudioService
         instance.SetClip(entry.AudioClip);
         instance.SetLoop(loop);
         instance.SetPitch(pitch);
-
-        float baseVolume = (audioCategory == AudioCategory.Bgm ? bgmVolume : sfxVolume) * entry.Volume;
-        instance.SetVolume(baseVolume * masterVolume);
+        instance.SetVolume(entry.Volume);
+        instance.SetOutputAudioMixerGroup(
+            audioCategory == AudioCategory.Bgm
+            ? mixerController.BgmGroup
+            : mixerController.SfxGroup);
 
         if (audioCategory == AudioCategory.Bgm)
         {

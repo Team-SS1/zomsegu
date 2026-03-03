@@ -1,5 +1,6 @@
 using AudioEnum;
 using UnityEngine;
+using UnityEngine.Audio;
 
 /// <summary>
 /// AudioDatabase로 BGM/SFX 관리
@@ -21,9 +22,12 @@ public class AudioManager : GlobalSingleton<AudioManager>
     [SerializeField] private AudioSource origin;
 
     private IAudioInstance bgmAudioInstance;    // BGM
-    private IAudioSourcePool pool;            // SFX 풀
+    private IAudioSourcePool pool;              // SFX 풀
 
-    private AudioService audioPlayer;
+    [Header("오디오 믹서")]
+    [SerializeField] private AudioMixer audioMixer;
+
+    private AudioService audioService;
     #endregion
 
     #region Unity API
@@ -32,14 +36,17 @@ public class AudioManager : GlobalSingleton<AudioManager>
         base.Awake();
 
         var repository = new AudioRepository(audioDatabase, new UnityRandom());
-        audioPlayer = new AudioService(repository, spatialMinDistance, spatialMaxDistance);
+        var controller = new AudioMixerController(audioMixer);
+        audioService = new AudioService(repository, controller, spatialMinDistance, spatialMaxDistance);
 
         SetAudioSources();
+
+        bgmAudioInstance.SetOutputAudioMixerGroup(controller.BgmGroup);
     }
 
     private void Update()
     {
-        audioPlayer.Tick();
+        audioService.Tick();
     }
     #endregion
 
@@ -66,7 +73,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlayBgm(AudioName audioName, int idx = 0, bool loop = true, float pitch = 1f)
     {
-        audioPlayer.Play(AudioCategory.Bgm, audioName, bgmAudioInstance, null, idx, loop, pitch);
+        audioService.Play(AudioCategory.Bgm, audioName, bgmAudioInstance, null, idx, loop, pitch);
     }
 
     /// <summary>
@@ -75,7 +82,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     public void PlaySfx2D(AudioName audioName, int idx = 0, bool loop = false, float pitch = 1f)
     {
         IAudioInstance instance = pool.Get();
-        audioPlayer.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch);
+        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch);
     }
 
     /// <summary>
@@ -86,7 +93,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         IAudioInstance instance = pool.Get();
         instance.SetPosition(position);
-        audioPlayer.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch, is3D: true);
+        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch, is3D: true);
     }
 
     /// <summary>
@@ -97,7 +104,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         IAudioInstance instance = pool.Get();
         instance.SetPosition(transform.position);
-        PlayingAudio activeAudio = audioPlayer
+        PlayingAudio activeAudio = audioService
             .Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch, is3D: true);
 
         if (activeAudio != null)
@@ -116,14 +123,14 @@ public class AudioManager : GlobalSingleton<AudioManager>
     public void StopAllSfx()
     {
         pool.ReleaseAll();
-        audioPlayer.Actives.Clear();
+        audioService.Actives.Clear();
     }
 
     public void StopAll()
     {
         bgmAudioInstance.Stop();
         pool.ReleaseAll();
-        audioPlayer.Actives.Clear();
+        audioService.Actives.Clear();
     }
     #endregion
 
