@@ -13,7 +13,7 @@ public class AudioData : ScriptableObject
     [SerializeField] private List<AudioEntry> audioEntries;
 
     public AudioEnum.AudioType AudioType => audioType;
-    public IReadOnlyList<AudioEntry> AudioEntries => audioEntries;
+    public List<AudioEntry> AudioEntries => audioEntries;
 
     #region 에디터 전용
 #if UNITY_EDITOR
