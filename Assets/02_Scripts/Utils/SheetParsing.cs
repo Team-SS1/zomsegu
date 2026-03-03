@@ -16,8 +16,8 @@ using UnityEditor;
 
 public partial class SheetParsing : EditorWindow
 {
-    string sheetAPIurl = "** 배포 받은 url 링크 **";
-    string sheeturl = "** 구글스프레드시트 링크 **";
+    string sheetAPIurl = "https://script.google.com/macros/s/AKfycbzdRsGIH-ptKHvWWIYAqvXgw2o1L2OlkzyACCzWfhLd_gGflyMl0Lt-DyJv4ON50T7v/exec";
+    string sheeturl = "https://docs.google.com/spreadsheets/d/15LgGPgcJTUdnBY0oHn6y0l47Y6YHvV6oKILyh8l6cpk";
 
     private List<SheetData> sheets = new List<SheetData>();
     private int selectedSheetIndex = 0;
@@ -281,9 +281,9 @@ public partial class SheetParsing : EditorWindow
     // TSV 데이터 파싱
     private List<string> ParseTSVData(string data)
     {
-        return data.Split('\n')
-           .Select(l => l.TrimEnd('\r'))
-           .ToList();
+        return data
+            .Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
+            .ToList();
     }
 
     // DB_IGNORE 열 필터링
@@ -317,9 +317,18 @@ public partial class SheetParsing : EditorWindow
 
             string key = keys[j];
             string type = types[j];
-            string value = rowData[j].Trim();
+            string rawValue = rowData[j].Trim();
 
-            if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)) continue;
+            if (string.IsNullOrEmpty(key)) continue;
+
+            string value = rawValue;
+
+            if (type.Trim() != "string")
+            {
+                value = rawValue.Trim();
+            }
+
+            if (string.IsNullOrEmpty(value)) continue;
 
             rowObject[key] = ConvertValue(value, type);
         }
@@ -430,7 +439,7 @@ public partial class SheetParsing : EditorWindow
 
                 if (!string.IsNullOrEmpty(fieldName))
                 {
-                    writer.WriteLine($"\tpublic {fieldType} {fieldName}; // from \"{fieldNameRaw}\"");
+                    writer.WriteLine($"\tpublic {fieldType} {fieldName};");
                 }
             }
 
