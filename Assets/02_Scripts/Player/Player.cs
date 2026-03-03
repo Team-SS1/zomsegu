@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PlayerEnum;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -12,6 +14,29 @@ public class Player : MonoBehaviour
     public float CurrentStamina { get; private set; }
     public int Injury { get; private set; } // enum type ?
 
+    public PlayerType playerType;
+
+    public PlayerStat BaseStat { get; private set; }
+
+    private void Awake()
+    {
+        DataTableLoader.LoadTables();
+        int id = GetPlayerID(playerType);
+        BaseStat = DataManager.Instance.GetPlayerStat(id);
+
+    }
+    private int GetPlayerID(PlayerType type)
+    {
+        switch (type)
+        {
+            case PlayerType.Player_SHIN:
+                return GameConstants.PlayerID_A;
+            case PlayerType.Player_HAN:
+                return GameConstants.PlayerID_B;
+            default:
+                return 0;
+        }
+    }
     public void Init()
     {
         Hunger = 10;
