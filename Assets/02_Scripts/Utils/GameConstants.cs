@@ -3,4 +3,7 @@ public static class GameConstants
 {
     // 랜덤
     public static System.Random Random = new();
+
+    public const int PlayerID_A = 100001;
+    public const int PlayerID_B = 100002;
 }
