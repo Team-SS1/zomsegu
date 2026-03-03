@@ -48,4 +48,5 @@ MonoBehaviour:
   minDistance: 3
   maxDistance: 15
   sfxPoolSize: 10
+  maxSfxPoolSize: 20
   origin: {fileID: 7182008941494196748, guid: 2507306f2f2013746a613fba3184f446, type: 3}

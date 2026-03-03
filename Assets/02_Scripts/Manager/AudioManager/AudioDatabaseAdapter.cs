@@ -43,7 +43,7 @@ public class AudioDatabaseAdapter
         Dictionary<AudioName, List<AudioEntry>> dict = (audioCategory == AudioCategory.Bgm) ? bgmDict : sfxDict;
         if (!dict.TryGetValue(audioName, out List<AudioEntry> entries) || entries == null || entries.Count == 0)
         {
-            Logger.LogWarning($"{audioName} 오디오 데이터 없음");
+            Logger.LogWarning($"{audioCategory}.{audioName} 오디오 데이터 없음");
             return false;
         }
 
