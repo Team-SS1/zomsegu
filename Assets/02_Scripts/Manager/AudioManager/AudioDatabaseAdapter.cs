@@ -2,13 +2,20 @@ using AudioEnum;
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// AudioDatabase 관리 및 조회용 어댑터
+/// </summary>
 public class AudioDatabaseAdapter
 {
     private readonly Dictionary<AudioName, List<AudioEntry>> bgmDict = new();
     private readonly Dictionary<AudioName, List<AudioEntry>> sfxDict = new();
+    private readonly IRandom random;
 
-    public AudioDatabaseAdapter(AudioDatabase audioDatabase)
+    public AudioDatabaseAdapter(AudioDatabase audioDatabase, IRandom random)
     {
+        this.random = random ?? new UnityRandom();
+        if (audioDatabase == null) throw new ArgumentNullException("AudioDatabase 없음");
+
         foreach (var audioData in audioDatabase.GetDatabase<AudioData>())
         {
             if (!Enum.TryParse(audioData.name, out AudioName audioName))
@@ -42,7 +49,7 @@ public class AudioDatabaseAdapter
 
         if (idx >= entries.Count || idx < 0)
         {
-            idx = UnityEngine.Random.Range(0, entries.Count);
+            idx = random.Range(0, entries.Count);
         }
 
         entry = entries[idx];

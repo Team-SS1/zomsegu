@@ -1,18 +1,28 @@
 using AudioEnum;
 using UnityEngine;
 
-[RequireComponent(typeof(AudioPlayer))]
+/// <summary>
+/// AudioDatabase로 BGM/SFX 관리
+/// 2D(UI) / 3D(거리 기반) SFX를 풀링해 놓은 AudioSource로 제공
+/// </summary>
 public class AudioManager : GlobalSingleton<AudioManager>
 {
     #region 필드
+    [Header("데이터베이스")]
+    [SerializeField] private AudioDatabase audioDatabase;
+
+    [Header("거리 기반 세팅")]
+    [SerializeField] private float minDistance = 3f;
+    [SerializeField] private float maxDistance = 15f;
+
     [Header("풀 세팅")]
     [SerializeField] private int sfxPoolSize = 10;
     [SerializeField] private int maxSfxPoolSize = 20;
     [SerializeField] private AudioSource origin;
 
-    private AudioSource bgmAudioSource; // BGM
-    private AudioSourcePool pool2D;     // SFX - UI
-    private AudioSourcePool pool3D;     // SFX - 거리 기반
+    private IAudioHandle bgmAudioHandle; // BGM
+    private IAudioSourcePool pool2D;     // SFX - UI
+    private IAudioSourcePool pool3D;     // SFX - 거리 기반
 
     private AudioPlayer audioPlayer;
     #endregion
@@ -22,17 +32,33 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         base.Awake();
 
+        var adapter = new AudioDatabaseAdapter(audioDatabase, new UnityRandom());
+        audioPlayer = new AudioPlayer(adapter, minDistance, maxDistance);
+
         SetAudioSources();
-        audioPlayer = GetComponent<AudioPlayer>();
+    }
+
+    private void Update()
+    {
+        audioPlayer.Tick();
     }
     #endregion
 
     #region 초기화
+    /// <summary>
+    /// DI용 초기화 메서드
+    /// </summary>
+    /// <param name="database"></param>
+    public void Initialize(AudioDatabase database)
+    {
+        audioDatabase = database;
+    }
+
     private void SetAudioSources()
     {
-        bgmAudioSource = gameObject.AddComponent<AudioSource>();
-        pool2D = new(origin, transform, sfxPoolSize);
-        pool3D = new(origin, transform, sfxPoolSize);
+        bgmAudioHandle = new AudioHandle(gameObject.AddComponent<AudioSource>());
+        pool2D = new AudioSourcePool(origin, transform, sfxPoolSize);
+        pool3D = new AudioSourcePool(origin, transform, sfxPoolSize);
     }
     #endregion
 
@@ -42,7 +68,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlayBgm(AudioName audioName, int idx = 0, bool loop = true, float pitch = 1f)
     {
-        audioPlayer.PlayInternal(AudioCategory.Bgm, audioName, bgmAudioSource, null, idx, loop, pitch);
+        audioPlayer.Play(AudioCategory.Bgm, audioName, bgmAudioHandle, null, idx, loop, pitch);
     }
 
     /// <summary>
@@ -50,8 +76,8 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfx2D(AudioName audioName, int idx = 0, bool loop = false, float pitch = 1f)
     {
-        AudioSource audioSource = pool2D.Get();
-        audioPlayer.PlayInternal(AudioCategory.Sfx, audioName, audioSource, pool2D, idx, loop, pitch);
+        IAudioHandle handle = pool2D.Get();
+        audioPlayer.Play(AudioCategory.Sfx, audioName, handle, pool2D, idx, loop, pitch);
     }
 
     /// <summary>
@@ -60,9 +86,9 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfx3D(AudioName audioName, Vector3 position, int idx = -1, bool loop = false, float pitch = 1f)
     {
-        AudioSource audioSource = pool3D.Get();
-        audioSource.transform.position = position;
-        audioPlayer.PlayInternal(AudioCategory.Sfx, audioName, audioSource, pool3D, idx, loop, pitch, is3D: true);
+        IAudioHandle handle = pool3D.Get();
+        handle.SetPosition(position);
+        audioPlayer.Play(AudioCategory.Sfx, audioName, handle, pool3D, idx, loop, pitch, is3D: true);
     }
 
     /// <summary>
@@ -71,10 +97,10 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfx3D(AudioName audioName, Transform transform, int idx = -1, bool loop = false, float pitch = 1f)
     {
-        AudioSource audioSource = pool3D.Get();
-        audioSource.transform.position = transform.position;
+        IAudioHandle handle = pool3D.Get();
+        handle.SetPosition(transform.position);
         ActiveAudio activeAudio = audioPlayer
-            .PlayInternal(AudioCategory.Sfx, audioName, audioSource, pool3D, idx, loop, pitch, is3D: true);
+            .Play(AudioCategory.Sfx, audioName, handle, pool3D, idx, loop, pitch, is3D: true);
 
         if (activeAudio != null)
         {
@@ -86,7 +112,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #region Bgm / Sfx 정지
     public void StopBgm()
     {
-        bgmAudioSource.Stop();
+        bgmAudioHandle.Stop();
     }
 
     public void StopAllSfx()
@@ -98,7 +124,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     public void StopAll()
     {
-        bgmAudioSource.Stop();
+        bgmAudioHandle.Stop();
         pool2D.ReleaseAll();
         pool3D.ReleaseAll();
         audioPlayer.Actives.Clear();
@@ -106,5 +132,15 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #endregion
 
     #region 볼륨 조절
+    #endregion
+
+    #region 에디터 전용
+#if UNITY_EDITOR
+    private void Reset()
+    {
+        audioDatabase = AssetLoader.FindAndLoadByName<AudioDatabase>("AudioDatabase");
+        origin = AssetLoader.FindAndLoadByName("AudioSource").GetComponent<AudioSource>();
+    }
+#endif
     #endregion
 }

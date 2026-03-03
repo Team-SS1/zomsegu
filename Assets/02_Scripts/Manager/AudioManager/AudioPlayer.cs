@@ -1,24 +1,13 @@
 using AudioEnum;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class ActiveAudio
-{
-    public AudioSource audioSource;
-    public Transform follow;
-    public AudioSourcePool pool;
-}
-
-public class AudioPlayer : MonoBehaviour
+/// <summary>
+/// 오디오 재생, 볼륨 관리
+/// </summary>
+public class AudioPlayer
 {
     #region 필드
-    [Header("데이터베이스")]
-    [SerializeField] private AudioDatabase audioDatabase;
     private AudioDatabaseAdapter adapter;
-
-    [Header("거리 기반 세팅")]
-    [SerializeField] private float minDistance = 3f;
-    [SerializeField] private float maxDistance = 15f;
 
     // 볼륨
     private float bgmVolume = 1f;
@@ -31,51 +20,46 @@ public class AudioPlayer : MonoBehaviour
 
     private List<ActiveAudio> actives = new();
     public List<ActiveAudio> Actives => actives;
+
+    private readonly float minDistance;
+    private readonly float maxDistance;
     #endregion
 
-    #region Unity API
-    private void Awake()
+    public AudioPlayer(
+        AudioDatabaseAdapter adapter,
+        float minDistance,
+        float maxDistance)
     {
-        adapter = new(audioDatabase);
+        this.adapter = adapter;
+        this.minDistance = minDistance;
+        this.maxDistance = maxDistance;
     }
 
-    private void Update()
+    public void Tick()
     {
         for (int i = actives.Count - 1; i >= 0; i--)
         {
             ActiveAudio active = actives[i];
 
-            if (!active.audioSource.isPlaying)
+            if (!active.handle.IsPlaying)
             {
-                active.pool.Release(active.audioSource);
+                active.pool?.Release(active.handle);
                 actives.RemoveAt(i);
                 continue;
             }
 
             if (active.follow != null)
             {
-                active.audioSource.transform.position = active.follow.position;
+                active.handle.SetPosition(active.follow.position);
             }
         }
     }
-    #endregion
 
-    #region 초기화
-    /// <summary>
-    /// DI용 초기화 메서드
-    /// </summary>
-    /// <param name="database"></param>
-    public void Initialize(AudioDatabase database)
-    {
-        audioDatabase = database;
-    }
-    #endregion
-
-    public ActiveAudio PlayInternal(
+    public ActiveAudio Play(
         AudioCategory audioCategory,
         AudioName audioName,
-        AudioSource audioSource,
-        AudioSourcePool pool,
+        IAudioHandle handle,
+        IAudioSourcePool pool,
         int idx,
         bool loop,
         float pitch,
@@ -83,50 +67,37 @@ public class AudioPlayer : MonoBehaviour
     {
         if (!adapter.TryGetAudioEntry(audioCategory, audioName, idx, out AudioEntry entry)) { return null; }
 
-        audioSource.clip = entry.AudioClip;
-        audioSource.loop = loop;
-        audioSource.pitch = pitch;
+        handle.SetClip(entry.AudioClip);
+        handle.SetLoop(loop);
+        handle.SetPitch(pitch);
 
         float baseVolume = (audioCategory == AudioCategory.Bgm ? bgmVolume : sfxVolume) * entry.Volume;
-        audioSource.volume = baseVolume * masterVolume;
+        handle.SetVolume(baseVolume * masterVolume);
 
         if (audioCategory == AudioCategory.Bgm)
         {
-            audioSource.Play();
+            handle.Play();
             return null;
         }
 
         var newActiveAudio = new ActiveAudio
         {
-            audioSource = audioSource,
+            handle = handle,
             pool = pool
         };
         actives.Add(newActiveAudio);
 
         if (is3D)
         {
-            Configure3D(audioSource);
+            handle.Set3D(minDistance, maxDistance);
+        }
+        else
+        {
+            handle.Set2D();
         }
 
-        audioSource.Play();
+        handle.Play();
 
         return newActiveAudio;
     }
-
-    private void Configure3D(AudioSource source)
-    {
-        source.spatialBlend = 1f; // 3D 사운드
-        source.minDistance = minDistance;
-        source.maxDistance = maxDistance;
-        source.rolloffMode = AudioRolloffMode.Linear;
-    }
-
-    #region 에디터 전용
-#if UNITY_EDITOR
-    private void Reset()
-    {
-        audioDatabase = AssetLoader.FindAndLoadByName<AudioDatabase>("AudioDatabase");
-    }
-#endif
-    #endregion
 }
