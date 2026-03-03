@@ -48,7 +48,19 @@ public class AudioSourcePool
 
     public void Release(AudioSource audioSource)
     {
+        if (audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
         audioSource.clip = null;
         audioSource.gameObject.SetActive(false);
+    }
+
+    public void ReleaseAll()
+    {
+        foreach (var audioSource in pool)
+        {
+            Release(audioSource);
+        }
     }
 }

@@ -103,48 +103,43 @@ public class AudioManager : GlobalSingleton<AudioManager>
     }
     #endregion
 
-    #region 오디오 재생 / 정지
+    #region Bgm / Sfx 재생
     /// <summary>
     /// BGM 재생
     /// </summary>
-    /// <param name="audioName"></param>
-    public void PlayBgm(AudioName audioName)
+    public void PlayBgm(AudioName audioName, int idx = 0, bool loop = true, float pitch = 1f)
     {
-        if (!TryGetRandomAudioEntry(audioName, out AudioEntry entry)) return;
-
-        bgmAudioSource.clip = entry.AudioClip;
-        bgmAudioSource.volume = entry.Volume;
-        bgmAudioSource.Play();
+        PlayInternal(AudioCategory.Bgm, audioName, bgmAudioSource, idx, loop, pitch);
     }
 
     /// <summary>
     /// 2D 사운드 재생 (UI 등 거리 기반이 필요 없는 사운드)
     /// </summary>
-    /// <param name="audioName"></param>
-    public void PlaySfx2D(AudioName audioName)
+    public void PlaySfx2D(AudioName audioName, int idx = 0, bool loop = false, float pitch = 1f)
     {
-        if (!TryGetRandomAudioEntry(audioName, out AudioEntry entry)) return;
-
         AudioSource audioSource = pool2D.Get();
-        audioSource.clip = entry.AudioClip;
-        audioSource.volume = entry.Volume;
-        audioSource.Play();
+        PlayInternal(AudioCategory.Sfx, audioName, audioSource, idx, loop, pitch);
     }
 
-    public void PlaySfx3D(AudioName audioName, Vector3 position)
+    /// <summary>
+    /// 3D 사운드 재생 (고정 위치 사운드 재생용)
+    /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
+    /// </summary>
+    public void PlaySfx3D(AudioName audioName, Vector3 position, int idx = -1, bool loop = false, float pitch = 1f)
     {
-        if (!TryGetRandomAudioEntry(audioName, out AudioEntry entry)) return;
-
-        AudioSource audioSource = Set3DAudioSource(entry);
+        AudioSource audioSource = pool3D.Get();
+        PlayInternal(AudioCategory.Sfx, audioName, audioSource, idx, loop, pitch, is3D: true);
         audioSource.transform.position = position;
     }
 
-
-    public void PlaySfx3D(AudioName audioName, Transform transform)
+    /// <summary>
+    /// 3D 사운드 재생 (따라다니는 사운드 재생용)
+    /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
+    /// </summary>
+    public void PlaySfx3D(AudioName audioName, Transform transform, int idx = -1, bool loop = false, float pitch = 1f)
     {
-        if (!TryGetRandomAudioEntry(audioName, out AudioEntry entry)) return;
-
-        AudioSource audioSource = Set3DAudioSource(entry);
+        AudioSource audioSource = pool3D.Get();
+        PlayInternal(AudioCategory.Sfx, audioName, audioSource, idx, loop, pitch, is3D: true);
         audioSource.transform.position = transform.position;
 
         active3D.Add(new ActiveAudio
@@ -154,30 +149,94 @@ public class AudioManager : GlobalSingleton<AudioManager>
         });
     }
 
+    private void PlayInternal(
+        AudioCategory audioCategory,
+        AudioName audioName,
+        AudioSource audioSource,
+        int idx,
+        bool loop,
+        float pitch,
+        bool is3D = false)
+    {
+        bool flowControl = (idx < 0)
+            ? TryGetRandomAudioEntry(audioName, out AudioEntry entry)
+            : TryGetAudioEntry(audioName, idx, out entry);
+        if (!flowControl) return;
+
+        audioSource.clip = entry.AudioClip;
+        audioSource.loop = loop;
+        audioSource.pitch = pitch;
+
+        float baseVolume = (audioCategory == AudioCategory.Bgm ? bgmVolume : sfxVolume) * entry.Volume;
+        audioSource.volume = baseVolume * masterVolume;
+
+        if (is3D)
+        {
+            Configure3D(audioSource);
+        }
+
+        audioSource.Play();
+    }
+    #endregion
+
+    #region Bgm / Sfx 정지
+    public void StopBgm()
+    {
+        bgmAudioSource.Stop();
+    }
+
+    public void StopAllSfx()
+    {
+        pool2D.ReleaseAll();
+        pool3D.ReleaseAll();
+        active3D.Clear();
+    }
+
+    public void StopAll()
+    {
+        bgmAudioSource.Stop();
+        pool2D.ReleaseAll();
+        pool3D.ReleaseAll();
+        active3D.Clear();
+    }
+    #endregion
+
+    #region 볼륨 조절
     #endregion
 
     #region Utils
     private bool TryGetRandomAudioEntry(AudioName audioName, out AudioEntry entry)
     {
+        entry = null;
+
         if (!bgmDict.TryGetValue(audioName, out List<AudioEntry> entries))
         {
-            Logger.Log($"{audioName} 오디오 데이터 없음");
-            entry = null;
+            Logger.LogWarning($"{audioName} 오디오 데이터 없음");
             return false;
         }
+
         entry = entries[UnityEngine.Random.Range(0, entries.Count)];
         return true;
     }
 
-    private AudioSource Set3DAudioSource(AudioEntry entry)
+    private bool TryGetAudioEntry(AudioName audioName, int idx, out AudioEntry entry)
     {
-        AudioSource audioSource = pool3D.Get();
-        audioSource.clip = entry.AudioClip;
-        audioSource.volume = entry.Volume;
-        Configure3D(audioSource);
-        audioSource.Play();
+        entry = null;
 
-        return audioSource;
+        if (!bgmDict.TryGetValue(audioName, out List<AudioEntry> entries))
+        {
+            Logger.LogWarning($"{audioName} 오디오 데이터 없음");
+            return false;
+        }
+
+        if (idx >= entries.Count)
+        {
+            Logger.LogWarning("index 벗어남");
+            return false;
+        }
+
+        entry = entries[idx];
+        return true;
     }
 
     private void Configure3D(AudioSource source)
