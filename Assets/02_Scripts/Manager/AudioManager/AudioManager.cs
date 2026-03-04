@@ -81,7 +81,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// <summary>
     /// BGM 재생
     /// </summary>
-    public void PlayBgm(AudioName audioName, int clipIndex = 0, bool loop = true, float pitch = 1f)
+    public void PlayBgm(AudioName audioName, int clipIndex = -1, bool loop = true, float pitch = 1f)
     {
         bgmAudioInstance.Stop();
         audioService.Play(AudioCategory.Bgm, audioName, bgmAudioInstance, null, clipIndex, loop, pitch);
@@ -90,7 +90,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// <summary>
     /// 2D 사운드 재생 (UI 등 거리 기반이 필요 없는 사운드)
     /// </summary>
-    public void PlaySfx2D(AudioName audioName, int clipIndex = 0, bool loop = false, float pitch = 1f)
+    public void PlaySfx2D(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
         IAudioInstance instance = pool.Get();
         audioService.Play(AudioCategory.Sfx, audioName, instance, pool, clipIndex, loop, pitch);
