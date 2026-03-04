@@ -17,22 +17,9 @@ public class Player : MonoBehaviour
     public PlayerType playerType;
     public PlayerStat BaseStat { get; private set; }
 
-    private int GetPlayerID(PlayerType type)
-    {
-        switch (type)
-        {
-            case PlayerType.Player_SHIN:
-                return GameConstants.PlayerID_A;
-            case PlayerType.Player_HAN:
-                return GameConstants.PlayerID_B;
-            default:
-                return 0;
-        }
-    }
     public void Init()
     {
-        DataTableLoader.LoadTables();
-        int id = GetPlayerID(playerType);
+        int id = DataManager.Instance.GetPlayerID(playerType);
         BaseStat = DataManager.Instance.GetPlayerStat(id);
 
         Hunger = 10;

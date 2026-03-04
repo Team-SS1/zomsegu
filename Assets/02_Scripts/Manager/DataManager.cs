@@ -21,7 +21,7 @@ public class DataManager : GlobalSingleton<DataManager>
         }
         return stat;
     }
-    public int GetPlayerID(PlayerType type)
+    public int GetPlayerID(PlayerType type) // 추후 PlayerManager ? Repo? 로 옮기기
     {
         switch (type)
         {
