@@ -1,0 +1,65 @@
+[
+  {
+    "ItemID": 36007,
+    "ItemName": "비타민음료",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36009,
+    "ItemName": "소화제",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36010,
+    "ItemName": "쌍화탕",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36011,
+    "ItemName": "자양강장제",
+    "ItemType": 7,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36413,
+    "ItemName": "포도당 캔디",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36417,
+    "ItemName": "비타민C 알약",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 4
+  },
+  {
+    "ItemID": 36800,
+    "ItemName": "진통제",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36801,
+    "ItemName": "항생제",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36803,
+    "ItemName": "구급상자",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  }
+]
