@@ -144,8 +144,15 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #endregion
 
     #region 볼륨 조절
-    public void SetVolume(AudioMixerGroupType type, float normalized) => audioMixerController.SetVolume(type, normalized);
-    public float GetVolume(AudioMixerGroupType type) => audioMixerController.GetVolume01(type);
+    public void SetVolume(AudioMixerGroupType type, float normalized)
+    {
+        audioMixerController.SetVolume(type, normalized);
+    }
+
+    public float GetVolume(AudioMixerGroupType type)
+    {
+        return audioMixerController.GetVolume01(type);
+    }
     #endregion
 
     #region 에디터 전용
