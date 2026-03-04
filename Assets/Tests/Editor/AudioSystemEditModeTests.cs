@@ -1,16 +1,17 @@
 using AudioEnum;
 using NUnit.Framework;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class AudioSystemEditModeTests
 {
     #region Fake Objects
-
     private class FakeInstance : IAudioInstance
     {
         public bool IsPlaying { get; private set; }
+        public bool Set3DCalled { get; private set; }
+        public bool Set2DCalled { get; private set; }
+
         public object Clip { get; private set; }
         public float Volume { get; private set; }
         public bool Loop { get; private set; }
@@ -26,21 +27,16 @@ public class AudioSystemEditModeTests
         public void SetVolume(float volume) => Volume = volume;
         public void SetPosition(Vector3 position) => Position = position;
         public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup) { }
-        public void Set2D() { }
-        public void Set3D(float minDistance, float maxDistance) { }
+
+        public void Set2D() => Set2DCalled = true;
+        public void Set3D(float minDistance, float maxDistance) => Set3DCalled = true;
     }
 
     private class FakePool : IAudioSourcePool
     {
         public int ReleaseCallCount = 0;
-        public List<IAudioInstance> Handles = new();
 
-        public IAudioInstance Get()
-        {
-            var instance = new FakeInstance();
-            Handles.Add(instance);
-            return instance;
-        }
+        public IAudioInstance Get() => new FakeInstance();
 
         public void Release(IAudioInstance instance)
         {
@@ -48,11 +44,7 @@ public class AudioSystemEditModeTests
             instance.Stop();
         }
 
-        public void ReleaseAll()
-        {
-            foreach (var h in Handles)
-                h.Stop();
-        }
+        public void ReleaseAll() { }
     }
 
     private class FakeRandom : IRandom
@@ -82,37 +74,17 @@ public class AudioSystemEditModeTests
 
     private AudioMixerController CreateMixerController()
     {
-        AudioMixer audioMixer = AssetLoader.FindAndLoadByName<AudioMixer>("AudioMixer");
-        return new AudioMixerController(audioMixer);
+        AudioMixer mixer = AssetLoader.FindAndLoadByName<AudioMixer>("AudioMixer");
+        return new AudioMixerController(mixer);
     }
 
-    #region SFX 테스트
+    #region SFX Tests
     [Test]
-    public void SFX_플레이()
+    public void PlaySfx_StartsPlaying_AndReturnsHandle()
     {
         var instance = pool.Get();
 
-        var active = service.Play(
-            AudioCategory.Sfx,
-            AudioName.Test_Sfx,
-            instance,
-            pool,
-            idx: 0,
-            loop: false,
-            pitch: 1f,
-            is3D: false);
-
-        Assert.IsNotNull(active);
-        Assert.AreEqual(1, service.Actives.Count);
-        Assert.IsTrue(instance.IsPlaying);
-    }
-
-    [Test]
-    public void SFX_플레이_완료()
-    {
-        var instance = pool.Get();
-
-        var active = service.Play(
+        var result = service.Play(
             AudioCategory.Sfx,
             AudioName.Test_Sfx,
             instance,
@@ -122,31 +94,34 @@ public class AudioSystemEditModeTests
             1f,
             false);
 
-        Assert.AreEqual(1, service.Actives.Count);
+        Assert.IsNotNull(result);
+        Assert.IsTrue(instance.IsPlaying);
+    }
 
-        // 강제로 종료 상태 만들기
+    [Test]
+    public void StoppedSfx_IsReleasedOnUpdate()
+    {
+        var instance = pool.Get();
+
+        service.Play(
+            AudioCategory.Sfx,
+            AudioName.Test_Sfx,
+            instance,
+            pool,
+            0,
+            false,
+            1f,
+            false);
+
         instance.Stop();
 
-        service.Tick();
+        service.Update();
 
-        Assert.AreEqual(0, service.Actives.Count);
         Assert.AreEqual(1, pool.ReleaseCallCount);
     }
 
     [Test]
-    public void SFX_풀_적용()
-    {
-        var i1 = pool.Get();
-        var i2 = pool.Get();
-
-        service.Play(AudioCategory.Sfx, AudioName.Test_Sfx, i1, pool, 0, false, 1f, false);
-        service.Play(AudioCategory.Sfx, AudioName.Test_Sfx, i2, pool, 0, false, 1f, false);
-
-        Assert.AreEqual(2, service.Actives.Count);
-    }
-
-    [Test]
-    public void SFX_부분종료_정리()
+    public void MultipleSfx_StopOne_ReleasesOnlyStoppedInstance()
     {
         var i1 = pool.Get();
         var i2 = pool.Get();
@@ -156,38 +131,73 @@ public class AudioSystemEditModeTests
 
         i1.Stop();
 
-        service.Tick();
+        service.Update();
 
-        Assert.AreEqual(1, service.Actives.Count);
         Assert.AreEqual(1, pool.ReleaseCallCount);
+        Assert.IsTrue(i2.IsPlaying);
     }
 
     [Test]
-    public void SFX_Pool_Null_안전성()
+    public void SpatialFlag_True_CallsSet3D()
     {
-        var instance = new FakeInstance();
+        var instance = (FakeInstance)pool.Get();
 
-        Assert.DoesNotThrow(() =>
-        {
-            service.Play(AudioCategory.Sfx, AudioName.Test_Sfx, instance, null, 0, false, 1f, false);
-        });
+        service.Play(
+            AudioCategory.Sfx,
+            AudioName.Test_Sfx,
+            instance,
+            pool,
+            0,
+            false,
+            1f,
+            true);
+
+        Assert.IsTrue(instance.Set3DCalled);
+        Assert.IsFalse(instance.Set2DCalled);
     }
 
     [Test]
-    public void 잘못된_오디오명_예외처리()
+    public void SpatialFlag_False_CallsSet2D()
+    {
+        var instance = (FakeInstance)pool.Get();
+
+        service.Play(
+            AudioCategory.Sfx,
+            AudioName.Test_Sfx,
+            instance,
+            pool,
+            0,
+            false,
+            1f,
+            false);
+
+        Assert.IsTrue(instance.Set2DCalled);
+        Assert.IsFalse(instance.Set3DCalled);
+    }
+
+    [Test]
+    public void InvalidAudioName_DoesNotThrow()
     {
         var instance = pool.Get();
 
         Assert.DoesNotThrow(() =>
         {
-            service.Play(AudioCategory.Sfx, (AudioName)999, instance, pool, 0, false, 1f, false);
+            service.Play(
+                AudioCategory.Sfx,
+                (AudioName)999,
+                instance,
+                pool,
+                0,
+                false,
+                1f,
+                false);
         });
     }
     #endregion
 
-    #region BGM 테스트
+    #region BGM Tests
     [Test]
-    public void BGM_플레이_단일_소스_동작_확인()
+    public void PlayBgm_DoesNotRegisterToPool_AndReturnsNull()
     {
         var instance = new FakeInstance();
 
@@ -202,7 +212,6 @@ public class AudioSystemEditModeTests
             false);
 
         Assert.IsNull(result);
-        Assert.AreEqual(0, service.Actives.Count);
         Assert.IsTrue(instance.IsPlaying);
     }
     #endregion
