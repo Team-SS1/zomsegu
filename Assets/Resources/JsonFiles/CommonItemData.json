@@ -6,7 +6,7 @@
     "Icon": "Icons/Wrist_Common",
     "Description": "맨손",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": false,
     "IsDroppable": false,
     "PlayerAudioType": 0
@@ -18,7 +18,7 @@
     "Icon": "Icons/WoodBat_Epic",
     "Description": "설명 : 광택나는 나무 야구방망이",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 1
@@ -30,7 +30,7 @@
     "Icon": "Icons/AluminiumBat_Rare",
     "Description": "설명 : 번쩍이는 알루미늄 야구방망이. 소리가 잘 날 것 같다.",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 2
@@ -41,7 +41,7 @@
     "ItemType": 5,
     "Icon": "Icons/GolfClub_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 3
@@ -53,7 +53,7 @@
     "Icon": "Icons/GolfClubIron4_Epic",
     "Description": "설명 : 4번 아이언. 묵직하고 그립감이 좋다.",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 3
@@ -64,7 +64,7 @@
     "ItemType": 5,
     "Icon": "Icons/HandHammer_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 4
@@ -75,7 +75,7 @@
     "ItemType": 5,
     "Icon": "Icons/KitchenKnife_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 5
@@ -86,7 +86,7 @@
     "ItemType": 5,
     "Icon": "Icons/LongUmbrella_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 6
@@ -97,7 +97,7 @@
     "ItemType": 5,
     "Icon": "Icons/MonkeySpanner_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 4
@@ -108,7 +108,7 @@
     "ItemType": 5,
     "Icon": "Icons/MopStick_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 7
@@ -119,7 +119,7 @@
     "ItemType": 5,
     "Icon": "Icons/SashimiKnife_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 5
@@ -130,7 +130,7 @@
     "ItemType": 5,
     "Icon": "Icons/SquareWood_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 1
@@ -142,7 +142,7 @@
     "Icon": "Icons/JaggedRock_Common",
     "Description": "설명 : 단단묵직한 짱돌이다. 길에서 쉽게 주울 수 있다.",
     "ItemRarity": 0,
-    "MaxStack": 3,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 8
@@ -153,7 +153,7 @@
     "ItemType": 5,
     "Icon": "Icons/BaseballBall_Epic",
     "ItemRarity": 2,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 8
@@ -165,7 +165,7 @@
     "Icon": "Icons/SojuGlass_Rare",
     "Description": "설명 : 술집에서 볼 수 있는 소주잔이다. 던져볼 만한데?",
     "ItemRarity": 1,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 9
@@ -177,7 +177,7 @@
     "Icon": "Icons/BeerGlass_Rare",
     "Description": "설명 : 술집에서 볼 수 있는 맥주잔이다. 던지면 꽤 아프겠는걸...?",
     "ItemRarity": 1,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 9
@@ -188,7 +188,7 @@
     "ItemType": 5,
     "Icon": "Icons/EmptySojuBottle_Common",
     "ItemRarity": 0,
-    "MaxStack": 3,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 9
@@ -199,7 +199,7 @@
     "ItemType": 5,
     "Icon": "Icons/GolfBall_Epic",
     "ItemRarity": 2,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 8
@@ -210,7 +210,7 @@
     "ItemType": 0,
     "Icon": "Icons/BaseballHat_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -221,7 +221,7 @@
     "ItemType": 0,
     "Icon": "Icons/BaseballHelmet_Unique",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 2
@@ -232,7 +232,7 @@
     "ItemType": 0,
     "Icon": "Icons/BikeHelmet_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 2
@@ -243,7 +243,7 @@
     "ItemType": 0,
     "Icon": "Icons/BulletProofHat_Unique",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 2
@@ -254,7 +254,7 @@
     "ItemType": 0,
     "Icon": "Icons/HardHat_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 2
@@ -265,7 +265,7 @@
     "ItemType": 0,
     "Icon": "Icons/KhakiBucketHat_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -276,7 +276,7 @@
     "ItemType": 0,
     "Icon": "Icons/MotorcycleHelmet_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 2
@@ -287,7 +287,7 @@
     "ItemType": 0,
     "Icon": "Icons/NavyBeanie_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -298,7 +298,7 @@
     "ItemType": 0,
     "Icon": "Icons/Snapback_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -309,7 +309,7 @@
     "ItemType": 0,
     "Icon": "Icons/TrapperHat_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -320,7 +320,7 @@
     "ItemType": 0,
     "Icon": "Icons/BlackOversizedCap_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -331,7 +331,7 @@
     "ItemType": 0,
     "Icon": "Icons/BlueHeadgear_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -342,7 +342,7 @@
     "ItemType": 0,
     "Icon": "Icons/MilitaryCap_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 2
@@ -353,7 +353,7 @@
     "ItemType": 0,
     "Icon": "Icons/RedHeadgear_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -364,7 +364,7 @@
     "ItemType": 1,
     "Icon": "Icons/BaseballUniformTop_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -375,7 +375,7 @@
     "ItemType": 1,
     "Icon": "Icons/BaseballJacket_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -386,7 +386,7 @@
     "ItemType": 1,
     "Icon": "Icons/BlackPaddedJacket_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -397,7 +397,7 @@
     "ItemType": 1,
     "Icon": "Icons/GrayHoody_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -408,7 +408,7 @@
     "ItemType": 1,
     "Icon": "Icons/HoodedZip-up_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -419,7 +419,7 @@
     "ItemType": 1,
     "Icon": "Icons/KakhiFieldJacket_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -430,7 +430,7 @@
     "ItemType": 1,
     "Icon": "Icons/MilitaryUniformTop_Unique",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -441,7 +441,7 @@
     "ItemType": 1,
     "Icon": "Icons/SuitTop_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -452,7 +452,7 @@
     "ItemType": 1,
     "Icon": "Icons/BlackSweatShirt_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -463,7 +463,7 @@
     "ItemType": 1,
     "Icon": "Icons/BlackT-Shirt_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -474,7 +474,7 @@
     "ItemType": 1,
     "Icon": "Icons/BlueSweater_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -485,7 +485,7 @@
     "ItemType": 1,
     "Icon": "Icons/GraySweatShirt_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -496,7 +496,7 @@
     "ItemType": 1,
     "Icon": "Icons/GreenCheckedShirt_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -507,7 +507,7 @@
     "ItemType": 1,
     "Icon": "Icons/LeatherJacket_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -518,7 +518,7 @@
     "ItemType": 1,
     "Icon": "Icons/NavySweatShirt_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -529,7 +529,7 @@
     "ItemType": 1,
     "Icon": "Icons/WhiteDressShirt_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -540,7 +540,7 @@
     "ItemType": 1,
     "Icon": "Icons/WhiteT-Shirt_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -551,7 +551,7 @@
     "ItemType": 1,
     "Icon": "Icons/YellowCheckedShirt_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -562,7 +562,7 @@
     "ItemType": 1,
     "Icon": "Icons/YellowSweater_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -573,7 +573,7 @@
     "ItemType": 2,
     "Icon": "Icons/BaseballUniformBottom_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -584,7 +584,7 @@
     "ItemType": 2,
     "Icon": "Icons/BlackCottonPants_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -595,7 +595,7 @@
     "ItemType": 2,
     "Icon": "Icons/BlackSlacks_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -606,7 +606,7 @@
     "ItemType": 2,
     "Icon": "Icons/Jeans_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -617,7 +617,7 @@
     "ItemType": 2,
     "Icon": "Icons/MilitaryUniformPants_Unique",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -628,7 +628,7 @@
     "ItemType": 2,
     "Icon": "Icons/SuitPants_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -639,7 +639,7 @@
     "ItemType": 2,
     "Icon": "Icons/SweatPants_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -650,7 +650,7 @@
     "ItemType": 2,
     "Icon": "Icons/LeatherPants_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 10
@@ -661,7 +661,7 @@
     "ItemType": 4,
     "Icon": "Icons/BaseballBag_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -671,7 +671,7 @@
     "ItemType": 4,
     "Icon": "Icons/SchoolBag_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -681,7 +681,7 @@
     "ItemType": 4,
     "Icon": "Icons/Backpack_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -691,7 +691,7 @@
     "ItemType": 4,
     "Icon": "Icons/BlueHikingBag_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -701,7 +701,7 @@
     "ItemType": 4,
     "Icon": "Icons/RedHikingBag_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -711,7 +711,7 @@
     "ItemType": 4,
     "Icon": "Icons/MilitaryBackpack_Unique",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -721,7 +721,7 @@
     "ItemType": 3,
     "Icon": "Icons/RunningShoes_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -731,7 +731,7 @@
     "ItemType": 3,
     "Icon": "Icons/BasketballShoes_Epic",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -741,7 +741,7 @@
     "ItemType": 3,
     "Icon": "Icons/BlackFlipFlops_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -751,7 +751,7 @@
     "ItemType": 3,
     "Icon": "Icons/GraySneakers_Rare",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -762,7 +762,7 @@
     "Icon": "Icons/MilitaryBoots_Unique",
     "Description": "추가효과 : 벗겨질 확률 0%",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -772,7 +772,7 @@
     "ItemType": 3,
     "Icon": "Icons/BlackDressShoes_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -782,7 +782,7 @@
     "ItemType": 3,
     "Icon": "Icons/BrownDressShoes_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -792,7 +792,7 @@
     "ItemType": 3,
     "Icon": "Icons/CanvasSneakers_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -803,7 +803,7 @@
     "Icon": "Icons/CasualCombatBoots_Epic",
     "Description": "추가효과 : 벗겨질 확률 0%",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -813,7 +813,7 @@
     "ItemType": 3,
     "Icon": "Icons/RedHighHeels_Common",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -824,7 +824,7 @@
     "Icon": "Icons/Flashlight_Unique",
     "Description": "추가효과 : 어두울 때 시야가 소폭 증가한다. \\n\\n설명 : 어두운 밤을 비추는 한 줄기 빛",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -835,7 +835,7 @@
     "Icon": "Icons/BrownScarf_Common",
     "Description": "설명 : 따뜻한 갈색 목도리",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -846,7 +846,7 @@
     "Icon": "Icons/WorkGloves_Rare",
     "Description": "설명 : 손에 감기는 목장갑. 무기 그립감이 좋아진다.",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -857,7 +857,7 @@
     "Icon": "Icons/WristGuards_Epic",
     "Description": "설명 : 팔목을 보호해주는 파란색 팔목 보호대",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -867,7 +867,7 @@
     "ItemType": 7,
     "Icon": "Icons/Water500ml_Common",
     "ItemRarity": 0,
-    "MaxStack": 3,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -878,7 +878,7 @@
     "ItemType": 7,
     "Icon": "Icons/Water2L_Epic",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -889,7 +889,7 @@
     "ItemType": 7,
     "Icon": "Icons/CoffeeCan_Rare",
     "ItemRarity": 1,
-    "MaxStack": 8,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -900,7 +900,7 @@
     "ItemType": 7,
     "Icon": "Icons/CokeCan_Common",
     "ItemRarity": 0,
-    "MaxStack": 8,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -911,7 +911,7 @@
     "ItemType": 7,
     "Icon": "Icons/SpriteCan_Common",
     "ItemRarity": 0,
-    "MaxStack": 8,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -922,7 +922,7 @@
     "ItemType": 7,
     "Icon": "Icons/CokePlasticBottle_Rare",
     "ItemRarity": 1,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -933,7 +933,7 @@
     "ItemType": 7,
     "Icon": "Icons/SpritePlasticBottle_Rare",
     "ItemRarity": 1,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -944,7 +944,7 @@
     "ItemType": 7,
     "Icon": "Icons/VitaminDrink_Rare",
     "ItemRarity": 1,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -955,7 +955,7 @@
     "ItemType": 7,
     "Icon": "Icons/GrapeJuice_Rare",
     "ItemRarity": 1,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -966,7 +966,7 @@
     "ItemType": 7,
     "Icon": "Icons/EnergyDrinkBottle_Rare",
     "ItemRarity": 1,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -977,7 +977,7 @@
     "ItemType": 7,
     "Icon": "Icons/Ssanghwa-tangBottle_Epic",
     "ItemRarity": 2,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -988,7 +988,7 @@
     "ItemType": 7,
     "Icon": "Icons/StaminaDrink_Unique",
     "ItemRarity": 3,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -999,7 +999,7 @@
     "ItemType": 7,
     "Icon": "Icons/InstantNoodles_Common",
     "ItemRarity": 0,
-    "MaxStack": 5,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1010,7 +1010,7 @@
     "ItemType": 7,
     "Icon": "Icons/InstantRice_Rare",
     "ItemRarity": 1,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1021,7 +1021,7 @@
     "ItemType": 7,
     "Icon": "Icons/CannedHam_Epic",
     "ItemRarity": 2,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1032,7 +1032,7 @@
     "ItemType": 7,
     "Icon": "Icons/CannedWhelks_Rare",
     "ItemRarity": 1,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1043,7 +1043,7 @@
     "ItemType": 7,
     "Icon": "Icons/CannedYellowPeaches_Epic",
     "ItemRarity": 2,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1054,7 +1054,7 @@
     "ItemType": 7,
     "Icon": "Icons/TunaCan_Rare",
     "ItemRarity": 1,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1065,7 +1065,7 @@
     "ItemType": 7,
     "Icon": "Icons/HotPepperTunaCan_Epic",
     "ItemRarity": 2,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1076,7 +1076,7 @@
     "ItemType": 7,
     "Icon": "Icons/CombatRation_Unique",
     "ItemRarity": 3,
-    "MaxStack": 2,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1087,7 +1087,7 @@
     "ItemType": 7,
     "Icon": "Icons/Cereal_Rare",
     "ItemRarity": 1,
-    "MaxStack": 2,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1098,7 +1098,7 @@
     "ItemType": 7,
     "Icon": "Icons/Biscuit_Rare",
     "ItemRarity": 1,
-    "MaxStack": 5,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1109,7 +1109,7 @@
     "ItemType": 7,
     "Icon": "Icons/BeefJerky_Epic",
     "ItemRarity": 2,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1120,7 +1120,7 @@
     "ItemType": 7,
     "Icon": "Icons/Chocolate_Epic",
     "ItemRarity": 2,
-    "MaxStack": 15,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1131,7 +1131,7 @@
     "ItemType": 7,
     "Icon": "Icons/Chocolatebar_Epic",
     "ItemRarity": 2,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1142,7 +1142,7 @@
     "ItemType": 7,
     "Icon": "Icons/ChocolatePie_Rare",
     "ItemRarity": 1,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1153,7 +1153,7 @@
     "ItemType": 7,
     "Icon": "Icons/DigestiveBiscuit_Epic",
     "ItemRarity": 2,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1164,7 +1164,7 @@
     "ItemType": 7,
     "Icon": "Icons/PotatoChips_Common",
     "ItemRarity": 0,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1175,7 +1175,7 @@
     "ItemType": 7,
     "Icon": "Icons/Snack1_Common",
     "ItemRarity": 0,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1186,7 +1186,7 @@
     "ItemType": 7,
     "Icon": "Icons/NutPack_Epic",
     "ItemRarity": 2,
-    "MaxStack": 15,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1197,7 +1197,7 @@
     "ItemType": 7,
     "Icon": "Icons/DriedSquid_Rare",
     "ItemRarity": 1,
-    "MaxStack": 6,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1208,7 +1208,7 @@
     "ItemType": 7,
     "Icon": "Icons/BubbleGum_Common",
     "ItemRarity": 0,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1219,7 +1219,7 @@
     "ItemType": 7,
     "Icon": "Icons/PeppermintCandy_Rare",
     "ItemRarity": 1,
-    "MaxStack": 30,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1230,7 +1230,7 @@
     "ItemType": 7,
     "Icon": "Icons/GlucoseTablets_Epic",
     "ItemRarity": 2,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1241,7 +1241,7 @@
     "ItemType": 7,
     "Icon": "Icons/GreenGrapesCandy_Rare",
     "ItemRarity": 1,
-    "MaxStack": 30,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1252,7 +1252,7 @@
     "ItemType": 7,
     "Icon": "Icons/Gum_Common",
     "ItemRarity": 0,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1263,7 +1263,7 @@
     "ItemType": 7,
     "Icon": "Icons/Honey_Unique",
     "ItemRarity": 3,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1274,7 +1274,7 @@
     "ItemType": 7,
     "Icon": "Icons/Vitamin-CPills_Common",
     "ItemRarity": 0,
-    "MaxStack": 100,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1286,7 +1286,7 @@
     "Icon": "Icons/PainKiller_Epic",
     "Description": "설명 : 고통을 줄여주는 약이다. 고통과 관련된 디버프가 절반으로 줄어든다.",
     "ItemRarity": 2,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1297,7 +1297,7 @@
     "Icon": "Icons/Antibiotics_Epic",
     "Description": "설명 : 먹으면 쇼크게이지가 3칸 줄어든다.",
     "ItemRarity": 2,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1308,7 +1308,7 @@
     "Icon": "Icons/SojuBottle_Rare",
     "Description": "설명 : 소주다. 지금 이걸 마시고 돌아다니는 사람은 없겠지...",
     "ItemRarity": 1,
-    "MaxStack": 4,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1320,7 +1320,7 @@
     "Icon": "Icons/FirstAidKit_Epic",
     "Description": "추가효과 : 부상 상태일 경우 치료해준다. \\n\\n설명 : 부상 상태를 치료해주는 중요한 아이템이다.",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1331,7 +1331,7 @@
     "Icon": "Icons/SistersFavoriteChocolate_Epic",
     "Description": "설명 : 여동생이 좋아하던 초콜릿",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
     "PlayerAudioType": 11
@@ -1343,7 +1343,7 @@
     "Icon": "Icons/Nail_Common",
     "Description": "설명 : 손가락 두 마디 길이의 쇠못이다.",
     "ItemRarity": 0,
-    "MaxStack": 100,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1354,7 +1354,7 @@
     "Icon": "Icons/Tobacco_Common",
     "Description": "설명 : 담배 한 개피, 누군가에겐 소중한 생명줄",
     "ItemRarity": 0,
-    "MaxStack": 100,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1364,7 +1364,7 @@
     "ItemType": 8,
     "Icon": "Icons/DryCell_Epic",
     "ItemRarity": 2,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1375,7 +1375,7 @@
     "Icon": "Icons/ComicBook1_Common",
     "Description": "설명 : 나름 유명한 시리즈물의 만화책 1권. 유치하지만 요즘 같은 세상에선 볼 만하다.",
     "ItemRarity": 0,
-    "MaxStack": 1,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1386,7 +1386,7 @@
     "Icon": "Icons/ComicBook2_Rare",
     "Description": "설명 : 나름 유명한 시리즈물의 만화책 2권. 유치하지만 요즘 같은 세상에선 볼 만하다.",
     "ItemRarity": 1,
-    "MaxStack": 1,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1397,7 +1397,7 @@
     "Icon": "Icons/ComicBook3_Epic",
     "Description": "설명 : 나름 유명한 시리즈물의 만화책 3권. 유치하지만 요즘 같은 세상에선 볼 만하다.",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1408,7 +1408,7 @@
     "Icon": "Icons/ComicBook4_Unique",
     "Description": "설명 : 나름 유명한 시리즈물의 만화책 4권. 이게 4권까지 있었어...?",
     "ItemRarity": 3,
-    "MaxStack": 1,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1418,7 +1418,7 @@
     "ItemType": 8,
     "Icon": "Icons/ZippoLighter_Epic",
     "ItemRarity": 2,
-    "MaxStack": 10,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1428,7 +1428,7 @@
     "ItemType": 8,
     "Icon": "Icons/Lighter_Common",
     "ItemRarity": 0,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1438,7 +1438,7 @@
     "ItemType": 8,
     "Description": "[퀘스트 아이템] 좀비 사태를 버틸 수 있는 양식",
     "ItemRarity": 0,
-    "MaxStack": 20,
+    "IsStackable": true,
     "IsSellable": false,
     "IsDroppable": false
   },
@@ -1448,7 +1448,7 @@
     "ItemType": 8,
     "Description": "[퀘스트 아이템] 계산대에서 발견된 열쇠. 마트에 잠긴 곳을 열 수 있을지도?",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": false,
     "IsDroppable": true
   },
@@ -1458,7 +1458,7 @@
     "ItemType": 8,
     "Description": "[퀘스트 아이템] 할아버지가 주신 차키",
     "ItemRarity": 2,
-    "MaxStack": 1,
+    "IsStackable": false,
     "IsSellable": false,
     "IsDroppable": false
   },
@@ -1468,7 +1468,7 @@
     "ItemType": 8,
     "Description": "설명 : 이순신 장군님이 그려져있다.",
     "ItemRarity": 0,
-    "MaxStack": 100,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1478,7 +1478,7 @@
     "ItemType": 8,
     "Description": "설명 : 퇴계 이황 선생이 지켜보신다.",
     "ItemRarity": 1,
-    "MaxStack": 1000,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1488,7 +1488,7 @@
     "ItemType": 8,
     "Description": "설명 : 세종대왕이 그윽하게 바라보신다.",
     "ItemRarity": 2,
-    "MaxStack": 1000,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   },
@@ -1498,7 +1498,7 @@
     "ItemType": 8,
     "Description": "설명 : 신사가 자기소개하면? 신사임당",
     "ItemRarity": 3,
-    "MaxStack": 1000,
+    "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true
   }
