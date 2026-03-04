@@ -144,26 +144,13 @@ public class InputManager : GlobalSingleton<InputManager>
     }
     #endregion
 
-    #region 바인딩
+    #region 인풋 설정
     /// <summary>
     /// ActionMaps의 Actions에 함수 바인딩하기
     /// </summary>
-    public void BindInput(
-        ActionMaps actionMaps,
-        Actions actions,
-        Action<InputAction.CallbackContext> action)
+    public void BindInput(ActionMaps actionMaps, Actions actions, Action<InputAction.CallbackContext> action)
     {
-        if (!IsSingleFlag(actionMaps))
-        {
-            Logger.LogWarning($"ActionMaps.'{actionMaps}'는 단일 플래그가 아님");
-            return;
-        }
-
-        if (!handlers.TryGetValue(actionMaps, out InputHandler handler))
-        {
-            Logger.LogWarning($"ActionMap.'{actionMaps}' 핸들러 없음");
-            return;
-        }
+        if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
         handler.BindInput(actions, action);
     }
 
@@ -172,17 +159,7 @@ public class InputManager : GlobalSingleton<InputManager>
     /// </summary>
     public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath, int bindingIndex = 0)
     {
-        if (!IsSingleFlag(actionMaps))
-        {
-            Logger.LogWarning($"ActionMaps.'{actionMaps}'는 단일 플래그가 아님");
-            return;
-        }
-
-        if (!handlers.TryGetValue(actionMaps, out InputHandler handler))
-        {
-            Logger.LogWarning($"ActionMap.'{actionMaps}' 핸들러 없음");
-            return;
-        }
+        if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
         handler.ApplyBindingOverride(actions, newPath, bindingIndex);
     }
     #endregion
@@ -207,6 +184,25 @@ public class InputManager : GlobalSingleton<InputManager>
     #endregion
 
     #region Utils
+    private bool TryGetInputHandler(ActionMaps actionMaps, out InputHandler handler)
+    {
+        handler = null;
+
+        if (!IsSingleFlag(actionMaps))
+        {
+            Logger.LogWarning($"ActionMaps.'{actionMaps}'는 단일 플래그가 아님");
+            return false;
+        }
+
+        if (!handlers.TryGetValue(actionMaps, out handler))
+        {
+            Logger.LogWarning($"ActionMap.'{actionMaps}' 핸들러 없음");
+            return false;
+        }
+
+        return true;
+    }
+
     public static bool IsSingleFlag(ActionMaps value)
     {
         return value != 0 && (value & (value - 1)) == 0;

@@ -28,7 +28,7 @@ public class InputHandler
     }
     #endregion
 
-    #region 바인딩 관리
+    #region 인풋 관리
     /// <summary>
     /// InputManager에서 사용하는 함수 바인딩
     /// </summary>
@@ -41,7 +41,7 @@ public class InputHandler
             throw new ArgumentNullException(nameof(action), "바인딩할 함수가 null 입니다");
         }
 
-        InputAction inputAction = FindAction(actions);
+        if (!TryGetInputAction(actions, out InputAction inputAction)) return;
 
         // 기존 바인딩이 있으면 교체(중복 호출 방지)
         if (bindings.TryGetValue(inputAction, out var prev))
@@ -58,6 +58,9 @@ public class InputHandler
         inputAction.canceled += action;
     }
 
+    #endregion
+
+    #region 키 관리
     /// <summary>
     /// 특정 액션의 바인딩 오버라이드 적용. 
     /// bindingIndex는 InputAction의 bindings 리스트에서 몇 번째 바인딩을 변경할지 지정. 
@@ -69,7 +72,7 @@ public class InputHandler
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public void ApplyBindingOverride(Actions actions, string newPath, int bindingIndex = 0)
     {
-        InputAction inputAction = FindAction(actions);
+        if (!TryGetInputAction(actions, out InputAction inputAction)) return;
 
         if (bindingIndex < 0 || bindingIndex >= inputAction.bindings.Count)
             throw new ArgumentOutOfRangeException(nameof(bindingIndex),
@@ -101,11 +104,15 @@ public class InputHandler
     #endregion
 
     #region Utils
-    private InputAction FindAction(Actions actions)
+    private bool TryGetInputAction(Actions actions, out InputAction action)
     {
-        InputAction inputAction = map.FindAction(actions.ToString())
-            ?? throw new InvalidOperationException($"{map.name}.{actions} 없음");
-        return inputAction;
+        action = map.FindAction(actions.ToString());
+        if (action == null)
+        {
+            Logger.LogWarning($"{action} 못 찾음");
+            return false;
+        }
+        return true;
     }
     #endregion
 }
