@@ -6,4 +6,7 @@ public static class GameConstants
 
     public const int PlayerID_A = 100001;
     public const int PlayerID_B = 100002;
+
+    // 오디오
+    public const float DefaultVolume = 0.8f;
 }

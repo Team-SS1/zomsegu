@@ -101,4 +101,11 @@ namespace AudioEnum
         Test_Bgm,
         Test_Sfx,
     }
+
+    public enum AudioMixerGroupType
+    {
+        Master,
+        Bgm,
+        Sfx,
+    }
 }

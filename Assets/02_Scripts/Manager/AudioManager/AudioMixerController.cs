@@ -1,22 +1,16 @@
+using AudioEnum;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class AudioMixerController
 {
-    private const string MASTER = "Master";
-    private const string BGM = "Bgm";
-    private const string SFX = "Sfx";
-
     private readonly AudioMixer mixer;
+    private readonly Dictionary<AudioMixerGroupType, AudioMixerGroup> mixerGroups = new();
 
-    private readonly AudioMixerGroup masterGroup;
-    private readonly AudioMixerGroup bgmGroup;
-    private readonly AudioMixerGroup sFXGroup;
-
-    public AudioMixerGroup MasterGroup => masterGroup;
-    public AudioMixerGroup BgmGroup => bgmGroup;
-    public AudioMixerGroup SfxGroup => sFXGroup;
+    public AudioMixerGroup BgmGroup => mixerGroups[AudioMixerGroupType.Bgm];
+    public AudioMixerGroup SfxGroup => mixerGroups[AudioMixerGroupType.Sfx];
 
     public AudioMixerController(AudioMixer mixer)
     {
@@ -24,24 +18,31 @@ public class AudioMixerController
 
         this.mixer = mixer;
 
-        masterGroup = mixer.FindMatchingGroups(MASTER)[0];
-        bgmGroup = mixer.FindMatchingGroups(BGM)[0];
-        sFXGroup = mixer.FindMatchingGroups(SFX)[0];
+        foreach (AudioMixerGroupType mixerGroup in Enum.GetValues(typeof(AudioMixerGroupType)))
+        {
+            mixerGroups[mixerGroup] = mixer.FindMatchingGroups(mixerGroup.ToString())[0];
+            SetVolume(mixerGroup, PlayerPrefs.GetFloat(mixerGroup.ToString(), GameConstants.DefaultVolume));
+        }
     }
 
-    public void SetMaster(float normalized) => SetVolume(MASTER, normalized);
-    public void SetBgm(float normalized) => SetVolume(BGM, normalized);
-    public void SetSfx(float normalized) => SetVolume(SFX, normalized);
-
-    private void SetVolume(string param, float normalized)
+    public void SetVolume(AudioMixerGroupType type, float normalized)
     {
+        string param = type.ToString();
         float volume = Mathf.Log10(Mathf.Clamp(normalized, 0.0001f, 1f)) * 20f; // db로 변환
         mixer.SetFloat(param, volume);
+        SaveVolume(param, volume);
     }
 
-    public float GetVolume01(string param)
+    public float GetVolume01(AudioMixerGroupType type)
     {
+        string param = type.ToString();
         if (!mixer.GetFloat(param, out float volume)) return 1f;
         return Mathf.Pow(10f, volume / 20f);
+    }
+
+    private void SaveVolume(string key, float value)
+    {
+        PlayerPrefs.SetFloat(key, value);
+        PlayerPrefs.Save();
     }
 }
