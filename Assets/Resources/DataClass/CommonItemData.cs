@@ -8,10 +8,12 @@ public class CommonItemData
 	public string Icon;
 	public string Description;
 	public int ItemRarity;
-	public int MaxStack;
+	public bool IsStackable;
 	public bool IsSellable;
 	public bool IsDroppable;
 	public int PlayerAudioType;
+	public float ItemVolume;
+	public float ItemWeight;
 
 	public static Dictionary<int, CommonItemData> tableDic = new Dictionary<int, CommonItemData>();
 }
