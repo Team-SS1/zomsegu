@@ -20,7 +20,9 @@ public class AudioMixerController
 
         foreach (AudioMixerGroupType mixerGroup in Enum.GetValues(typeof(AudioMixerGroupType)))
         {
-            mixerGroups[mixerGroup] = mixer.FindMatchingGroups(mixerGroup.ToString())[0];
+            AudioMixerGroup[] groups = mixer.FindMatchingGroups(mixerGroup.ToString());
+            if (groups.Length == 0) throw new Exception($"MixerGroup 없음: {mixerGroup}");
+            mixerGroups[mixerGroup] = groups[0];
         }
     }
 

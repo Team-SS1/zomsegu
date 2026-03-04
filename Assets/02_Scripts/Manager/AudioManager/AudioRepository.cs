@@ -14,7 +14,7 @@ public class AudioRepository
     public AudioRepository(AudioDatabase audioDatabase, IRandom random)
     {
         this.random = random ?? new UnityRandom();
-        if (audioDatabase == null) throw new ArgumentNullException("AudioDatabase 없음");
+        if (audioDatabase == null) throw new ArgumentNullException(nameof(audioDatabase));
 
         foreach (var audioData in audioDatabase.GetDatabase<AudioData>())
         {
@@ -36,7 +36,7 @@ public class AudioRepository
         }
     }
 
-    public bool TryGetAudioEntry(AudioCategory audioCategory, AudioName audioName, int idx, out AudioEntry entry)
+    public bool TryGetAudioEntry(AudioCategory audioCategory, AudioName audioName, int clipIndex, out AudioEntry entry)
     {
         entry = null;
 
@@ -47,12 +47,12 @@ public class AudioRepository
             return false;
         }
 
-        if (idx >= entries.Count || idx < 0)
+        if (clipIndex >= entries.Count || clipIndex < 0)
         {
-            idx = random.Range(0, entries.Count);
+            clipIndex = random.Range(0, entries.Count);
         }
 
-        entry = entries[idx];
+        entry = entries[clipIndex];
         return true;
     }
 }

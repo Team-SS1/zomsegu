@@ -49,5 +49,5 @@ MonoBehaviour:
   spatialMaxDistance: 15
   sfxPoolSize: 10
   maxSfxPoolSize: 20
-  origin: {fileID: 7182008941494196748, guid: 2507306f2f2013746a613fba3184f446, type: 3}
+  sourcePrefab: {fileID: 7182008941494196748, guid: 2507306f2f2013746a613fba3184f446, type: 3}
   audioMixer: {fileID: 24100000, guid: e2848151d30ad5b49871c2e3ac9ae2dd, type: 2}

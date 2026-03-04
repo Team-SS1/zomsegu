@@ -48,10 +48,7 @@ public class AudioSourcePool : IAudioSourcePool
 
     public void Release(IAudioInstance instance)
     {
-        if (instance.IsPlaying)
-        {
-            instance.Stop();
-        }
+        instance.Stop();
         instance.SetClip(null);
     }
 

@@ -10,8 +10,7 @@ public class AudioService
     private readonly AudioRepository repository;
     private readonly AudioMixerController mixerController;
 
-    private readonly List<PlayingAudio> actives = new();
-    public List<PlayingAudio> Actives => actives;
+    private readonly List<PlayingAudio> activeAudios = new();
 
     private readonly float spatialMinDistance;
     private readonly float spatialMaxDistance;
@@ -29,16 +28,16 @@ public class AudioService
         spatialMaxDistance = maxDist;
     }
 
-    public void Tick()
+    public void Update()
     {
-        for (int i = actives.Count - 1; i >= 0; i--)
+        for (int i = activeAudios.Count - 1; i >= 0; i--)
         {
-            PlayingAudio active = actives[i];
+            PlayingAudio active = activeAudios[i];
 
             if (!active.instance.IsPlaying)
             {
                 active.pool?.Release(active.instance);
-                actives.RemoveAt(i);
+                activeAudios.RemoveAt(i);
                 continue;
             }
 
@@ -54,17 +53,18 @@ public class AudioService
         AudioName audioName,
         IAudioInstance instance,
         IAudioSourcePool pool,
-        int idx,
+        int clipIndex,
         bool loop,
         float pitch,
-        bool is3D = false)
+        bool useSpatial = false)
     {
-        if (!repository.TryGetAudioEntry(audioCategory, audioName, idx, out AudioEntry entry)) { return null; }
+        if (!repository.TryGetAudioEntry(audioCategory, audioName, clipIndex, out AudioEntry entry)) { return null; }
 
         instance.SetClip(entry.AudioClip);
         instance.SetLoop(loop);
         instance.SetPitch(pitch);
         instance.SetVolume(entry.Volume);
+
         instance.SetOutputAudioMixerGroup(
             audioCategory == AudioCategory.Bgm
             ? mixerController.BgmGroup
@@ -76,14 +76,24 @@ public class AudioService
             return null;
         }
 
-        var newActiveAudio = new PlayingAudio
+        var newPlayingAudio = new PlayingAudio
         {
             instance = instance,
             pool = pool
         };
-        actives.Add(newActiveAudio);
 
-        if (is3D)
+        activeAudios.Add(newPlayingAudio);
+
+        ApplySpatial(instance, useSpatial);
+
+        instance.Play();
+
+        return newPlayingAudio;
+    }
+
+    private void ApplySpatial(IAudioInstance instance, bool useSpatial)
+    {
+        if (useSpatial)
         {
             instance.Set3D(spatialMinDistance, spatialMaxDistance);
         }
@@ -91,9 +101,15 @@ public class AudioService
         {
             instance.Set2D();
         }
+    }
 
-        instance.Play();
+    public void StopAllSfx()
+    {
+        foreach (PlayingAudio audio in activeAudios)
+        {
+            audio.pool?.Release(audio.instance);
+        }
 
-        return newActiveAudio;
+        activeAudios.Clear();
     }
 }

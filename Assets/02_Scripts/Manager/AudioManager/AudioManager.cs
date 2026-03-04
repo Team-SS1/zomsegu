@@ -20,7 +20,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     [Header("풀 세팅")]
     [SerializeField] private int sfxPoolSize = 10;
     [SerializeField] private int maxSfxPoolSize = 20;
-    [SerializeField] private AudioSource origin;
+    [SerializeField] private AudioSource sourcePrefab;
 
     private IAudioInstance bgmAudioInstance;    // BGM
     private IAudioSourcePool pool;              // SFX 풀
@@ -41,7 +41,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
         audioMixerController = new AudioMixerController(audioMixer);
         audioService = new AudioService(repository, audioMixerController, spatialMinDistance, spatialMaxDistance);
 
-        SetAudioSources();
+        InitializeSources();
 
         bgmAudioInstance.SetOutputAudioMixerGroup(audioMixerController.BgmGroup);
     }
@@ -56,7 +56,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     private void Update()
     {
-        audioService.Tick();
+        audioService.Update();
     }
     #endregion
 
@@ -70,10 +70,10 @@ public class AudioManager : GlobalSingleton<AudioManager>
         audioDatabase = database;
     }
 
-    private void SetAudioSources()
+    private void InitializeSources()
     {
         bgmAudioInstance = new AudioInstance(gameObject.AddComponent<AudioSource>());
-        pool = new AudioSourcePool(origin, transform, sfxPoolSize);
+        pool = new AudioSourcePool(sourcePrefab, transform, sfxPoolSize);
     }
     #endregion
 
@@ -81,46 +81,46 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// <summary>
     /// BGM 재생
     /// </summary>
-    public void PlayBgm(AudioName audioName, int idx = 0, bool loop = true, float pitch = 1f)
+    public void PlayBgm(AudioName audioName, int clipIndex = 0, bool loop = true, float pitch = 1f)
     {
         bgmAudioInstance.Stop();
-        audioService.Play(AudioCategory.Bgm, audioName, bgmAudioInstance, null, idx, loop, pitch);
+        audioService.Play(AudioCategory.Bgm, audioName, bgmAudioInstance, null, clipIndex, loop, pitch);
     }
 
     /// <summary>
     /// 2D 사운드 재생 (UI 등 거리 기반이 필요 없는 사운드)
     /// </summary>
-    public void PlaySfx2D(AudioName audioName, int idx = 0, bool loop = false, float pitch = 1f)
+    public void PlaySfx2D(AudioName audioName, int clipIndex = 0, bool loop = false, float pitch = 1f)
     {
         IAudioInstance instance = pool.Get();
-        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch);
+        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, clipIndex, loop, pitch);
     }
 
     /// <summary>
     /// 3D 사운드 재생 (고정 위치 사운드 재생용)
     /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
     /// </summary>
-    public void PlaySfx3D(AudioName audioName, Vector3 position, int idx = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfx3D(AudioName audioName, Vector3 position, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
         IAudioInstance instance = pool.Get();
         instance.SetPosition(position);
-        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch, is3D: true);
+        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, clipIndex, loop, pitch, useSpatial: true);
     }
 
     /// <summary>
     /// 3D 사운드 재생 (따라다니는 사운드 재생용)
     /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
     /// </summary>
-    public void PlaySfx3D(AudioName audioName, Transform transform, int idx = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfx3D(AudioName audioName, Transform transform, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
         IAudioInstance instance = pool.Get();
         instance.SetPosition(transform.position);
-        PlayingAudio activeAudio = audioService
-            .Play(AudioCategory.Sfx, audioName, instance, pool, idx, loop, pitch, is3D: true);
+        PlayingAudio playingAudio = audioService
+            .Play(AudioCategory.Sfx, audioName, instance, pool, clipIndex, loop, pitch, useSpatial: true);
 
-        if (activeAudio != null)
+        if (playingAudio != null)
         {
-            activeAudio.follow = transform;
+            playingAudio.follow = transform;
         }
     }
     #endregion
@@ -133,15 +133,13 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     public void StopAllSfx()
     {
-        pool.ReleaseAll();
-        audioService.Actives.Clear();
+        audioService.StopAllSfx();
     }
 
     public void StopAll()
     {
         bgmAudioInstance.Stop();
-        pool.ReleaseAll();
-        audioService.Actives.Clear();
+        StopAllSfx();
     }
     #endregion
 
@@ -155,7 +153,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     private void Reset()
     {
         audioDatabase = AssetLoader.FindAndLoadByName<AudioDatabase>("AudioDatabase");
-        origin = AssetLoader.FindAndLoadByName("AudioSource").GetComponent<AudioSource>();
+        sourcePrefab = AssetLoader.FindAndLoadByName("AudioSource").GetComponent<AudioSource>();
         audioMixer = AssetLoader.FindAndLoadByName<AudioMixer>("AudioMixer");
     }
 #endif
