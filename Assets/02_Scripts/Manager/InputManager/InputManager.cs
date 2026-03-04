@@ -79,7 +79,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// 기존 Input Action Maps 설정 모두 제거, 새로운 설정
     /// 게임 초기화 시 사용 권장
     /// </summary>
-    /// <param name="actionMaps"></param>
     public void SetMaps(ActionMaps actionMaps)
     {
         ActionMaps prev = activeActionMaps;
@@ -90,7 +89,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// 특정 Input Action Maps 추가
     /// </summary>
-    /// <param name="actionMaps"></param>
     public void AddMaps(ActionMaps actionMaps)
     {
         ActionMaps prev = activeActionMaps;
@@ -101,7 +99,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// 특정 Input Action Maps 제거
     /// </summary>
-    /// <param name="actionMaps"></param>
     public void RemoveMaps(ActionMaps actionMaps)
     {
         ActionMaps prev = activeActionMaps;
@@ -112,8 +109,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// Input Action Maps 보유 여부 확인
     /// </summary>
-    /// <param name="actionMaps"></param>
-    /// <returns></returns>
     public bool HasMaps(ActionMaps actionMaps)
     {
         return (activeActionMaps & actionMaps) != 0;
@@ -153,9 +148,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// ActionMaps의 Actions에 함수 바인딩하기
     /// </summary>
-    /// <param name="actionMaps"></param>
-    /// <param name="actions"></param>
-    /// <param name="action"></param>
     public void BindInput(
         ActionMaps actionMaps,
         Actions actions,
@@ -178,9 +170,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// ActionMaps의 Actions에 바인딩된 키를 newPath로 변경
     /// </summary>
-    /// <param name="actionMaps"></param>
-    /// <param name="actions"></param>
-    /// <param name="newPath"></param>
     public void ApplyBindingOverride(ActionMaps actionMaps, Actions actions, string newPath, int bindingIndex = 0)
     {
         if (!IsSingleFlag(actionMaps))
@@ -202,7 +191,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// DataManager에서 가져가서 사용
     /// </summary>
-    /// <returns></returns>
     public string ExportBindingJson()
     {
         return inputAssets.SaveBindingOverridesAsJson();
@@ -211,7 +199,6 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// Datamanager에서 가져온 키 설정 JSON을 InputActionAsset에 적용
     /// </summary>
-    /// <param name="json"></param>
     public void ImportBindingJson(string json)
     {
         inputAssets.LoadBindingOverridesFromJson(json);
