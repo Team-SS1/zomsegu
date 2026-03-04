@@ -1,0 +1,44 @@
+[
+  {
+    "RarityID": 900001,
+    "Common": 60,
+    "Rare": 85,
+    "Epic": 98,
+    "Unique": 100
+  },
+  {
+    "RarityID": 900002,
+    "Common": 0,
+    "Rare": 60,
+    "Epic": 92,
+    "Unique": 100
+  },
+  {
+    "RarityID": 910001,
+    "Common": 50,
+    "Rare": 80,
+    "Epic": 98,
+    "Unique": 100
+  },
+  {
+    "RarityID": 920001,
+    "Common": 50,
+    "Rare": 80,
+    "Epic": 98,
+    "Unique": 100
+  },
+  {
+    "RarityID": 930001,
+    "Common": 60,
+    "Rare": 90,
+    "Epic": 100,
+    "Unique": 0
+  },
+  {
+    "RarityID": 950001,
+    "Common": 40,
+    "Rare": 70,
+    "Epic": 90,
+    "Unique": 100
+  }
+]

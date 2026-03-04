@@ -3,23 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using EventEnum;
 
-public class EventManager : MonoBehaviour
+public class EventManager : GlobalSingleton<EventManager>
 {
-    public static EventManager Instance;
-
     private Dictionary<EventKey, Delegate> eventDictionary;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         if (Instance == null)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
             eventDictionary = new Dictionary<EventKey, Delegate>();
-        }
-        else
-        {
-            Destroy(gameObject);
         }
     }
 

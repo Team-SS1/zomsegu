@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PlayerEnum;
 using UnityEngine;
 
 public class DataManager : GlobalSingleton<DataManager>
@@ -19,5 +20,17 @@ public class DataManager : GlobalSingleton<DataManager>
             return null;
         }
         return stat;
+    }
+    public int GetPlayerID(PlayerType type)
+    {
+        switch (type)
+        {
+            case PlayerType.Player_SHIN:
+                return GameConstants.PlayerID_A;
+            case PlayerType.Player_HAN:
+                return GameConstants.PlayerID_B;
+            default:
+                return 0;
+        }
     }
 }
