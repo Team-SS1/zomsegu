@@ -58,6 +58,17 @@ public class InputHandler
         inputAction.canceled += action;
     }
 
+    public void LockInput(Actions actions)
+    {
+        if (!TryGetInputAction(actions, out InputAction inputAction)) return;
+        inputAction.Disable();
+    }
+
+    public void UnlockInput(Actions actions)
+    {
+        if (!TryGetInputAction(actions, out InputAction inputAction)) return;
+        inputAction.Enable();
+    }
     #endregion
 
     #region 키 관리

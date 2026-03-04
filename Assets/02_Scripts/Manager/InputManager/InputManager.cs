@@ -154,6 +154,18 @@ public class InputManager : GlobalSingleton<InputManager>
         handler.BindInput(actions, action);
     }
 
+    public void LockInput(ActionMaps actionMaps, Actions actions)
+    {
+        if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
+        handler.LockInput(actions);
+    }
+
+    public void UnlockInput(ActionMaps actionMaps, Actions actions)
+    {
+        if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
+        handler.UnlockInput(actions);
+    }
+
     /// <summary>
     /// ActionMaps의 Actions에 바인딩된 키를 newPath로 변경
     /// </summary>
