@@ -65,6 +65,23 @@ public class Test_InputSystem : MonoBehaviour
     }
     #endregion
 
+    #region Example - Lock / Unlock Single Input
+    private bool isLock = false;
+    public void Example_Toggle_Input_Move()
+    {
+        if (isLock)
+        {
+            mg.UnlockInput(InputEnum.ActionMaps.Gameplay, InputEnum.Actions.Move);
+        }
+        else
+        {
+            mg.LockInput(InputEnum.ActionMaps.Gameplay, InputEnum.Actions.Move);
+        }
+
+        isLock = !isLock;
+    }
+    #endregion
+
     #region Utils
     public void ToggleLayer(string text)
     {
