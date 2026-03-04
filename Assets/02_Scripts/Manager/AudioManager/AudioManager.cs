@@ -1,4 +1,5 @@
 using AudioEnum;
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -43,6 +44,14 @@ public class AudioManager : GlobalSingleton<AudioManager>
         SetAudioSources();
 
         bgmAudioInstance.SetOutputAudioMixerGroup(audioMixerController.BgmGroup);
+    }
+
+    private void Start()
+    {
+        foreach (AudioMixerGroupType mixerGroup in Enum.GetValues(typeof(AudioMixerGroupType)))
+        {
+            SetVolume(mixerGroup, PlayerPrefs.GetFloat(mixerGroup.ToString(), GameConstants.DefaultVolume));
+        }
     }
 
     private void Update()

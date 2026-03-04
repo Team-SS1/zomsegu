@@ -21,23 +21,31 @@ public class AudioMixerController
         foreach (AudioMixerGroupType mixerGroup in Enum.GetValues(typeof(AudioMixerGroupType)))
         {
             mixerGroups[mixerGroup] = mixer.FindMatchingGroups(mixerGroup.ToString())[0];
-            SetVolume(mixerGroup, PlayerPrefs.GetFloat(mixerGroup.ToString(), GameConstants.DefaultVolume));
         }
     }
 
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
         string param = type.ToString();
-        float volume = Mathf.Log10(Mathf.Clamp(normalized, 0.0001f, 1f)) * 20f; // db로 변환
-        mixer.SetFloat(param, volume);
-        SaveVolume(param, volume);
+        float db = Mathf.Log10(Mathf.Clamp(normalized, 0.0001f, 1f)) * 20f; // db로 변환
+        mixer.SetFloat(param, db);
+        SaveVolume(param, normalized);
     }
 
     public float GetVolume01(AudioMixerGroupType type)
     {
         string param = type.ToString();
-        if (!mixer.GetFloat(param, out float volume)) return 1f;
-        return Mathf.Pow(10f, volume / 20f);
+
+        if (!mixer.GetFloat(param, out float db))
+        {
+            Logger.LogWarning($"파라미터 못찾음 {param}");
+            return 1f;
+        }
+
+        // -80 이하일 경우 0으로 간주
+        if (db <= -80f) { return 0f; }
+
+        return Mathf.Pow(10f, db / 20f);
     }
 
     private void SaveVolume(string key, float value)
