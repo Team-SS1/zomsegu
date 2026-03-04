@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Send Discord Message
         run: |
           BRANCH="${{ github.ref_name }}"
@@ -18,13 +22,9 @@ jobs:
           REPO="${{ github.repository }}"
           COMPARE="${{ github.event.compare }}"
 
-          COMMITS_JSON='${{ toJson(github.event.commits) }}'
-          COUNT=${{ github.event.commits && github.event.commits.size || 1 }}
-          COMMITS=$(echo "$COMMITS_JSON" | jq -r '
-            .[:5]
-            | map("`" + (.id[0:7]) + "` - " + (.message | split("\n")[0]))
-            | join("\n")
-          ')
+          RANGE="${{ github.event.before }}..${{ github.sha }}"
+          COUNT=$(git rev-list --count $RANGE)
+          COMMITS=$(git log $RANGE -n 5 --pretty=format:'`%h` - %s')
 
           if [ "$COUNT" -gt 5 ]; then
             REMAIN=$((COUNT - 5))
