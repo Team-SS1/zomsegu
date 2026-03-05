@@ -58,7 +58,7 @@ public class AudioService
         float pitch,
         bool useSpatial = false)
     {
-        if (!repository.TryGetAudioEntry(audioCategory, audioName, clipIndex, out AudioEntry entry)) { return null; }
+        if (!repository.TryGetAudioEntry(audioName, clipIndex, out AudioEntry entry)) { return null; }
 
         instance.SetClip(entry.AudioClip);
         instance.SetLoop(loop);

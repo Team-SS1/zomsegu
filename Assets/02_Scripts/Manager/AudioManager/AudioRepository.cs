@@ -7,8 +7,7 @@ using System.Collections.Generic;
 /// </summary>
 public class AudioRepository
 {
-    private readonly Dictionary<AudioName, List<AudioEntry>> bgmDict = new();
-    private readonly Dictionary<AudioName, List<AudioEntry>> sfxDict = new();
+    private readonly Dictionary<AudioName, List<AudioEntry>> audioDict = new();
     private readonly IRandom random;
 
     public AudioRepository(AudioDatabase audioDatabase, IRandom random)
@@ -24,26 +23,17 @@ public class AudioRepository
                 continue;
             }
 
-            switch (audioData.AudioCategory)
-            {
-                case AudioCategory.Bgm:
-                    bgmDict[audioName] = audioData.AudioEntries;
-                    break;
-                case AudioCategory.Sfx:
-                    sfxDict[audioName] = audioData.AudioEntries;
-                    break;
-            }
+            audioDict[audioName] = audioData.AudioEntries;
         }
     }
 
-    public bool TryGetAudioEntry(AudioCategory audioCategory, AudioName audioName, int clipIndex, out AudioEntry entry)
+    public bool TryGetAudioEntry(AudioName audioName, int clipIndex, out AudioEntry entry)
     {
         entry = null;
 
-        Dictionary<AudioName, List<AudioEntry>> dict = (audioCategory == AudioCategory.Bgm) ? bgmDict : sfxDict;
-        if (!dict.TryGetValue(audioName, out List<AudioEntry> entries) || entries == null || entries.Count == 0)
+        if (!audioDict.TryGetValue(audioName, out List<AudioEntry> entries) || entries == null || entries.Count == 0)
         {
-            Logger.LogWarning($"{audioCategory}.{audioName} 오디오 데이터 없음");
+            Logger.LogWarning($"{audioName} 오디오 데이터 없음");
             return false;
         }
 
