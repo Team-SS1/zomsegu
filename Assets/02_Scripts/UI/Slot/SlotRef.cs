@@ -1,4 +1,5 @@
 ﻿using ItemEnum;
+using PlayerEnum;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,21 +8,24 @@ using UnityEngine;
 [Serializable]
 public struct SlotRef //슬롯 주소값
 {
+    public PlayerType playerType;
     public SlotType slotType;
     public SlotKeyType keyType;
 
     public int index; // 인벤, 퀵슬롯, 드롭아이템용
     public EquipSlotType equipSlot; // 장비 슬롯용
 
-    public static SlotRef Inv(int index) => new SlotRef
+    public static SlotRef Inv(PlayerType player, int index) => new SlotRef
     {
+        playerType = player,
         slotType = SlotType.Inventory,
         keyType = SlotKeyType.Index,
         index = index,
         equipSlot = default
     };
-    public static SlotRef Quick(int index) => new SlotRef
+    public static SlotRef Quick(PlayerType player, int index) => new SlotRef
     {
+        playerType = player,
         slotType = SlotType.QuickSlot,
         keyType = SlotKeyType.Index,
         index = index,
@@ -34,8 +38,9 @@ public struct SlotRef //슬롯 주소값
         index = index,
         equipSlot = default
     };
-    public static SlotRef Equip(EquipSlotType equipSlot) => new SlotRef
+    public static SlotRef Equip(PlayerType player, EquipSlotType equipSlot) => new SlotRef
     {
+        playerType = player,
         slotType = SlotType.Equipment,
         keyType = SlotKeyType.EquipSlot,
         index = -1,

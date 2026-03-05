@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PlayerEnum;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,8 +17,11 @@ public class Inventory
     private readonly Dictionary<string, int> guidToIndex = new(); //인스턴스형 슬롯 인덱스
     private readonly Dictionary<int, int> stackToIndex = new(); //스택형 슬롯 인덱스
 
-    public Inventory(int capacity = 80, float maxWeight = 40f, float maxVolume = 30f)
+    private readonly PlayerType playerType; //플레이어 타입
+
+    public Inventory(PlayerType player, int capacity = 80, float maxWeight = 40f, float maxVolume = 30f)
     {
+        this.playerType = player;
         Capacity = Mathf.Max(1, capacity);
         MaxWeight = maxWeight;
         MaxVolume = maxVolume;
@@ -253,6 +257,6 @@ public class Inventory
     }
     private void NotifyChanged()
     {
-        EventManager.TriggerEvent(EventEnum.EventKey.InventoryChanged);
+        EventManager.TriggerEvent(EventEnum.EventKey.InventoryChanged, playerType);
     }
 }
