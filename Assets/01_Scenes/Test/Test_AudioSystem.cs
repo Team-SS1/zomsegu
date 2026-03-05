@@ -72,6 +72,16 @@ public class Test_AudioSystem : MonoBehaviour
         mg.PlaySfx3D(AudioEnum.AudioName.Test_Sfx, followTarget);
     }
 
+    public void Example_Pause()
+    {
+        mg.PauseAll();
+    }
+
+    public void Example_UnPause()
+    {
+        mg.UnPauseAll();
+    }
+
     public void Example_StopBgm()
     {
         mg.StopBgm();

@@ -19,6 +19,8 @@ public class AudioSystemEditModeTests
         public Vector3 Position { get; private set; }
 
         public void Play() => IsPlaying = true;
+        public void Pause() => IsPlaying = false;
+        public void UnPause() => IsPlaying = true;
         public void Stop() => IsPlaying = false;
 
         public void SetClip(object clip) => Clip = clip;
