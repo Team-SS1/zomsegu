@@ -68,6 +68,8 @@ public class Inventory
 
         CurrentWeight += addWeight;
         CurrentVolume += addVolume;
+
+        NotifyChanged();
         return true;
     }
     public bool TryAddInstance(int itemId, ItemStack instance) // 외부에서 인스턴스형 아이템 추가
@@ -96,6 +98,8 @@ public class Inventory
 
         CurrentWeight += addWeight;
         CurrentVolume += addVolume;
+
+        NotifyChanged();
         return true;
     }
     public bool TryAddNewInstance(int itemId) //인스턴스형 아이템을 새로 생성하여 추가하는 메서드
@@ -124,6 +128,8 @@ public class Inventory
 
         CurrentWeight += addWeight;
         CurrentVolume += addVolume;
+
+        NotifyChanged();
         return true;
     }
     public bool TryRemoveStack(int index, int amount) //스택형 아이템 제거
@@ -146,6 +152,8 @@ public class Inventory
             slot.clear();
             stackToIndex.Remove(id);
         }
+
+        NotifyChanged();
         return true;
     }
     public bool TryRemoveInstance(string guid, out ItemStack removedItem) // 인스턴스 아이템 제거
@@ -164,6 +172,8 @@ public class Inventory
 
         slot.clear();
         guidToIndex.Remove(guid);
+
+        NotifyChanged();
         return true;
     }
     public bool Swap(int a, int b) //슬롯 간 아이템 교환
@@ -175,6 +185,8 @@ public class Inventory
 
         UpdateIndexForSlot(a);
         UpdateIndexForSlot(b);
+
+        NotifyChanged();
         return true;
     }
     public bool Move(int from, int to) //슬롯 간 아이템 이동 (교환과 달리 빈 슬롯으로 이동할 때만 허용)
@@ -238,5 +250,9 @@ public class Inventory
         }
         CurrentVolume = Mathf.Max(0f, volume);
         CurrentWeight = Mathf.Max(0f, weight);
+    }
+    private void NotifyChanged()
+    {
+        EventManager.TriggerEvent(EventEnum.EventKey.InventoryChanged);
     }
 }
