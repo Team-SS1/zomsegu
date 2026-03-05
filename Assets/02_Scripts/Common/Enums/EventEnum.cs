@@ -2,6 +2,10 @@
 {
     public enum EventKey
     {
-        InventoryChanged
+        InventoryChanged,
+        EquipmentChanged,
+        QuickSlotChanged,
+        DropItemChanged,
+        StatChanged,
     }
 }

@@ -13,4 +13,27 @@ namespace ItemEnum
         Consumable,
         Misc
     }
+    public enum EquipSlotType
+    {
+        Head,
+        Body,
+        Leg,
+        Shoes,
+        Bag,
+        Weapon,
+        Accessory1,
+        Accessory2
+    }
+    public enum SlotType
+    {
+        Inventory,
+        Equipment,
+        QuickSlot,
+        DropItem
+    }
+    public enum SlotKeyType
+    {
+        Index,
+        EquipSlot
+    }
 }
