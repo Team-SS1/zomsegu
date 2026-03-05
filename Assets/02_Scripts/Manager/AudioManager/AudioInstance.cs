@@ -30,7 +30,14 @@ public class AudioInstance : IAudioInstance
         source.gameObject.SetActive(false);
     }
 
-    public void SetClip(object clip) => source.clip = (AudioClip)clip;
+    public void SetClip(object o)
+    {
+        if (o is AudioClip clip)
+        {
+            source.clip = clip;
+        }
+    }
+
     public void SetLoop(bool loop) => source.loop = loop;
     public void SetPitch(float pitch) => source.pitch = pitch;
     public void SetVolume(float volume) => source.volume = volume;
