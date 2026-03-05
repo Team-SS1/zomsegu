@@ -47,7 +47,6 @@ public class Test_AudioSystem : MonoBehaviour
     #region Example - Play Bgm/Sfx
     public void Example_PlayBgm()
     {
-        Debug.Log("BGM");
         mg.PlayBgm(
             AudioEnum.AudioName.Test_Bgm,   // AudioData SO 이름
             clipIndex: 0,                   // AudioData의 리스트 index, -1일 경우 random(기본값)
@@ -58,7 +57,6 @@ public class Test_AudioSystem : MonoBehaviour
 
     public void Example_PlayTestSfx2D()
     {
-        Debug.Log("SFX");
         mg.PlaySfx2D(AudioEnum.AudioName.Test_Sfx);
     }
 
