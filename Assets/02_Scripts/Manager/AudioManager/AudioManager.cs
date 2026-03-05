@@ -72,8 +72,13 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     private void InitializeSources()
     {
-        bgmAudioInstance = new AudioInstance(gameObject.AddComponent<AudioSource>());
-        pool = new AudioSourcePool(sourcePrefab, transform, sfxPoolSize);
+        GameObject bgmGo = new GameObject("BGM_Source");
+        GameObject sfxGo = new GameObject("SFX_Root");
+        bgmGo.transform.parent = transform;
+        sfxGo.transform.parent = transform;
+
+        bgmAudioInstance = new AudioInstance(bgmGo.AddComponent<AudioSource>());
+        pool = new AudioSourcePool(sourcePrefab, sfxGo.transform, sfxPoolSize);
     }
     #endregion
 
