@@ -15,6 +15,7 @@ public class AudioInstance : IAudioInstance
 
     public bool IsPlaying => source.isPlaying;
 
+    #region AudioSource 재생 관리
     public void Play()
     {
         if (!source.gameObject.activeSelf)
@@ -24,12 +25,30 @@ public class AudioInstance : IAudioInstance
         source.Play();
     }
 
+    public void Pause()
+    {
+        if (source.isPlaying)
+        {
+            source.Pause();
+        }
+    }
+
+    public void UnPause()
+    {
+        if (!source.isPlaying)
+        {
+            source.UnPause();
+        }
+    }
+
     public void Stop()
     {
         source.Stop();
         source.gameObject.SetActive(false);
     }
+    #endregion
 
+    #region AudioSoucre 설정
     public void SetClip(object o)
     {
         if (o is AudioClip clip)
@@ -61,4 +80,5 @@ public class AudioInstance : IAudioInstance
         source.maxDistance = maxDistance;
         source.rolloffMode = AudioRolloffMode.Linear;
     }
+    #endregion
 }

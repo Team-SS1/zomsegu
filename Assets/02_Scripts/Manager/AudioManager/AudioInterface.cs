@@ -12,6 +12,8 @@ public interface IAudioInstance
     public bool IsPlaying { get; }
 
     public void Play();
+    public void Pause();
+    public void UnPause();
     public void Stop();
 
     public void SetClip(object clip);

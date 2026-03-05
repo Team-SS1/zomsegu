@@ -91,15 +91,19 @@ public class AudioService
         return newPlayingAudio;
     }
 
-    private void ApplySpatial(IAudioInstance instance, bool useSpatial)
+    public void PauseAll()
     {
-        if (useSpatial)
+        foreach (PlayingAudio audio in activeAudios)
         {
-            instance.Set3D(spatialMinDistance, spatialMaxDistance);
+            audio.instance.Pause();
         }
-        else
+    }
+
+    public void UnPauseAll()
+    {
+        foreach (PlayingAudio audio in activeAudios)
         {
-            instance.Set2D();
+            audio.instance.UnPause();
         }
     }
 
@@ -111,5 +115,17 @@ public class AudioService
         }
 
         activeAudios.Clear();
+    }
+
+    private void ApplySpatial(IAudioInstance instance, bool useSpatial)
+    {
+        if (useSpatial)
+        {
+            instance.Set3D(spatialMinDistance, spatialMaxDistance);
+        }
+        else
+        {
+            instance.Set2D();
+        }
     }
 }

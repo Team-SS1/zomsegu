@@ -30,6 +30,8 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     private AudioService audioService;
     private AudioMixerController audioMixerController;
+
+    private bool isPause = false;
     #endregion
 
     #region Unity API
@@ -131,6 +133,22 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #endregion
 
     #region Bgm / Sfx 정지
+    public void PauseAll()
+    {
+        if (isPause) return;
+        isPause = true;
+        bgmAudioInstance.Pause();
+        audioService.PauseAll();
+    }
+
+    public void UnPauseAll()
+    {
+        if (!isPause) return;
+        isPause = false;
+        bgmAudioInstance.UnPause();
+        audioService.UnPauseAll();
+    }
+
     public void StopBgm()
     {
         bgmAudioInstance.Stop();
