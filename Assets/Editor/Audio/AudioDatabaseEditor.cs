@@ -105,7 +105,7 @@ public class AudioDatabaseEditor : Editor
 
                 EditorGUILayout.ObjectField(data, typeof(AudioData), false, GUILayout.ExpandWidth(true));
 
-                int clipCount = data.AudioEntries != null ? data.AudioEntries.Count : 0;
+                int clipCount = data.AudioVariations != null ? data.AudioVariations.Count : 0;
 
                 GUILayout.Label($"{clipCount} Clips",
                     EditorStyles.miniLabel,

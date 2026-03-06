@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-[CustomEditor(typeof(AudioEntry))]
+[CustomEditor(typeof(AudioData))]
 public class AudioDataEditor : Editor
 {
     private ReorderableList list;
@@ -41,6 +41,11 @@ public class AudioDataEditor : Editor
     {
         SerializedProperty loop = serializedObject.FindProperty("loop");
         SerializedProperty spatial = serializedObject.FindProperty("spatial");
+
+        SerializedProperty randomPitch = serializedObject.FindProperty("randomPitch");
+        SerializedProperty randomVolume = serializedObject.FindProperty("randomVolume");
+        SerializedProperty cooldown = serializedObject.FindProperty("cooldown");
+
         SerializedProperty priority = serializedObject.FindProperty("priority");
 
         EditorGUILayout.LabelField("Play Settings", EditorStyles.boldLabel);
@@ -48,6 +53,9 @@ public class AudioDataEditor : Editor
 
         EditorGUILayout.PropertyField(loop);
         EditorGUILayout.PropertyField(spatial);
+        EditorGUILayout.PropertyField(randomPitch);
+        EditorGUILayout.PropertyField(randomVolume);
+        EditorGUILayout.PropertyField(cooldown);
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Priority");
@@ -89,13 +97,13 @@ public class AudioDataEditor : Editor
     #region 리스트 관리
     private void InitReorderableList()
     {
-        SerializedProperty listProp = serializedObject.FindProperty("audioEntries");
+        SerializedProperty listProp = serializedObject.FindProperty("audioVariations");
 
         list = new ReorderableList(serializedObject, listProp, true, true, true, true);
 
         list.drawHeaderCallback = rect =>
         {
-            EditorGUI.LabelField(rect, "Audio Entries");
+            EditorGUI.LabelField(rect, "Audio Variations");
         };
 
         list.elementHeightCallback = index =>
@@ -204,7 +212,7 @@ public class AudioDataEditor : Editor
         {
             DragAndDrop.AcceptDrag();
 
-            SerializedProperty listProp = serializedObject.FindProperty("audioEntries");
+            SerializedProperty listProp = serializedObject.FindProperty("audioVariations");
 
             foreach (UnityEngine.Object obj in DragAndDrop.objectReferences)
             {

@@ -89,11 +89,16 @@ public class AudioService
             return false;
         }
 
-        AudioEntry entry = data.GetEntry(clipIndex);
+        AudioVariation entry = data.GetEntry(clipIndex);
+
+        if (!AudioCooldown.CanPlay(audioName, data.Cooldown))
+        {
+            return false;
+        }
 
         instance.SetClip(entry.AudioClip);
-        instance.SetVolume(entry.Volume);
-
+        instance.SetVolume(entry.Volume * data.RandomVolume);
+        instance.SetPitch(data.RandomPitch);
         instance.SetLoop(data.Loop);
         instance.SetOutputAudioMixerGroup(audioRouter.GetMixerGroup(routes[data.AudioCategory]));
         ApplySpatial(instance, data.Spatial);

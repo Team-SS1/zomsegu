@@ -27,7 +27,7 @@ public class AudioRepository
 
     public bool TryGetAudioData(AudioName audioName, out AudioData data)
     {
-        if (!audioDict.TryGetValue(audioName, out data) || data == null || data.AudioEntries.Count == 0)
+        if (!audioDict.TryGetValue(audioName, out data) || data == null || data.AudioVariations.Count == 0)
         {
             Logger.LogWarning($"{audioName} 오디오 데이터 없음");
             return false;

@@ -17,25 +17,36 @@ public class AudioData : ScriptableObject
 
     [SerializeField] private AudioPriority priority;
 
-    [Header("Clips")]
-    [SerializeField] private List<AudioEntry> audioEntries;
+    [SerializeField] private Vector2 randomPitch = new(1f, 1f);
+    [SerializeField] private Vector2 randomVolume = new(1f, 1f);
+    [SerializeField] private float cooldown = 0.05f;
+
+    [SerializeField] private List<AudioVariation> audioVariations;
 
     public AudioCategory AudioCategory => audioCategory;
     public bool Loop => loop;
     public bool Spatial => spatial;
     public AudioPriority Priority => priority;
-    public List<AudioEntry> AudioEntries => audioEntries;
+    public float RandomPitch => Random.Range(randomPitch.x, randomPitch.y);
+    public float RandomVolume => Random.Range(randomVolume.x, randomVolume.y);
+    public float Cooldown => cooldown;
+    public IReadOnlyList<AudioVariation> AudioVariations => audioVariations;
 
-    public AudioEntry GetRandomEntry()
+    public AudioVariation GetRandomEntry()
     {
-        return audioEntries.Random();
+        if (audioVariations == null || audioVariations.Count == 0)
+        {
+            return null;
+        }
+
+        return audioVariations.Random();
     }
 
-    public AudioEntry GetEntry(int index)
+    public AudioVariation GetEntry(int index)
     {
-        if (0 <= index && index < audioEntries.Count)
+        if (0 <= index && index < audioVariations.Count)
         {
-            return audioEntries[index];
+            return audioVariations[index];
         }
 
         return GetRandomEntry();
@@ -91,7 +102,7 @@ public class AudioData : ScriptableObject
 }
 
 [System.Serializable]
-public class AudioEntry
+public class AudioVariation
 {
     [SerializeField] private AudioClip audioClip;
     [Range(0f, 1f)][SerializeField] private float volume = 1f;
