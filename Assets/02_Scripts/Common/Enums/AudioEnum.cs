@@ -3,7 +3,15 @@ namespace AudioEnum
     public enum AudioCategory
     {
         Bgm,
-        Sfx
+        Sfx,    // 3D 월드 사운드
+        UI,     // UI
+    }
+
+    public enum AudioMixerGroupType
+    {
+        Master,
+        Bgm,
+        Sfx,
     }
 
     public enum AudioName
@@ -100,12 +108,5 @@ namespace AudioEnum
         // === Test ===
         Test_Bgm,
         Test_Sfx,
-    }
-
-    public enum AudioMixerGroupType
-    {
-        Master,
-        Bgm,
-        Sfx,
     }
 }
