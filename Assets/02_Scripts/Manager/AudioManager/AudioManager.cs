@@ -22,14 +22,11 @@ public class AudioManager : GlobalSingleton<AudioManager>
     [SerializeField] private int maxSfxPoolSize = 20;
     [SerializeField] private AudioSource sourcePrefab;
 
-    private IAudioInstance bgmAudioInstance;    // BGM
-    private IAudioSourcePool pool;              // SFX 풀
 
     [Header("오디오 믹서")]
     [SerializeField] private AudioMixer audioMixer;
 
     private AudioService audioService;
-    private AudioMixerController audioMixerController;
 
     private bool isPause = false;
     #endregion
@@ -40,12 +37,14 @@ public class AudioManager : GlobalSingleton<AudioManager>
         base.Awake();
 
         var repository = new AudioRepository(audioDatabase, new UnityRandom());
-        audioMixerController = new AudioMixerController(audioMixer);
-        audioService = new AudioService(repository, audioMixerController, spatialMinDistance, spatialMaxDistance);
+        var mixerController = new AudioMixerController(audioMixer);
 
-        InitializeSources();
+        audioService = new AudioService(repository, mixerController, spatialMinDistance, spatialMaxDistance);
 
-        bgmAudioInstance.SetOutputAudioMixerGroup(audioMixerController.BgmGroup);
+        IAudioInstance bgmInstance = CreateBgmInstance();
+        IAudioSourcePool pool = CreateAudioSourcePool();
+
+        audioService.InitializeRuntime(bgmInstance, pool);
     }
 
     private void Start()
@@ -72,15 +71,18 @@ public class AudioManager : GlobalSingleton<AudioManager>
         audioDatabase = database;
     }
 
-    private void InitializeSources()
+    private AudioInstance CreateBgmInstance()
     {
-        GameObject bgmGo = new GameObject("BGM_Source");
-        GameObject sfxGo = new GameObject("SFX_Root");
-        bgmGo.transform.parent = transform;
-        sfxGo.transform.parent = transform;
+        GameObject newGo = new("BGM_Source");
+        newGo.transform.parent = transform;
+        return new AudioInstance(newGo.AddComponent<AudioSource>());
+    }
 
-        bgmAudioInstance = new AudioInstance(bgmGo.AddComponent<AudioSource>());
-        pool = new AudioSourcePool(sourcePrefab, sfxGo.transform, sfxPoolSize);
+    private AudioSourcePool CreateAudioSourcePool()
+    {
+        GameObject newGo = new("AudioSource_Root");
+        newGo.transform.parent = transform;
+        return new AudioSourcePool(sourcePrefab, newGo.transform, sfxPoolSize);
     }
     #endregion
 
@@ -90,45 +92,33 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlayBgm(AudioName audioName, int clipIndex = -1, bool loop = true, float pitch = 1f)
     {
-        bgmAudioInstance.Stop();
-        audioService.Play(AudioCategory.Bgm, audioName, bgmAudioInstance, null, clipIndex, loop, pitch);
+        audioService.Play(AudioCategory.Bgm, audioName, clipIndex, loop, pitch);
     }
 
     /// <summary>
     /// 2D 사운드 재생 (UI 등 거리 기반이 필요 없는 사운드)
     /// </summary>
-    public void PlaySfx2D(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfx(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
-        IAudioInstance instance = pool.Get();
-        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, clipIndex, loop, pitch);
+        audioService.Play(AudioCategory.Sfx, audioName, clipIndex, loop, pitch);
     }
 
     /// <summary>
     /// 3D 사운드 재생 (고정 위치 사운드 재생용)
     /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
     /// </summary>
-    public void PlaySfx3D(AudioName audioName, Vector3 position, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfx(AudioName audioName, Vector3 position, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
-        IAudioInstance instance = pool.Get();
-        instance.SetPosition(position);
-        audioService.Play(AudioCategory.Sfx, audioName, instance, pool, clipIndex, loop, pitch, useSpatial: true);
+        audioService.Play(AudioCategory.Sfx, audioName, position, clipIndex, loop, pitch);
     }
 
     /// <summary>
     /// 3D 사운드 재생 (따라다니는 사운드 재생용)
     /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
     /// </summary>
-    public void PlaySfx3D(AudioName audioName, Transform transform, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfx(AudioName audioName, Transform transform, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
-        IAudioInstance instance = pool.Get();
-        instance.SetPosition(transform.position);
-        PlayingAudio playingAudio = audioService
-            .Play(AudioCategory.Sfx, audioName, instance, pool, clipIndex, loop, pitch, useSpatial: true);
-
-        if (playingAudio != null)
-        {
-            playingAudio.follow = transform;
-        }
+        audioService.Play(AudioCategory.Sfx, audioName, transform, clipIndex, loop, pitch);
     }
     #endregion
 
@@ -137,7 +127,6 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         if (isPause) return;
         isPause = true;
-        bgmAudioInstance.Pause();
         audioService.PauseAll();
     }
 
@@ -145,13 +134,12 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         if (!isPause) return;
         isPause = false;
-        bgmAudioInstance.UnPause();
         audioService.UnPauseAll();
     }
 
     public void StopBgm()
     {
-        bgmAudioInstance.Stop();
+        audioService.StopBgm();
     }
 
     public void StopAllSfx()
@@ -161,7 +149,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
     public void StopAll()
     {
-        bgmAudioInstance.Stop();
+        audioService.StopBgm();
         StopAllSfx();
     }
     #endregion
@@ -169,12 +157,12 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #region 볼륨 조절
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
-        audioMixerController.SetVolume(type, normalized);
+        audioService.SetVolume(type, normalized);
     }
 
     public float GetVolume(AudioMixerGroupType type)
     {
-        return audioMixerController.GetVolume01(type);
+        return audioService.GetVolume(type);
     }
     #endregion
 

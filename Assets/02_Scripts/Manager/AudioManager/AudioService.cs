@@ -1,5 +1,6 @@
 using AudioEnum;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 오디오 재생, 볼륨 관리
@@ -12,10 +13,15 @@ public class AudioService
 
     private readonly List<PlayingAudio> activeAudios = new();
 
+    private IAudioInstance bgmInstance;    // BGM
+    private IAudioSourcePool pool;              // SFX 풀
+
+    // todo: 확정되면 상수로 빼기
     private readonly float spatialMinDistance;
     private readonly float spatialMaxDistance;
     #endregion
 
+    #region 초기화
     public AudioService(
         AudioRepository repository,
         AudioMixerController mixerController,
@@ -27,6 +33,14 @@ public class AudioService
         spatialMinDistance = minDist;
         spatialMaxDistance = maxDist;
     }
+
+    public void InitializeRuntime(IAudioInstance bgmInstance, IAudioSourcePool pool)
+    {
+        this.bgmInstance = bgmInstance;
+        this.pool = pool;
+        bgmInstance.SetOutputAudioMixerGroup(mixerController.BgmGroup);
+    }
+    #endregion
 
     public void Update()
     {
@@ -48,33 +62,28 @@ public class AudioService
         }
     }
 
-    public PlayingAudio Play(
+    public void Play(
         AudioCategory audioCategory,
         AudioName audioName,
-        IAudioInstance instance,
-        IAudioSourcePool pool,
         int clipIndex,
         bool loop,
-        float pitch,
-        bool useSpatial = false)
+        float pitch)
     {
-        if (!repository.TryGetAudioEntry(audioName, clipIndex, out AudioEntry entry)) { return null; }
+        IAudioInstance instance = (audioCategory) switch
+        {
+            AudioCategory.Bgm => bgmInstance,
+            _ => pool.Get()
+        };
 
-        instance.SetClip(entry.AudioClip);
-        instance.SetLoop(loop);
-        instance.SetPitch(pitch);
-        instance.SetVolume(entry.Volume);
-
-        instance.SetOutputAudioMixerGroup(
-            audioCategory == AudioCategory.Bgm
-            ? mixerController.BgmGroup
-            : mixerController.SfxGroup);
+        if (!SetInstance(audioName, clipIndex, loop, pitch, instance)) { return; }
 
         if (audioCategory == AudioCategory.Bgm)
         {
             instance.Play();
-            return null;
+            return;
         }
+
+        instance.SetOutputAudioMixerGroup(mixerController.SfxGroup);
 
         var newPlayingAudio = new PlayingAudio
         {
@@ -84,15 +93,106 @@ public class AudioService
 
         activeAudios.Add(newPlayingAudio);
 
-        ApplySpatial(instance, useSpatial);
+        ApplySpatial(instance, useSpatial: false);
 
         instance.Play();
+    }
 
-        return newPlayingAudio;
+    public void Play(
+        AudioCategory audioCategory,
+        AudioName audioName,
+        Vector3 position,
+        int clipIndex,
+        bool loop,
+        float pitch)
+    {
+        IAudioInstance instance = (audioCategory) switch
+        {
+            AudioCategory.Bgm => bgmInstance,
+            _ => pool.Get()
+        };
+
+        if (!SetInstance(audioName, clipIndex, loop, pitch, instance)) { return; }
+
+        if (audioCategory == AudioCategory.Bgm)
+        {
+            instance.Play();
+            return;
+        }
+
+        instance.SetPosition(position);
+        instance.SetOutputAudioMixerGroup(mixerController.SfxGroup);
+
+        var newPlayingAudio = new PlayingAudio
+        {
+            instance = instance,
+            pool = pool
+        };
+
+        activeAudios.Add(newPlayingAudio);
+
+        ApplySpatial(instance, useSpatial: true);
+
+        instance.Play();
+    }
+
+    public void Play(
+        AudioCategory audioCategory,
+        AudioName audioName,
+        Transform transform,
+        int clipIndex,
+        bool loop,
+        float pitch)
+    {
+        IAudioInstance instance = (audioCategory) switch
+        {
+            AudioCategory.Bgm => bgmInstance,
+            _ => pool.Get()
+        };
+
+        if (!SetInstance(audioName, clipIndex, loop, pitch, instance)) { return; }
+
+        if (audioCategory == AudioCategory.Bgm)
+        {
+            instance.Play();
+            return;
+        }
+
+        instance.SetPosition(transform.position);
+        instance.SetOutputAudioMixerGroup(mixerController.SfxGroup);
+
+        var newPlayingAudio = new PlayingAudio
+        {
+            instance = instance,
+            pool = pool,
+            follow = transform
+        };
+
+        activeAudios.Add(newPlayingAudio);
+
+        ApplySpatial(instance, useSpatial: true);
+
+        instance.Play();
+    }
+
+    private bool SetInstance(AudioName audioName, int clipIndex, bool loop, float pitch, IAudioInstance instance)
+    {
+        if (!repository.TryGetAudioEntry(audioName, clipIndex, out AudioEntry entry))
+        {
+            return false;
+        }
+
+        instance.SetClip(entry.AudioClip);
+        instance.SetLoop(loop);
+        instance.SetPitch(pitch);
+        instance.SetVolume(entry.Volume);
+
+        return true;
     }
 
     public void PauseAll()
     {
+        bgmInstance.Pause();
         foreach (PlayingAudio audio in activeAudios)
         {
             audio.instance.Pause();
@@ -101,10 +201,16 @@ public class AudioService
 
     public void UnPauseAll()
     {
+        bgmInstance.UnPause();
         foreach (PlayingAudio audio in activeAudios)
         {
             audio.instance.UnPause();
         }
+    }
+
+    public void StopBgm()
+    {
+        bgmInstance.Stop();
     }
 
     public void StopAllSfx()
@@ -128,4 +234,16 @@ public class AudioService
             instance.Set2D();
         }
     }
+
+    #region 볼륨 조절
+    public void SetVolume(AudioMixerGroupType type, float normalized)
+    {
+        mixerController.SetVolume(type, normalized);
+    }
+
+    public float GetVolume(AudioMixerGroupType type)
+    {
+        return mixerController.GetVolume01(type);
+    }
+    #endregion
 }

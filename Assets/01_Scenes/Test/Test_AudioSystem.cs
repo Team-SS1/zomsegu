@@ -57,19 +57,19 @@ public class Test_AudioSystem : MonoBehaviour
 
     public void Example_PlayTestSfx2D()
     {
-        mg.PlaySfx2D(AudioEnum.AudioName.Test_Sfx);
+        mg.PlaySfx(AudioEnum.AudioName.Test_Sfx);
     }
 
     public void Example_PlayTestSfx3D_Position()
     {
         // 특정 위치에서 작동하는 sfx
-        mg.PlaySfx3D(AudioEnum.AudioName.Test_Sfx, Vector3.zero);
+        mg.PlaySfx(AudioEnum.AudioName.Test_Sfx, Vector3.zero);
     }
 
     public void Example_PlayTestSfx3D_Transform()
     {
         // 특정 대상을 따라가는 sfx
-        mg.PlaySfx3D(AudioEnum.AudioName.Test_Sfx, followTarget);
+        mg.PlaySfx(AudioEnum.AudioName.Test_Sfx, followTarget);
     }
 
     public void Example_Pause()
