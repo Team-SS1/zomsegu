@@ -7,15 +7,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SoDatabase", menuName = "SO/Database/SO Database")]
 public class SoDatabase : ScriptableObject
 {
-    [SerializeField] private List<ScriptableObject> _list = new();
-    protected List<ScriptableObject> List => _list;
-    public int Count => _list.Count;
+    [SerializeField] private List<ScriptableObject> list = new();
+    protected List<ScriptableObject> List => list;
+    public int Count => list.Count;
 
     public List<T> GetDatabase<T>() where T : ScriptableObject
     {
         List<T> newList = new();
 
-        foreach (ScriptableObject so in _list)
+        foreach (ScriptableObject so in list)
         {
             T t = so as T;
             if (t != null)
@@ -26,4 +26,12 @@ public class SoDatabase : ScriptableObject
 
         return newList;
     }
+
+    #region 에디터 전용
+#if UNITY_EDITOR
+    protected virtual void Reset()
+    {
+    }
+#endif
+    #endregion
 }

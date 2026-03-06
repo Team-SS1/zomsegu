@@ -1,0 +1,275 @@
+[
+  {
+    "ItemID": 36000,
+    "ItemName": "생수500ml",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36001,
+    "ItemName": "물 2L",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36002,
+    "ItemName": "캔커피",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36003,
+    "ItemName": "캔콜라",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36004,
+    "ItemName": "캔사이다",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36005,
+    "ItemName": "페트병콜라",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36006,
+    "ItemName": "페트병사이다",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36007,
+    "ItemName": "비타민음료",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36008,
+    "ItemName": "포도주스",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36009,
+    "ItemName": "소화제",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36010,
+    "ItemName": "쌍화탕",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36200,
+    "ItemName": "라면",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36201,
+    "ItemName": "즉석밥",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36202,
+    "ItemName": "깡통햄",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36203,
+    "ItemName": "골뱅이 통조림",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36204,
+    "ItemName": "황도 통조림",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36205,
+    "ItemName": "참치캔",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36206,
+    "ItemName": "고추참치캔",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36400,
+    "ItemName": "시리얼",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36401,
+    "ItemName": "비스킷",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36402,
+    "ItemName": "육포",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36403,
+    "ItemName": "초콜릿",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36404,
+    "ItemName": "초콜릿바",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36405,
+    "ItemName": "초코파이",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36406,
+    "ItemName": "다이제 과자",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36407,
+    "ItemName": "감자칩",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36408,
+    "ItemName": "A사 과자",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36409,
+    "ItemName": "견과류팩",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36410,
+    "ItemName": "건오징어",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36411,
+    "ItemName": "풍선껌",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36412,
+    "ItemName": "박하사탕",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36414,
+    "ItemName": "청포도 사탕",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36415,
+    "ItemName": "껌",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36416,
+    "ItemName": "꿀",
+    "ItemType": 7,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36800,
+    "ItemName": "진통제",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36802,
+    "ItemName": "소주",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 37001,
+    "ItemName": "담배",
+    "ItemType": 8,
+    "ItemRarity": 0,
+    "MaxDropCount": 10
+  },
+  {
+    "ItemID": 37002,
+    "ItemName": "건전지",
+    "ItemType": 8,
+    "ItemRarity": 2,
+    "MaxDropCount": 4
+  },
+  {
+    "ItemID": 37008,
+    "ItemName": "라이터",
+    "ItemType": 8,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  }
+]

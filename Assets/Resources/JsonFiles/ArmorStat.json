@@ -1,0 +1,207 @@
+[
+  {
+    "ItemID": 32000,
+    "ArmorType": 0,
+    "Durability": 10
+  },
+  {
+    "ItemID": 32001,
+    "ArmorType": 0,
+    "Durability": 30
+  },
+  {
+    "ItemID": 32002,
+    "ArmorType": 0,
+    "Durability": 20
+  },
+  {
+    "ItemID": 32003,
+    "ArmorType": 0,
+    "Durability": 40
+  },
+  {
+    "ItemID": 32004,
+    "ArmorType": 0,
+    "Durability": 30
+  },
+  {
+    "ItemID": 32005,
+    "ArmorType": 0,
+    "Durability": 10
+  },
+  {
+    "ItemID": 32006,
+    "ArmorType": 0,
+    "Durability": 40
+  },
+  {
+    "ItemID": 32007,
+    "ArmorType": 0,
+    "Durability": 7
+  },
+  {
+    "ItemID": 32008,
+    "ArmorType": 0,
+    "Durability": 5
+  },
+  {
+    "ItemID": 32009,
+    "ArmorType": 0,
+    "Durability": 20
+  },
+  {
+    "ItemID": 32010,
+    "ArmorType": 0,
+    "Durability": 10
+  },
+  {
+    "ItemID": 32011,
+    "ArmorType": 0,
+    "Durability": 15
+  },
+  {
+    "ItemID": 32012,
+    "ArmorType": 0,
+    "Durability": 15
+  },
+  {
+    "ItemID": 32013,
+    "ArmorType": 0,
+    "Durability": 15
+  },
+  {
+    "ItemID": 33000,
+    "ArmorType": 1,
+    "Durability": 5
+  },
+  {
+    "ItemID": 33001,
+    "ArmorType": 1,
+    "Durability": 25
+  },
+  {
+    "ItemID": 33002,
+    "ArmorType": 1,
+    "Durability": 25
+  },
+  {
+    "ItemID": 33003,
+    "ArmorType": 1,
+    "Durability": 20
+  },
+  {
+    "ItemID": 33004,
+    "ArmorType": 1,
+    "Durability": 20
+  },
+  {
+    "ItemID": 33005,
+    "ArmorType": 1,
+    "Durability": 25
+  },
+  {
+    "ItemID": 33006,
+    "ArmorType": 1,
+    "Durability": 40
+  },
+  {
+    "ItemID": 33007,
+    "ArmorType": 1,
+    "Durability": 20
+  },
+  {
+    "ItemID": 33008,
+    "ArmorType": 1,
+    "Durability": 10
+  },
+  {
+    "ItemID": 33009,
+    "ArmorType": 1,
+    "Durability": 5
+  },
+  {
+    "ItemID": 33010,
+    "ArmorType": 1,
+    "Durability": 10
+  },
+  {
+    "ItemID": 33011,
+    "ArmorType": 1,
+    "Durability": 15
+  },
+  {
+    "ItemID": 33012,
+    "ArmorType": 1,
+    "Durability": 7
+  },
+  {
+    "ItemID": 33013,
+    "ArmorType": 1,
+    "Durability": 30
+  },
+  {
+    "ItemID": 33014,
+    "ArmorType": 1,
+    "Durability": 15
+  },
+  {
+    "ItemID": 33015,
+    "ArmorType": 1,
+    "Durability": 7
+  },
+  {
+    "ItemID": 33016,
+    "ArmorType": 1,
+    "Durability": 5
+  },
+  {
+    "ItemID": 33017,
+    "ArmorType": 1,
+    "Durability": 7
+  },
+  {
+    "ItemID": 33018,
+    "ArmorType": 1,
+    "Durability": 10
+  },
+  {
+    "ItemID": 34000,
+    "ArmorType": 2,
+    "Durability": 25
+  },
+  {
+    "ItemID": 34001,
+    "ArmorType": 2,
+    "Durability": 15
+  },
+  {
+    "ItemID": 34002,
+    "ArmorType": 2,
+    "Durability": 10
+  },
+  {
+    "ItemID": 34003,
+    "ArmorType": 2,
+    "Durability": 15
+  },
+  {
+    "ItemID": 34004,
+    "ArmorType": 2,
+    "Durability": 40
+  },
+  {
+    "ItemID": 34005,
+    "ArmorType": 2,
+    "Durability": 20
+  },
+  {
+    "ItemID": 34006,
+    "ArmorType": 2,
+    "Durability": 10
+  },
+  {
+    "ItemID": 34007,
+    "ArmorType": 2,
+    "Durability": 30
+  }
+]

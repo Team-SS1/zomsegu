@@ -1,0 +1,240 @@
+[
+  {
+    "ItemID": 33002,
+    "ItemName": "검은색 패딩",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33003,
+    "ItemName": "회색 후드티",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33004,
+    "ItemName": "회색 후드집업",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33005,
+    "ItemName": "카키색 야상",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33007,
+    "ItemName": "정장상의",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33008,
+    "ItemName": "검은색 맨투맨",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33009,
+    "ItemName": "검은색 면티",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33010,
+    "ItemName": "파란색 스웨터",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33011,
+    "ItemName": "회색 맨투맨",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33012,
+    "ItemName": "녹색 체크무늬셔츠",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33013,
+    "ItemName": "가죽자켓",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33014,
+    "ItemName": "남색 맨투맨",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33015,
+    "ItemName": "흰색 와이셔츠",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33016,
+    "ItemName": "흰색 면티",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33017,
+    "ItemName": "노란색 체크무늬셔츠",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33018,
+    "ItemName": "노란색 스웨터",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34001,
+    "ItemName": "검은색 면바지",
+    "ItemType": 2,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34002,
+    "ItemName": "검은색 슬랙스",
+    "ItemType": 2,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34003,
+    "ItemName": "청바지",
+    "ItemType": 2,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34005,
+    "ItemName": "정장하의",
+    "ItemType": 2,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34006,
+    "ItemName": "트레이닝복",
+    "ItemType": 2,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34007,
+    "ItemName": "가죽바지",
+    "ItemType": 2,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35001,
+    "ItemName": "학교가방",
+    "ItemType": 4,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35002,
+    "ItemName": "백팩",
+    "ItemType": 4,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35100,
+    "ItemName": "런닝화",
+    "ItemType": 3,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35101,
+    "ItemName": "고급농구화",
+    "ItemType": 3,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35102,
+    "ItemName": "검은색 슬리퍼",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35103,
+    "ItemName": "회색 운동화",
+    "ItemType": 3,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35105,
+    "ItemName": "검은색 구두",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35106,
+    "ItemName": "갈색 구두",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35107,
+    "ItemName": "단화",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35108,
+    "ItemName": "워커",
+    "ItemType": 3,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35109,
+    "ItemName": "하이힐",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35201,
+    "ItemName": "갈색 목도리",
+    "ItemType": 6,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  }
+]

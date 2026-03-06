@@ -11,13 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Send Discord Message
         run: |
           BRANCH="${{ github.ref_name }}"
           ACTOR="${{ github.actor }}"
-          MESSAGE="${{ github.event.head_commit.message }}"
-          URL="${{ github.event.head_commit.url }}"
           REPO="${{ github.repository }}"
+          COMPARE="${{ github.event.compare }}"
+
+          RANGE="${{ github.event.before }}..${{ github.sha }}"
+          COUNT=$(git rev-list --count $RANGE)
+          COMMITS=$(git log $RANGE -n 5 --pretty=format:'`%h` - %s')
+
+          if [ "$COUNT" -gt 5 ]; then
+            REMAIN=$((COUNT - 5))
+            COMMITS="$COMMITS\n\n+ $REMAIN more commits..."
+          fi
 
           if [ "$BRANCH" = "main" ]; then
             COLOR=15158332   # 빨강
@@ -29,26 +41,27 @@ jobs:
             PARSE='[]'
           fi
 
+          TITLE="$COUNT new commits pushed to $BRANCH by $ACTOR"
+
           payload=$(jq -n \
+            --arg title "$TITLE" \
             --arg branch "$BRANCH" \
-            --arg actor "$ACTOR" \
-            --arg msg "$MESSAGE" \
-            --arg url "$URL" \
+            --arg commits "$COMMITS" \
             --arg repo "$REPO" \
+            --arg compare "$COMPARE" \
             --arg mention "$MENTION" \
             --argjson color "$COLOR" \
             --argjson parse "$PARSE" \
             '{
               content: $mention,
               embeds: [{
-                title: "🚀 브랜치 업데이트",
+                title: $title,
                 color: $color,
                 fields: [
                   {name: "📦 Repository", value: $repo, inline: true},
                   {name: "🌿 Branch", value: $branch, inline: true},
-                  {name: "👤 Author", value: $actor, inline: true},
-                  {name: "📝 Commit", value: $msg},
-                  {name: "🔗 Link", value: $url}
+                  {name: "📝 Commits", value: $commits},
+                  {name: "🔗 Link", value: $compare}
                 ],
                 footer: {
                   text: "GitHub → Discord 자동 알림"

@@ -1,0 +1,643 @@
+[
+  {
+    "ItemID": 30001,
+    "ItemName": "나무 방망이",
+    "ItemType": 5,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30002,
+    "ItemName": "알루미늄 방망이",
+    "ItemType": 5,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30003,
+    "ItemName": "골프채",
+    "ItemType": 5,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30004,
+    "ItemName": "4번 아이언",
+    "ItemType": 5,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30005,
+    "ItemName": "장도리",
+    "ItemType": 5,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30006,
+    "ItemName": "식칼",
+    "ItemType": 5,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30007,
+    "ItemName": "장우산",
+    "ItemType": 5,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30008,
+    "ItemName": "몽키스패너",
+    "ItemType": 5,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30009,
+    "ItemName": "대걸레봉",
+    "ItemType": 5,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30010,
+    "ItemName": "사시미칼",
+    "ItemType": 5,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 30011,
+    "ItemName": "각목",
+    "ItemType": 5,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32000,
+    "ItemName": "야구모자",
+    "ItemType": 0,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32001,
+    "ItemName": "야구헬맷",
+    "ItemType": 0,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32002,
+    "ItemName": "자전거헬맷",
+    "ItemType": 0,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32003,
+    "ItemName": "방탄모",
+    "ItemType": 0,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32004,
+    "ItemName": "안전모",
+    "ItemType": 0,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32005,
+    "ItemName": "카키색 벙거지모자",
+    "ItemType": 0,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32006,
+    "ItemName": "오토바이헬맷",
+    "ItemType": 0,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32007,
+    "ItemName": "남색 비니",
+    "ItemType": 0,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32008,
+    "ItemName": "스냅백",
+    "ItemType": 0,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32009,
+    "ItemName": "군밤모자",
+    "ItemType": 0,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32010,
+    "ItemName": "대두볼캡",
+    "ItemType": 0,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32011,
+    "ItemName": "파란색 헤드기어",
+    "ItemType": 0,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 32013,
+    "ItemName": "빨간색 헤드기어",
+    "ItemType": 0,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33000,
+    "ItemName": "야구유니폼상의",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33001,
+    "ItemName": "야구점퍼",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33002,
+    "ItemName": "검은색 패딩",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33003,
+    "ItemName": "회색 후드티",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33004,
+    "ItemName": "회색 후드집업",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33005,
+    "ItemName": "카키색 야상",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33006,
+    "ItemName": "군복상의",
+    "ItemType": 1,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33007,
+    "ItemName": "정장상의",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33008,
+    "ItemName": "검은색 맨투맨",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33009,
+    "ItemName": "검은색 면티",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33010,
+    "ItemName": "파란색 스웨터",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33011,
+    "ItemName": "회색 맨투맨",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33012,
+    "ItemName": "녹색 체크무늬셔츠",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33013,
+    "ItemName": "가죽자켓",
+    "ItemType": 1,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33014,
+    "ItemName": "남색 맨투맨",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33015,
+    "ItemName": "흰색 와이셔츠",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33016,
+    "ItemName": "흰색 면티",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33017,
+    "ItemName": "노란색 체크무늬셔츠",
+    "ItemType": 1,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 33018,
+    "ItemName": "노란색 스웨터",
+    "ItemType": 1,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34000,
+    "ItemName": "야구유니폼하의",
+    "ItemType": 2,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34001,
+    "ItemName": "검은색 면바지",
+    "ItemType": 2,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34002,
+    "ItemName": "검은색 슬랙스",
+    "ItemType": 2,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34003,
+    "ItemName": "청바지",
+    "ItemType": 2,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34004,
+    "ItemName": "군복하의",
+    "ItemType": 2,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34005,
+    "ItemName": "정장하의",
+    "ItemType": 2,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34006,
+    "ItemName": "트레이닝복",
+    "ItemType": 2,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 34007,
+    "ItemName": "가죽바지",
+    "ItemType": 2,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35000,
+    "ItemName": "야구가방",
+    "ItemType": 4,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35001,
+    "ItemName": "학교가방",
+    "ItemType": 4,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35002,
+    "ItemName": "백팩",
+    "ItemType": 4,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35003,
+    "ItemName": "파란색 등산가방",
+    "ItemType": 4,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35004,
+    "ItemName": "빨간색 등산가방",
+    "ItemType": 4,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35005,
+    "ItemName": "군용배낭",
+    "ItemType": 4,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemType": 4,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35100,
+    "ItemName": "런닝화",
+    "ItemType": 3,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35101,
+    "ItemName": "고급농구화",
+    "ItemType": 3,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35102,
+    "ItemName": "검은색 슬리퍼",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35103,
+    "ItemName": "회색 운동화",
+    "ItemType": 3,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35104,
+    "ItemName": "군용 부츠",
+    "ItemType": 3,
+    "ItemRarity": 3,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35105,
+    "ItemName": "검은색 구두",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35106,
+    "ItemName": "갈색 구두",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35107,
+    "ItemName": "단화",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35108,
+    "ItemName": "워커",
+    "ItemType": 3,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35109,
+    "ItemName": "하이힐",
+    "ItemType": 3,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35201,
+    "ItemName": "갈색 목도리",
+    "ItemType": 6,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35202,
+    "ItemName": "목장갑",
+    "ItemType": 6,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 35203,
+    "ItemName": "파란색 팔목보호대",
+    "ItemType": 6,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36000,
+    "ItemName": "생수500ml",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36003,
+    "ItemName": "캔콜라",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36004,
+    "ItemName": "캔사이다",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36403,
+    "ItemName": "초콜릿",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36404,
+    "ItemName": "초콜릿바",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36405,
+    "ItemName": "초코파이",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 36409,
+    "ItemName": "견과류팩",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36412,
+    "ItemName": "박하사탕",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36413,
+    "ItemName": "포도당 캔디",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36414,
+    "ItemName": "청포도 사탕",
+    "ItemType": 7,
+    "ItemRarity": 1,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36415,
+    "ItemName": "껌",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 3
+  },
+  {
+    "ItemID": 36417,
+    "ItemName": "비타민C 알약",
+    "ItemType": 7,
+    "ItemRarity": 0,
+    "MaxDropCount": 4
+  },
+  {
+    "ItemID": 36800,
+    "ItemName": "진통제",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 36801,
+    "ItemName": "항생제",
+    "ItemType": 7,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 37000,
+    "ItemName": "못",
+    "ItemType": 8,
+    "ItemRarity": 0,
+    "MaxDropCount": 10
+  },
+  {
+    "ItemID": 37001,
+    "ItemName": "담배",
+    "ItemType": 8,
+    "ItemRarity": 0,
+    "MaxDropCount": 4
+  },
+  {
+    "ItemID": 37002,
+    "ItemName": "건전지",
+    "ItemType": 8,
+    "ItemRarity": 2,
+    "MaxDropCount": 2
+  },
+  {
+    "ItemID": 37003,
+    "ItemName": "만화책1권",
+    "ItemType": 8,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 37004,
+    "ItemName": "만화책2권",
+    "ItemType": 8,
+    "ItemRarity": 1,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 37007,
+    "ItemName": "지포라이터",
+    "ItemType": 8,
+    "ItemRarity": 2,
+    "MaxDropCount": 1
+  },
+  {
+    "ItemID": 37008,
+    "ItemName": "라이터",
+    "ItemType": 8,
+    "ItemRarity": 0,
+    "MaxDropCount": 1
+  }
+]
