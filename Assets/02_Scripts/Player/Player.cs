@@ -18,8 +18,12 @@ public class Player : MonoBehaviour
     public float MaxTired { get; private set; }
     public int Injury { get; private set; } // enum type ?
 
+    public Inventory Inventory { get; private set; }
+
     public PlayerType playerType;
+
     public PlayerData data;
+
     public void Init()
     {
         data = PlayerManager.Instance.GetPlayerData(playerType);
@@ -41,7 +45,10 @@ public class Player : MonoBehaviour
         MaxTired = BaseStat.MaxTired;
 
         Injury = 0;
+
+        Inventory = new Inventory(playerType);
     }
+
     public void AddHunger(int value)
     {
         Hunger = Mathf.Clamp(Hunger + value, 0, MaxHunger);
