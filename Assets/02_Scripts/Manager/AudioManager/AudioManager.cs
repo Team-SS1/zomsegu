@@ -36,7 +36,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         base.Awake();
 
-        var repository = new AudioRepository(audioDatabase, new UnityRandom());
+        var repository = new AudioRepository(audioDatabase);
         var audioRouter = new AudioMixerRouter(audioMixer);
 
         audioService = new AudioService(repository, audioRouter, spatialMinDistance, spatialMaxDistance);
@@ -82,7 +82,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         GameObject newGo = new("AudioSource_Root");
         newGo.transform.parent = transform;
-        return new AudioSourcePool(sourcePrefab, newGo.transform, sfxPoolSize);
+        return new AudioSourcePool(sourcePrefab, newGo.transform, sfxPoolSize, maxSfxPoolSize);
     }
     #endregion
 
@@ -90,45 +90,35 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// <summary>
     /// BGM 재생
     /// </summary>
-    public void PlayBgm(AudioName audioName, int clipIndex = -1, bool loop = true, float pitch = 1f)
+    public void PlayBgm(AudioName audioName, int clipIndex = -1)
     {
-        audioService.PlayBgm(audioName, new AudioPlayOptions(clipIndex, loop, pitch));
-    }
-
-    public void PlaySfxUI(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
-    {
-        audioService.PlaySfx(AudioCategory.UI, audioName, new AudioPlayOptions(clipIndex, loop, pitch));
+        audioService.PlayBgm(audioName, clipIndex);
     }
 
     /// <summary>
     /// 2D 사운드 재생 (발소리 등 거리 기반이 필요 없는 사운드)
     /// </summary>
-    public void PlaySfx2D(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfx(AudioName audioName, int clipIndex = -1)
     {
-        audioService.PlaySfx(AudioCategory.Gameplay, audioName, new AudioPlayOptions(clipIndex, loop, pitch));
+        audioService.PlaySfx(audioName, clipIndex);
     }
 
     /// <summary>
     /// 3D 사운드 재생 (고정 위치 사운드 재생용)
     /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
     /// </summary>
-    public void PlaySfxAt(AudioName audioName, Vector3 position, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfxAt(AudioName audioName, Vector3 position, int clipIndex = -1)
     {
-        audioService.PlayAt(AudioCategory.Gameplay, audioName, position, new AudioPlayOptions(clipIndex, loop, pitch, true));
+        audioService.PlayAt(audioName, position, clipIndex);
     }
 
     /// <summary>
     /// 3D 사운드 재생 (따라다니는 사운드 재생용)
     /// 기본적으로 랜덤 클립 재생(index == -1), idx로 특정 클립 재생 가능
     /// </summary>
-    public void PlaySfxFollow(AudioName audioName, Transform target, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    public void PlaySfxFollow(AudioName audioName, Transform target, int clipIndex = -1)
     {
-        audioService.PlayFollow(AudioCategory.Gameplay, audioName, target, new AudioPlayOptions(clipIndex, loop, pitch, true));
-    }
-
-    public void PlaySfxAmbient2D(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
-    {
-        audioService.PlaySfx(AudioCategory.Ambient, audioName, new AudioPlayOptions(clipIndex, loop, pitch));
+        audioService.PlayFollow(audioName, target, clipIndex);
     }
     #endregion
 

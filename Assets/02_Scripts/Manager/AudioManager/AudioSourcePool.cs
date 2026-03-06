@@ -9,13 +9,16 @@ public class AudioSourcePool : IAudioSourcePool
 {
     private readonly AudioSource origin;
     private readonly Transform root;
-    private readonly List<IAudioInstance> pool = new();
-    private int index = 0;
 
-    public AudioSourcePool(AudioSource origin, Transform root, int size)
+    private readonly List<IAudioInstance> pool = new();
+
+    private readonly int maxSize;
+
+    public AudioSourcePool(AudioSource origin, Transform root, int size, int maxSize)
     {
         this.origin = origin;
         this.root = root;
+        this.maxSize = maxSize;
 
         for (int i = 0; i < size; i++)
         {
@@ -27,23 +30,26 @@ public class AudioSourcePool : IAudioSourcePool
 
     public IAudioInstance Get()
     {
-        // index가 풀 사이즈보다 커지면 다시 처음부터 순회
-        if (index >= pool.Count)
+        foreach (IAudioInstance instance in pool)
         {
-            index %= pool.Count;
+            if (!instance.IsPlaying) return instance;
         }
 
-        // 현재 인덱스의 오디오 소스가 활성화되어 있다면
-        // 1. 새로 생성 후 풀에 추가
-        // 2. 해당 index로 이동
-        if (pool[index].IsPlaying)
+        IAudioInstance newInstance;
+
+        if (pool.Count < maxSize)
         {
-            var newAudioSource = Object.Instantiate(origin, root);
-            pool.Add(new AudioInstance(newAudioSource));
-            index = pool.Count - 1;
+            var newGo = Object.Instantiate(origin, root);
+            newInstance = new AudioInstance(newGo);
+            pool.Add(newInstance);
+        }
+        else
+        {
+            newInstance = LowestPriorityInstance();
+            newInstance.Stop();
         }
 
-        return pool[index++];
+        return newInstance;
     }
 
     public void Release(IAudioInstance instance)
@@ -58,6 +64,20 @@ public class AudioSourcePool : IAudioSourcePool
         {
             Release(instance);
         }
-        index = 0;
+    }
+
+    private IAudioInstance LowestPriorityInstance()
+    {
+        AudioInstance lowest = pool[0] as AudioInstance;
+
+        foreach (IAudioInstance instance in pool)
+        {
+            if (lowest.Priority > ((AudioInstance)instance).Priority)
+            {
+                lowest = instance as AudioInstance;
+            }
+        }
+
+        return lowest;
     }
 }

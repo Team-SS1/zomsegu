@@ -13,7 +13,7 @@ public class AudioService
 
     private readonly Dictionary<AudioCategory, AudioMixerGroupType> routes;
 
-    private readonly List<PlayingAudio> activeAudios = new();
+    private readonly List<ActiveVoice> activeVoices = new();
 
     private IAudioInstance bgmInstance;     // BGM
     private IAudioSourcePool pool;          // SFX 풀
@@ -55,14 +55,14 @@ public class AudioService
 
     public void Update()
     {
-        for (int i = activeAudios.Count - 1; i >= 0; i--)
+        for (int i = activeVoices.Count - 1; i >= 0; i--)
         {
-            PlayingAudio active = activeAudios[i];
+            ActiveVoice active = activeVoices[i];
 
             if (!active.instance.IsPlaying)
             {
                 active.pool?.Release(active.instance);
-                activeAudios.RemoveAt(i);
+                activeVoices.RemoveAt(i);
                 continue;
             }
 
@@ -74,91 +74,86 @@ public class AudioService
     }
 
     #region 오디오 재생
-    public void PlayBgm(AudioName audioName, in AudioPlayOptions options)
+    public void PlayBgm(AudioName audioName, int clipIndex)
     {
         bgmInstance.Stop();
-        PlayCore(AudioCategory.Bgm, audioName, bgmInstance, options);
+        TryPlay(audioName, bgmInstance, clipIndex, out ActiveVoice playingAudio);
     }
 
-    private bool PlayCore(AudioCategory audioCategory, AudioName audioName, IAudioInstance instance, in AudioPlayOptions options)
+    private bool TryPlay(AudioName audioName, IAudioInstance instance, int clipIndex, out ActiveVoice playingAudio)
     {
-        if (!repository.TryGetAudioEntry(audioName, options.clipIndex, out AudioEntry entry))
+        playingAudio = null;
+
+        if (!repository.TryGetAudioData(audioName, out AudioData data))
         {
             return false;
         }
 
+        AudioEntry entry = data.GetEntry(clipIndex);
+
         instance.SetClip(entry.AudioClip);
-        instance.SetLoop(options.loop);
-        instance.SetPitch(options.pitch);
         instance.SetVolume(entry.Volume);
 
-        instance.SetOutputAudioMixerGroup(audioRouter.GetMixerGroup(routes[audioCategory]));
-        ApplySpatial(instance, options.useSpatial);
+        instance.SetLoop(data.Loop);
+        instance.SetOutputAudioMixerGroup(audioRouter.GetMixerGroup(routes[data.AudioCategory]));
+        ApplySpatial(instance, data.Spatial);
+        instance.SetPriority(data.Priority);
 
         instance.Play();
+
+        if (data.AudioCategory != AudioCategory.Bgm)
+        {
+            playingAudio = new ActiveVoice
+            {
+                instance = instance,
+                pool = pool,
+                priority = data.Priority
+            };
+        }
 
         return true;
     }
 
-    public void PlaySfx(AudioCategory audioCategory, AudioName audioName, in AudioPlayOptions options)
+    public void PlaySfx(AudioName audioName, int clipIndex)
     {
         IAudioInstance instance = pool.Get();
-        if (!PlayCore(audioCategory, audioName, instance, options))
+        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice playingAudio))
         {
             pool.Release(instance);
             return;
         }
 
-        var newPlayingAudio = new PlayingAudio
-        {
-            instance = instance,
-            pool = pool
-        };
-
-        activeAudios.Add(newPlayingAudio);
+        activeVoices.Add(playingAudio);
     }
 
-    public void PlayAt(AudioCategory audioCategory, AudioName audioName, Vector3 position, in AudioPlayOptions options)
+    public void PlayAt(AudioName audioName, Vector3 position, int clipIndex)
     {
         IAudioInstance instance = pool.Get();
         instance.SetPosition(position);
-        if (!PlayCore(audioCategory, audioName, instance, options))
+        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice playingAudio))
         {
             pool.Release(instance);
             return;
         }
 
-        var newPlayingAudio = new PlayingAudio
-        {
-            instance = instance,
-            pool = pool
-        };
-
-        activeAudios.Add(newPlayingAudio);
+        activeVoices.Add(playingAudio);
     }
 
     public void PlayFollow(
-        AudioCategory audioCategory,
         AudioName audioName,
         Transform target,
-        in AudioPlayOptions options)
+        int clipIndex)
     {
         IAudioInstance instance = pool.Get();
         instance.SetPosition(target.position);
-        if (!PlayCore(audioCategory, audioName, instance, options))
+        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice playingAudio))
         {
             pool.Release(instance);
             return;
         }
 
-        var newPlayingAudio = new PlayingAudio
-        {
-            instance = instance,
-            pool = pool,
-            follow = target
-        };
-
-        activeAudios.Add(newPlayingAudio);
+        playingAudio.follow = target;
+        activeVoices.Add(playingAudio);
     }
     #endregion
 
@@ -166,7 +161,7 @@ public class AudioService
     public void PauseAll()
     {
         bgmInstance.Pause();
-        foreach (PlayingAudio audio in activeAudios)
+        foreach (ActiveVoice audio in activeVoices)
         {
             audio.instance.Pause();
         }
@@ -175,7 +170,7 @@ public class AudioService
     public void UnPauseAll()
     {
         bgmInstance.UnPause();
-        foreach (PlayingAudio audio in activeAudios)
+        foreach (ActiveVoice audio in activeVoices)
         {
             audio.instance.UnPause();
         }
@@ -190,12 +185,12 @@ public class AudioService
 
     public void StopAllSfx()
     {
-        foreach (PlayingAudio audio in activeAudios)
+        foreach (ActiveVoice audio in activeVoices)
         {
             audio.pool?.Release(audio.instance);
         }
 
-        activeAudios.Clear();
+        activeVoices.Clear();
     }
     #endregion
 

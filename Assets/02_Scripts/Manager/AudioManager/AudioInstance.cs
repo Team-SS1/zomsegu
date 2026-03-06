@@ -1,3 +1,4 @@
+using AudioEnum;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -7,6 +8,7 @@ using UnityEngine.Audio;
 public class AudioInstance : IAudioInstance
 {
     private readonly AudioSource source;
+    private AudioPriority priority;
 
     public AudioInstance(AudioSource source)
     {
@@ -14,6 +16,7 @@ public class AudioInstance : IAudioInstance
     }
 
     public bool IsPlaying => source.isPlaying;
+    public AudioPriority Priority => priority;
 
     #region AudioSource 재생 관리
     public void Play()
@@ -49,18 +52,12 @@ public class AudioInstance : IAudioInstance
     #endregion
 
     #region AudioSoucre 설정
-    public void SetClip(object o)
-    {
-        if (o is AudioClip clip)
-        {
-            source.clip = clip;
-        }
-    }
-
+    public void SetClip(AudioClip clip) => source.clip = clip;
     public void SetLoop(bool loop) => source.loop = loop;
     public void SetPitch(float pitch) => source.pitch = pitch;
     public void SetVolume(float volume) => source.volume = volume;
     public void SetPosition(Vector3 position) => source.transform.position = position;
+    public void SetPriority(AudioPriority priority) => this.priority = priority;
 
     public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup)
     {
