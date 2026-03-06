@@ -41,3 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Ground
+    uniqueID: 3193483643
+    locked: 0
+  - name: GroundDeco
+    uniqueID: 3908414125
+    locked: 0
+  - name: WorldObject
+    uniqueID: 2317366349
+    locked: 0
+  - name: Character
+    uniqueID: 4221471519
+    locked: 0
+  - name: Roof_(Behind)
+    uniqueID: 546995315
+    locked: 0
