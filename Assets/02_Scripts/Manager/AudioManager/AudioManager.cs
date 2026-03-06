@@ -95,12 +95,17 @@ public class AudioManager : GlobalSingleton<AudioManager>
         audioService.PlayBgm(audioName, new AudioPlayOptions(clipIndex, loop, pitch));
     }
 
+    public void PlaySfxUI(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    {
+        audioService.PlaySfx(AudioCategory.UI, audioName, new AudioPlayOptions(clipIndex, loop, pitch));
+    }
+
     /// <summary>
-    /// 2D 사운드 재생 (UI 등 거리 기반이 필요 없는 사운드)
+    /// 2D 사운드 재생 (발소리 등 거리 기반이 필요 없는 사운드)
     /// </summary>
     public void PlaySfx2D(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
-        audioService.PlaySfx(AudioCategory.Sfx, audioName, new AudioPlayOptions(clipIndex, loop, pitch));
+        audioService.PlaySfx(AudioCategory.Gameplay, audioName, new AudioPlayOptions(clipIndex, loop, pitch));
     }
 
     /// <summary>
@@ -109,7 +114,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfxAt(AudioName audioName, Vector3 position, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
-        audioService.Play(AudioCategory.Sfx, audioName, position, new AudioPlayOptions(clipIndex, loop, pitch));
+        audioService.PlayAt(AudioCategory.Gameplay, audioName, position, new AudioPlayOptions(clipIndex, loop, pitch, true));
     }
 
     /// <summary>
@@ -118,7 +123,12 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfxFollow(AudioName audioName, Transform target, int clipIndex = -1, bool loop = false, float pitch = 1f)
     {
-        audioService.Play(AudioCategory.Sfx, audioName, target, new AudioPlayOptions(clipIndex, loop, pitch));
+        audioService.PlayFollow(AudioCategory.Gameplay, audioName, target, new AudioPlayOptions(clipIndex, loop, pitch, true));
+    }
+
+    public void PlaySfxAmbient2D(AudioName audioName, int clipIndex = -1, bool loop = false, float pitch = 1f)
+    {
+        audioService.PlaySfx(AudioCategory.Ambient, audioName, new AudioPlayOptions(clipIndex, loop, pitch));
     }
     #endregion
 
@@ -160,7 +170,6 @@ public class AudioManager : GlobalSingleton<AudioManager>
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
         audioService.SetVolume(type, normalized);
-        SaveVolume(type.ToString(), normalized);
     }
 
     public float GetVolume(AudioMixerGroupType type)
@@ -168,7 +177,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
         return audioService.GetVolume(type);
     }
 
-    private void SaveVolume(string key, float value)
+    public void SaveVolume(string key, float value)
     {
         PlayerPrefs.SetFloat(key, value);
         PlayerPrefs.Save();

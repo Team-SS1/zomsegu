@@ -3,8 +3,9 @@ namespace AudioEnum
     public enum AudioCategory
     {
         Bgm,
-        Sfx,    // 3D 월드 사운드
-        UI,     // UI
+        UI,
+        Gameplay,
+        Ambient,
     }
 
     public enum AudioMixerGroupType
@@ -12,6 +13,9 @@ namespace AudioEnum
         Master,
         Bgm,
         Sfx,
+        UI,
+        Gameplay,
+        Ambient,
     }
 
     public enum AudioName
