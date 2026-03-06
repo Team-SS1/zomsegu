@@ -17,6 +17,8 @@ public class PlayerStat
 	public int StartThirst;
 	public int MaxTired;
 	public int StartTired;
+	public int MaxShock;
+	public int StartShock;
 	public float NoiseRadiusWalk;
 	public float NoiseRadiusRun;
 	public float NoiseRadiusSilentWalk;
