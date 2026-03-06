@@ -30,7 +30,6 @@ public class AudioMixerRouter : IAudioRouter
         string param = type.ToString();
         float db = Mathf.Log10(Mathf.Clamp(normalized, 0.0001f, 1f)) * 20f; // db로 변환
         mixer.SetFloat(param, db);
-        SaveVolume(param, normalized);
     }
 
     public float GetVolume01(AudioMixerGroupType type)
@@ -47,11 +46,5 @@ public class AudioMixerRouter : IAudioRouter
         if (db <= -80f) { return 0f; }
 
         return Mathf.Pow(10f, db / 20f);
-    }
-
-    private void SaveVolume(string key, float value)
-    {
-        PlayerPrefs.SetFloat(key, value);
-        PlayerPrefs.Save();
     }
 }

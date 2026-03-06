@@ -160,11 +160,18 @@ public class AudioManager : GlobalSingleton<AudioManager>
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
         audioService.SetVolume(type, normalized);
+        SaveVolume(type.ToString(), normalized);
     }
 
     public float GetVolume(AudioMixerGroupType type)
     {
         return audioService.GetVolume(type);
+    }
+
+    private void SaveVolume(string key, float value)
+    {
+        PlayerPrefs.SetFloat(key, value);
+        PlayerPrefs.Save();
     }
     #endregion
 
