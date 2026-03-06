@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PlayerEnum;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,8 +17,11 @@ public class Inventory
     private readonly Dictionary<string, int> guidToIndex = new(); //인스턴스형 슬롯 인덱스
     private readonly Dictionary<int, int> stackToIndex = new(); //스택형 슬롯 인덱스
 
-    public Inventory(int capacity = 80, float maxWeight = 40f, float maxVolume = 30f)
+    private readonly PlayerType playerType; //플레이어 타입
+
+    public Inventory(PlayerType player, int capacity = 80, float maxWeight = 40f, float maxVolume = 30f)
     {
+        this.playerType = player;
         Capacity = Mathf.Max(1, capacity);
         MaxWeight = maxWeight;
         MaxVolume = maxVolume;
@@ -68,6 +72,8 @@ public class Inventory
 
         CurrentWeight += addWeight;
         CurrentVolume += addVolume;
+
+        NotifyChanged();
         return true;
     }
     public bool TryAddInstance(int itemId, ItemStack instance) // 외부에서 인스턴스형 아이템 추가
@@ -96,6 +102,8 @@ public class Inventory
 
         CurrentWeight += addWeight;
         CurrentVolume += addVolume;
+
+        NotifyChanged();
         return true;
     }
     public bool TryAddNewInstance(int itemId) //인스턴스형 아이템을 새로 생성하여 추가하는 메서드
@@ -124,6 +132,8 @@ public class Inventory
 
         CurrentWeight += addWeight;
         CurrentVolume += addVolume;
+
+        NotifyChanged();
         return true;
     }
     public bool TryRemoveStack(int index, int amount) //스택형 아이템 제거
@@ -146,6 +156,8 @@ public class Inventory
             slot.clear();
             stackToIndex.Remove(id);
         }
+
+        NotifyChanged();
         return true;
     }
     public bool TryRemoveInstance(string guid, out ItemStack removedItem) // 인스턴스 아이템 제거
@@ -164,6 +176,8 @@ public class Inventory
 
         slot.clear();
         guidToIndex.Remove(guid);
+
+        NotifyChanged();
         return true;
     }
     public bool Swap(int a, int b) //슬롯 간 아이템 교환
@@ -175,6 +189,8 @@ public class Inventory
 
         UpdateIndexForSlot(a);
         UpdateIndexForSlot(b);
+
+        NotifyChanged();
         return true;
     }
     public bool Move(int from, int to) //슬롯 간 아이템 이동 (교환과 달리 빈 슬롯으로 이동할 때만 허용)
@@ -238,5 +254,9 @@ public class Inventory
         }
         CurrentVolume = Mathf.Max(0f, volume);
         CurrentWeight = Mathf.Max(0f, weight);
+    }
+    private void NotifyChanged()
+    {
+        EventManager.TriggerEvent(EventEnum.EventKey.InventoryChanged, playerType);
     }
 }
