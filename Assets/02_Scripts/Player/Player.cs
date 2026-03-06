@@ -37,11 +37,11 @@ public class Player : MonoBehaviour
         Thirst = BaseStat.StartThirst;
         MaxThirst = BaseStat.MaxThirst;
 
-        MaxShock = 7;
-        CurrentShock = 0;
+        MaxShock = BaseStat.MaxShock;
+        CurrentShock = BaseStat.StartShock;
 
         MaxStamina = BaseStat.BaseMaxStamina; // 추후 최대 계산값 적용
-        CurrentStamina = 100;
+        CurrentStamina = BaseStat.BaseStamina;
 
         Tired = BaseStat.StartTired;
         MaxTired = BaseStat.MaxTired;
