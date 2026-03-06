@@ -9,12 +9,12 @@ public class AudioService
 {
     #region 필드
     private readonly AudioRepository repository;
-    private readonly AudioMixerController mixerController;
+    private readonly IAudioRouter audioRouter;
 
     private readonly List<PlayingAudio> activeAudios = new();
 
-    private IAudioInstance bgmInstance;    // BGM
-    private IAudioSourcePool pool;              // SFX 풀
+    private IAudioInstance bgmInstance;     // BGM
+    private IAudioSourcePool pool;          // SFX 풀
 
     // todo: 확정되면 상수로 빼기
     private readonly float spatialMinDistance;
@@ -24,12 +24,12 @@ public class AudioService
     #region 초기화
     public AudioService(
         AudioRepository repository,
-        AudioMixerController mixerController,
+        IAudioRouter audioRouter,
         float minDist,
         float maxDist)
     {
         this.repository = repository;
-        this.mixerController = mixerController;
+        this.audioRouter = audioRouter;
         spatialMinDistance = minDist;
         spatialMaxDistance = maxDist;
     }
@@ -38,7 +38,7 @@ public class AudioService
     {
         this.bgmInstance = bgmInstance;
         this.pool = pool;
-        bgmInstance.SetOutputAudioMixerGroup(mixerController.BgmGroup);
+        bgmInstance.SetOutputAudioMixerGroup(audioRouter.GetMixerGroup(AudioMixerGroupType.Bgm));
     }
     #endregion
 
@@ -83,7 +83,7 @@ public class AudioService
             return;
         }
 
-        instance.SetOutputAudioMixerGroup(mixerController.SfxGroup);
+        instance.SetOutputAudioMixerGroup(router.GetAudioMixerGroup(AudioMixerGroupType.Sfx));
 
         var newPlayingAudio = new PlayingAudio
         {
@@ -121,7 +121,7 @@ public class AudioService
         }
 
         instance.SetPosition(position);
-        instance.SetOutputAudioMixerGroup(mixerController.SfxGroup);
+        instance.SetOutputAudioMixerGroup(router.GetAudioMixerGroup(AudioMixerGroupType.Sfx));
 
         var newPlayingAudio = new PlayingAudio
         {
@@ -159,7 +159,7 @@ public class AudioService
         }
 
         instance.SetPosition(transform.position);
-        instance.SetOutputAudioMixerGroup(mixerController.SfxGroup);
+        instance.SetOutputAudioMixerGroup(router.GetAudioMixerGroup(AudioMixerGroupType.Sfx));
 
         var newPlayingAudio = new PlayingAudio
         {
@@ -238,12 +238,12 @@ public class AudioService
     #region 볼륨 조절
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
-        mixerController.SetVolume(type, normalized);
+        audioRouter.SetVolume(type, normalized);
     }
 
     public float GetVolume(AudioMixerGroupType type)
     {
-        return mixerController.GetVolume01(type);
+        return audioRouter.GetVolume01(type);
     }
     #endregion
 }

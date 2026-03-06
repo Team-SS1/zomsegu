@@ -37,9 +37,9 @@ public class AudioManager : GlobalSingleton<AudioManager>
         base.Awake();
 
         var repository = new AudioRepository(audioDatabase, new UnityRandom());
-        var mixerController = new AudioMixerController(audioMixer);
+        var mixerRouter = new AudioMixerRouter(audioMixer);
 
-        audioService = new AudioService(repository, mixerController, spatialMinDistance, spatialMaxDistance);
+        audioService = new AudioService(repository, mixerRouter, spatialMinDistance, spatialMaxDistance);
 
         IAudioInstance bgmInstance = CreateBgmInstance();
         IAudioSourcePool pool = CreateAudioSourcePool();

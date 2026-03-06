@@ -1,3 +1,4 @@
+using AudioEnum;
 using UnityEngine.Audio;
 
 public interface IAudioSourcePool
@@ -24,4 +25,11 @@ public interface IAudioInstance
     public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup);
     public void Set2D();
     public void Set3D(float minDistance, float maxDistance);
+}
+
+public interface IAudioRouter
+{
+    public AudioMixerGroup GetMixerGroup(AudioMixerGroupType type);
+    public void SetVolume(AudioMixerGroupType type, float normalized);
+    public float GetVolume01(AudioMixerGroupType type);
 }

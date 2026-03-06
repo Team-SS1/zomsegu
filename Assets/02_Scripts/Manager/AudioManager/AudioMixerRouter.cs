@@ -4,15 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioMixerController
+public class AudioMixerRouter : IAudioRouter
 {
     private readonly AudioMixer mixer;
     private readonly Dictionary<AudioMixerGroupType, AudioMixerGroup> mixerGroups = new();
 
-    public AudioMixerGroup BgmGroup => mixerGroups[AudioMixerGroupType.Bgm];
-    public AudioMixerGroup SfxGroup => mixerGroups[AudioMixerGroupType.Sfx];
-
-    public AudioMixerController(AudioMixer mixer)
+    public AudioMixerRouter(AudioMixer mixer)
     {
         if (mixer == null) throw new ArgumentNullException(nameof(mixer));
 
@@ -25,6 +22,8 @@ public class AudioMixerController
             mixerGroups[mixerGroup] = groups[0];
         }
     }
+
+    public AudioMixerGroup GetMixerGroup(AudioMixerGroupType type) => mixerGroups[type];
 
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
