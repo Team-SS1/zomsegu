@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    /*----- Field -----*/
     public int Hunger { get; private set; }
     public int MaxHunger { get; private set; }
     public int Thirst { get; private set; }
@@ -24,6 +25,7 @@ public class Player : MonoBehaviour
 
     public PlayerData data;
 
+    /*----- Initialize -----*/
     public void Init()
     {
         data = PlayerManager.Instance.GetPlayerData(playerType);
