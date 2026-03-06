@@ -113,4 +113,17 @@ namespace AudioEnum
         Test_Bgm,
         Test_Sfx,
     }
+
+    public enum AudioPriority
+    {
+        None = 0,
+        Music = 5,
+        Ambient = 10,
+        Footstep = 20,
+        Normal = 50,
+        Weapon = 70,
+        UI = 80,
+        Important = 90,
+        Critical = 100
+    }
 }
