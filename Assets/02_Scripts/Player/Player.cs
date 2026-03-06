@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     public PlayerType playerType;
     public PlayerStat BaseStat { get; private set; }
 
+    public Inventory Inventory { get; private set; }
     public void Init()
     {
         int id = DataManager.Instance.GetPlayerID(playerType);
@@ -29,6 +30,8 @@ public class Player : MonoBehaviour
         MaxStamina = BaseStat.BaseMaxStamina; // 추후 최대 계산값 적용
         CurrentStamina = 100;
         Injury = 0;
+
+        Inventory = new Inventory(playerType);
     }
     public void AddHunger(int value)
     {
