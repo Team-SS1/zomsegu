@@ -70,19 +70,58 @@ public class AudioService
     public void PlayBgm(AudioName audioName, int clipIndex)
     {
         bgmInstance.Stop();
-        TryPlay(audioName, bgmInstance, clipIndex, out ActiveVoice playingAudio);
+        TryPlay(audioName, bgmInstance, clipIndex, out ActiveVoice activeAudio);
     }
 
-    private bool TryPlay(AudioName audioName, IAudioInstance instance, int clipIndex, out ActiveVoice playingAudio)
+    public void PlaySfx(AudioName audioName, int clipIndex)
     {
-        playingAudio = null;
+        IAudioInstance instance = pool.Get();
+        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice activeAudio))
+        {
+            pool.Release(instance);
+            return;
+        }
+
+        activeVoices.Add(activeAudio);
+    }
+
+    public void PlayAt(AudioName audioName, Vector3 position, int clipIndex)
+    {
+        IAudioInstance instance = pool.Get();
+        instance.SetPosition(position);
+        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice activeAudio))
+        {
+            pool.Release(instance);
+            return;
+        }
+
+        activeVoices.Add(activeAudio);
+    }
+
+    public void PlayFollow(AudioName audioName, Transform target, int clipIndex)
+    {
+        IAudioInstance instance = pool.Get();
+        instance.SetPosition(target.position);
+        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice activeAudio))
+        {
+            pool.Release(instance);
+            return;
+        }
+
+        activeAudio.follow = target;
+        activeVoices.Add(activeAudio);
+    }
+
+    private bool TryPlay(AudioName audioName, IAudioInstance instance, int clipIndex, out ActiveVoice activeAudio)
+    {
+        activeAudio = null;
 
         if (!repository.TryGetAudioData(audioName, out AudioData data))
         {
             return false;
         }
 
-        AudioVariation entry = data.GetEntry(clipIndex);
+        AudioVariation variation = data.GetVariation(clipIndex);
 
         if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime))
         {
@@ -90,7 +129,7 @@ public class AudioService
         }
 
         AudioPlaybackConfig config = new(
-            clip: entry.AudioClip,
+            clip: variation.AudioClip,
             mixerGroup: audioRouter.GetMixerGroup(GetRoute(data.AudioCategory)),
             loop: data.Loop,
             spatial: data.Spatial,
@@ -100,14 +139,14 @@ public class AudioService
 
         instance.SetConfig(config);
 
-        instance.SetVolume(entry.Volume * data.RandomVolume);
+        instance.SetVolume(variation.Volume * data.RandomVolume);
         instance.SetPitch(data.RandomPitch);
 
         instance.Play();
 
         if (data.AudioCategory != AudioCategory.Bgm)
         {
-            playingAudio = new ActiveVoice
+            activeAudio = new ActiveVoice
             {
                 instance = instance,
                 priority = data.Priority
@@ -115,48 +154,6 @@ public class AudioService
         }
 
         return true;
-    }
-
-    public void PlaySfx(AudioName audioName, int clipIndex)
-    {
-        IAudioInstance instance = pool.Get();
-        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice playingAudio))
-        {
-            pool.Release(instance);
-            return;
-        }
-
-        activeVoices.Add(playingAudio);
-    }
-
-    public void PlayAt(AudioName audioName, Vector3 position, int clipIndex)
-    {
-        IAudioInstance instance = pool.Get();
-        instance.SetPosition(position);
-        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice playingAudio))
-        {
-            pool.Release(instance);
-            return;
-        }
-
-        activeVoices.Add(playingAudio);
-    }
-
-    public void PlayFollow(
-        AudioName audioName,
-        Transform target,
-        int clipIndex)
-    {
-        IAudioInstance instance = pool.Get();
-        instance.SetPosition(target.position);
-        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice playingAudio))
-        {
-            pool.Release(instance);
-            return;
-        }
-
-        playingAudio.follow = target;
-        activeVoices.Add(playingAudio);
     }
     #endregion
 

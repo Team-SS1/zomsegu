@@ -32,7 +32,7 @@ public class AudioData : ScriptableObject
     public float Cooldown => cooldown;
     public IReadOnlyList<AudioVariation> AudioVariations => audioVariations;
 
-    public AudioVariation GetRandomEntry()
+    public AudioVariation GetRandomVariation()
     {
         if (audioVariations == null || audioVariations.Count == 0)
         {
@@ -42,14 +42,14 @@ public class AudioData : ScriptableObject
         return audioVariations.Random();
     }
 
-    public AudioVariation GetEntry(int index)
+    public AudioVariation GetVariation(int index)
     {
         if (0 <= index && index < audioVariations.Count)
         {
             return audioVariations[index];
         }
 
-        return GetRandomEntry();
+        return GetRandomVariation();
     }
 
     #region 에디터 전용
