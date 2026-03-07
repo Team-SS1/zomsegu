@@ -20,6 +20,8 @@ public class AudioService
     // todo: 확정되면 상수로 빼기
     private readonly float spatialMinDistance;
     private readonly float spatialMaxDistance;
+
+    private bool isPaused = false;
     #endregion
 
     #region 초기화
@@ -44,13 +46,15 @@ public class AudioService
 
     public void Update()
     {
+        if (isPaused) return;
+
         for (int i = activeVoices.Count - 1; i >= 0; i--)
         {
             ActiveVoice active = activeVoices[i];
 
             if (!active.instance.IsPlaying)
             {
-                active.pool?.Release(active.instance);
+                pool.Release(active.instance);
                 activeVoices.RemoveAt(i);
                 continue;
             }
@@ -106,7 +110,6 @@ public class AudioService
             playingAudio = new ActiveVoice
             {
                 instance = instance,
-                pool = pool,
                 priority = data.Priority
             };
         }
@@ -160,6 +163,9 @@ public class AudioService
     #region 오디오 일시정지
     public void PauseAll()
     {
+        if (isPaused) return;
+        isPaused = true;
+
         bgmInstance.Pause();
         foreach (ActiveVoice audio in activeVoices)
         {
@@ -169,6 +175,9 @@ public class AudioService
 
     public void UnPauseAll()
     {
+        if (!isPaused) return;
+        isPaused = false;
+
         bgmInstance.UnPause();
         foreach (ActiveVoice audio in activeVoices)
         {
@@ -187,7 +196,7 @@ public class AudioService
     {
         foreach (ActiveVoice audio in activeVoices)
         {
-            audio.pool?.Release(audio.instance);
+            pool.Release(audio.instance);
         }
 
         activeVoices.Clear();

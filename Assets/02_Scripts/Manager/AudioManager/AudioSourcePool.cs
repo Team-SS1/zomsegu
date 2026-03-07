@@ -55,7 +55,6 @@ public class AudioSourcePool : IAudioSourcePool
     public void Release(IAudioInstance instance)
     {
         instance.Stop();
-        instance.SetClip(null);
     }
 
     public void ReleaseAll()

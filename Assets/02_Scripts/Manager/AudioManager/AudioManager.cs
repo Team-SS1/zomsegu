@@ -22,13 +22,10 @@ public class AudioManager : GlobalSingleton<AudioManager>
     [SerializeField] private int maxSfxPoolSize = 20;
     [SerializeField] private AudioSource sourcePrefab;
 
-
     [Header("오디오 믹서")]
     [SerializeField] private AudioMixer audioMixer;
 
     private AudioService audioService;
-
-    private bool isPaused = false;
     #endregion
 
     #region Unity API
@@ -125,15 +122,11 @@ public class AudioManager : GlobalSingleton<AudioManager>
     #region 오디오 일시 정지
     public void PauseAll()
     {
-        if (isPaused) return;
-        isPaused = true;
         audioService.PauseAll();
     }
 
     public void ResumeAll()
     {
-        if (!isPaused) return;
-        isPaused = false;
         audioService.UnPauseAll();
     }
     #endregion

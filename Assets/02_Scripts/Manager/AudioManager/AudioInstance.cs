@@ -46,6 +46,7 @@ public class AudioInstance : IAudioInstance
     public void Stop()
     {
         source.Stop();
+        source.clip = null;
         source.gameObject.SetActive(false);
     }
     #endregion
