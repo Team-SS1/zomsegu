@@ -18,16 +18,10 @@ public interface IAudioInstance
     public void UnPause();
     public void Stop();
 
-    public void SetClip(AudioClip clip);
-    public void SetLoop(bool loop);
-    public void SetPitch(float pitch);
+    public void SetConfig(in AudioPlaybackConfig config);
     public void SetVolume(float volume);
+    public void SetPitch(float pitch);
     public void SetPosition(Vector3 position);
-    public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup);
-    public void SetPriority(AudioPriority priority);
-
-    public void Set2D();
-    public void Set3D(float minDistance, float maxDistance);
 }
 
 public interface IAudioRouter

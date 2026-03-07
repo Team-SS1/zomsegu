@@ -10,8 +10,7 @@ public class AudioService
     #region 필드
     private readonly AudioRepository repository;
     private readonly IAudioRouter audioRouter;
-
-    private readonly Dictionary<AudioCategory, AudioMixerGroupType> routes;
+    private readonly AudioCooldown cooldown = new();
 
     private readonly List<ActiveVoice> activeVoices = new();
 
@@ -34,22 +33,12 @@ public class AudioService
         this.audioRouter = audioRouter;
         spatialMinDistance = minDist;
         spatialMaxDistance = maxDist;
-
-        // 오디오 믹서 규칙
-        routes = new()
-        {
-            { AudioCategory.Bgm, AudioMixerGroupType.Bgm },
-            { AudioCategory.UI, AudioMixerGroupType.UI },
-            { AudioCategory.Gameplay, AudioMixerGroupType.Gameplay },
-            { AudioCategory.Ambient, AudioMixerGroupType.Ambient }
-        };
     }
 
     public void InitializeRuntime(IAudioInstance bgmInstance, IAudioSourcePool pool)
     {
         this.bgmInstance = bgmInstance;
         this.pool = pool;
-        bgmInstance.SetOutputAudioMixerGroup(audioRouter.GetMixerGroup(AudioMixerGroupType.Bgm));
     }
     #endregion
 
@@ -96,13 +85,19 @@ public class AudioService
             return false;
         }
 
-        instance.SetClip(entry.AudioClip);
+        AudioPlaybackConfig config = new(
+            clip: entry.AudioClip,
+            mixerGroup: audioRouter.GetMixerGroup(GetRoute(data.AudioCategory)),
+            loop: data.Loop,
+            spatial: data.Spatial,
+            priority: data.Priority,
+            spatialMinDistance: spatialMinDistance,
+            spatialMaxDistance: spatialMaxDistance);
+
+        instance.SetConfig(config);
+
         instance.SetVolume(entry.Volume * data.RandomVolume);
         instance.SetPitch(data.RandomPitch);
-        instance.SetLoop(data.Loop);
-        instance.SetOutputAudioMixerGroup(audioRouter.GetMixerGroup(routes[data.AudioCategory]));
-        ApplySpatial(instance, data.Spatial);
-        instance.SetPriority(data.Priority);
 
         instance.Play();
 
@@ -199,20 +194,6 @@ public class AudioService
     }
     #endregion
 
-    #region 오디오 세팅
-    private void ApplySpatial(IAudioInstance instance, bool useSpatial)
-    {
-        if (useSpatial)
-        {
-            instance.Set3D(spatialMinDistance, spatialMaxDistance);
-        }
-        else
-        {
-            instance.Set2D();
-        }
-    }
-    #endregion
-
     #region 볼륨 조절
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
@@ -222,6 +203,20 @@ public class AudioService
     public float GetVolume(AudioMixerGroupType type)
     {
         return audioRouter.GetVolume01(type);
+    }
+    #endregion
+
+    #region Utils
+    private AudioMixerGroupType GetRoute(AudioCategory category)
+    {
+        return category switch
+        {
+            AudioCategory.Bgm => AudioMixerGroupType.Bgm,
+            AudioCategory.UI => AudioMixerGroupType.UI,
+            AudioCategory.Gameplay => AudioMixerGroupType.Gameplay,
+            AudioCategory.Ambient => AudioMixerGroupType.Ambient,
+            _ => AudioMixerGroupType.Gameplay
+        };
     }
     #endregion
 }
