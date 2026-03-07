@@ -106,7 +106,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfxAt(AudioName audioName, Vector3 position, int clipIndex = -1)
     {
-        audioService.PlayAt(audioName, position, clipIndex);
+        audioService.PlaySfx(audioName, clipIndex, position);
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// </summary>
     public void PlaySfxFollow(AudioName audioName, Transform target, int clipIndex = -1)
     {
-        audioService.PlayFollow(audioName, target, clipIndex);
+        audioService.PlaySfx(audioName, clipIndex, target.position, target);
     }
     #endregion
 

@@ -70,63 +70,35 @@ public class AudioService
     public void PlayBgm(AudioName audioName, int clipIndex)
     {
         bgmInstance.Stop();
-        TryPlay(audioName, bgmInstance, clipIndex, out ActiveVoice activeAudio);
-    }
 
-    public void PlaySfx(AudioName audioName, int clipIndex)
-    {
-        IAudioInstance instance = pool.Get();
-        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice activeAudio))
-        {
-            pool.Release(instance);
-            return;
-        }
-
-        activeVoices.Add(activeAudio);
-    }
-
-    public void PlayAt(AudioName audioName, Vector3 position, int clipIndex)
-    {
-        IAudioInstance instance = pool.Get();
-        instance.SetPosition(position);
-        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice activeAudio))
-        {
-            pool.Release(instance);
-            return;
-        }
-
-        activeVoices.Add(activeAudio);
-    }
-
-    public void PlayFollow(AudioName audioName, Transform target, int clipIndex)
-    {
-        IAudioInstance instance = pool.Get();
-        instance.SetPosition(target.position);
-        if (!TryPlay(audioName, instance, clipIndex, out ActiveVoice activeAudio))
-        {
-            pool.Release(instance);
-            return;
-        }
-
-        activeAudio.follow = target;
-        activeVoices.Add(activeAudio);
-    }
-
-    private bool TryPlay(AudioName audioName, IAudioInstance instance, int clipIndex, out ActiveVoice activeAudio)
-    {
-        activeAudio = null;
-
-        if (!repository.TryGetAudioData(audioName, out AudioData data))
-        {
-            return false;
-        }
+        if (!repository.TryGetAudioData(audioName, out AudioData data)) return;
 
         AudioVariation variation = data.GetVariation(clipIndex);
 
-        if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime))
-        {
-            return false;
-        }
+        if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime)) return;
+
+        AudioPlaybackConfig config = new(
+            clip: variation.AudioClip,
+            mixerGroup: audioRouter.GetMixerGroup(GetRoute(AudioCategory.Bgm)),
+            loop: data.Loop,
+            spatial: false,
+            priority: data.Priority);
+
+        bgmInstance.SetConfig(config);
+        bgmInstance.SetVolume(variation.Volume * data.RandomVolume);
+        bgmInstance.SetPitch(data.RandomPitch);
+        bgmInstance.Play();
+    }
+
+    public void PlaySfx(AudioName audioName, int clipIndex, Vector3 position = default, Transform target = null)
+    {
+        if (!repository.TryGetAudioData(audioName, out AudioData data)) return;
+
+        if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime)) return;
+
+        IAudioInstance instance = pool.Get();
+
+        AudioVariation variation = data.GetVariation(clipIndex);
 
         AudioPlaybackConfig config = new(
             clip: variation.AudioClip,
@@ -138,22 +110,18 @@ public class AudioService
             spatialMaxDistance: spatialMaxDistance);
 
         instance.SetConfig(config);
-
         instance.SetVolume(variation.Volume * data.RandomVolume);
         instance.SetPitch(data.RandomPitch);
+        instance.SetPosition(position);
 
         instance.Play();
 
-        if (data.AudioCategory != AudioCategory.Bgm)
+        activeVoices.Add(new ActiveVoice
         {
-            activeAudio = new ActiveVoice
-            {
-                instance = instance,
-                priority = data.Priority
-            };
-        }
-
-        return true;
+            instance = instance,
+            follow = target,
+            priority = data.Priority
+        });
     }
     #endregion
 

@@ -43,7 +43,7 @@ public class AudioMixerRouter : IAudioRouter
         }
 
         // -80 이하일 경우 0으로 간주
-        if (db <= -80f) { return 0f; }
+        if (db <= -80f) return 0f;
 
         return Mathf.Pow(10f, db / 20f);
     }
