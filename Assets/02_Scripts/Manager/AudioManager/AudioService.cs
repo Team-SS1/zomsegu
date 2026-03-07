@@ -80,7 +80,7 @@ public class AudioService
 
         AudioVariation entry = data.GetEntry(clipIndex);
 
-        if (!AudioCooldown.CanPlay(audioName, data.Cooldown))
+        if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime))
         {
             return false;
         }
