@@ -15,8 +15,10 @@ public class PlayerStat
 	public int StartHunger;
 	public int MaxThirst;
 	public int StartThirst;
-	public int HungerDecayAmount;
-	public int ThirstDecayAmount;
+	public int MaxTired;
+	public int StartTired;
+	public int MaxShock;
+	public int StartShock;
 	public float NoiseRadiusWalk;
 	public float NoiseRadiusRun;
 	public float NoiseRadiusSilentWalk;
@@ -29,7 +31,6 @@ public class PlayerStat
 	public int VisionFOVAngleMax;
 	public int VisionFOVAngleLimited;
 	public int VisionFOVAngleMin;
-	public int UnbalanceDuration;
 	public int DefaultWeaponID;
 
 	public static Dictionary<int, PlayerStat> tableDic = new Dictionary<int, PlayerStat>();
