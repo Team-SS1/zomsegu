@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    private Camera Camera;
     public Vector2 InputVec { get; private set; }
     public Rigidbody2D Rb { get; private set; }
     public Collider2D Co { get; private set; }
@@ -15,13 +16,10 @@ public class PlayerController : MonoBehaviour
     {
         Rb = GetComponent<Rigidbody2D>();
         Co = GetComponent<Collider2D>();
-        
+        Camera = Camera.main;
     }
     private void Start()
     {
-        /* --- Test Set --- */
-        InputManager.Instance.SetMaps(InputEnum.ActionMaps.Gameplay);
-        /* --- -------- --- */
         InputManager.Instance.BindInput(InputEnum.ActionMaps.Gameplay, InputEnum.Actions.Move, OnMove);
     }
     private void FixedUpdate()
@@ -45,5 +43,18 @@ public class PlayerController : MonoBehaviour
         {
             InputVec = Vector2.zero;
         }
+    }
+    public Vector2 MouseDirection()
+    {
+        Vector3 mouseScreen = Mouse.current.position.ReadValue();
+        Vector3 mouseWorld = Camera.ScreenToWorldPoint(mouseScreen);
+
+        Vector2 origin = transform.position;
+        Vector2 dir = (Vector2)mouseWorld - origin;
+
+        if (dir.sqrMagnitude < 0.001f)
+            return Vector2.zero;
+
+        return dir.normalized;
     }
 }
