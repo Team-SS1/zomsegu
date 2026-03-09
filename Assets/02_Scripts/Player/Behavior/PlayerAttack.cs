@@ -11,8 +11,9 @@ public class PlayerAttack : MonoBehaviour
     public PlayerAim Aim {  get; private set; }
     public bool IsAttacking {  get; private set; }
     public Vector2 AttackDirection { get; private set; }
-    public int AttackRange;
-    public int AttackAngle;
+    public int AttackRange {  get; private set; } = 5;
+    public int AttackAngle { get; private set; } = 120;
+
 
     private void Awake()
     {
