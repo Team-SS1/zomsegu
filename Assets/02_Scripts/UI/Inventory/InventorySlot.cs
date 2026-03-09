@@ -14,7 +14,7 @@ public class InventorySlot
     public bool IsStack => itemId != 0 && instance == null;
     public bool IsInstance => itemId != 0 && instance != null;
 
-    public void clear()
+    public void Clear()
     {
         itemId = 0;
         amount = 0;

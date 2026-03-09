@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EventEnum;
 
 public class UISelectedCharacterContext : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class UISelectedCharacterContext : MonoBehaviour
 
     public void SetInspectPlayer(PlayerType player)
     {
+        if (CurrentInspectPlayer == player) return;
+
         CurrentInspectPlayer = player;
+        EventManager.TriggerEvent(EventKey.InspectCharacterChanged, player);
     }
 }
