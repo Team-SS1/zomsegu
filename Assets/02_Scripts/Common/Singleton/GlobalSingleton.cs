@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
 {
     private static T instance;
+
     public static T Instance
     {
         get
@@ -11,20 +12,30 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
             if (instance == null)
             {
                 instance = FindAnyObjectByType<T>();
+
                 if (instance == null)
                 {
-                    var prefab = Resources.Load<GameObject>($"Managers/{typeof(T).Name}");
+                    GameObject prefab = Resources.Load<GameObject>($"Managers/{typeof(T).Name}");
                     if (prefab == null)
                     {
                         Debug.LogError($"Singleton: {typeof(T).Name} 프리팹을 Managers/{typeof(T).Name} 경로에서 찾을 수 없습니다.");
                         return null;
                     }
-                    var instance = Instantiate(prefab);
-                    instance.name = typeof(T).Name; // 생성된 오브젝트 이름 설정
-                    DontDestroyOnLoad(instance);
-                    Debug.Log($"{instance.name} dynamically created.");
+
+                    GameObject obj = Instantiate(prefab);
+                    obj.name = typeof(T).Name;
+                    DontDestroyOnLoad(obj);
+
+                    instance = obj.GetComponent<T>();
+
+                    if (instance == null)
+                    {
+                        Debug.LogError($"{typeof(T).Name} 프리팹에 {typeof(T).Name} 컴포넌트가 없습니다.");
+                        return null;
+                    }
                 }
             }
+
             return instance;
         }
     }
@@ -37,7 +48,7 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
-        else
+        else if (instance != this)
         {
             Destroy(gameObject);
         }
@@ -45,7 +56,8 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
 
     protected virtual void OnDestroy()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (instance == this)
+            SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     protected virtual void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }

@@ -9,5 +9,7 @@ public class DataManager : GlobalSingleton<DataManager>
     {
         base.Awake();
         DataTableLoader.LoadTables();
+        EventManager.Instance.Init();
+        PlayerManager.Instance.Init();
     }
 }

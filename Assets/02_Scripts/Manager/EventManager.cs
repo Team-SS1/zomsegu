@@ -10,6 +10,10 @@ public class EventManager : GlobalSingleton<EventManager>
     protected override void Awake()
     {
         base.Awake();
+        
+    }
+    public void Init()
+    {
         eventDictionary ??= new Dictionary<EventKey, Delegate>();
     }
 
@@ -76,12 +80,41 @@ public class EventManager : GlobalSingleton<EventManager>
 
     public static void TriggerEvent<T>(EventKey key, T arg)
     {
-        if (Instance == null) return;
+        if (Instance == null)
+        {
+            Debug.LogWarning($"[EventManager] Instance is null. key = {key}");
+            return;
+        }
+
+        if (Instance.eventDictionary == null)
+        {
+            Debug.LogError($"[EventManager] eventDictionary is null. key = {key}");
+            return;
+        }
 
         if (Instance.eventDictionary.TryGetValue(key, out var del))
         {
+            Debug.Log($"[EventManager] TriggerEvent<{typeof(T).Name}> : {key}");
+
             if (del is Action<T> callback)
-                callback.Invoke(arg);
+            {
+                try
+                {
+                    callback.Invoke(arg);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[EventManager] Callback exception on key = {key}\n{e}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[EventManager] Delegate type mismatch. key = {key}, actual = {del?.GetType().Name}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[EventManager] No listener for key = {key}");
         }
     }
 

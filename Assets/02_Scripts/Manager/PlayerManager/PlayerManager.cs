@@ -14,13 +14,12 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
     protected override void Awake()
     {
         base.Awake();
-        Init();
     }
 
     /// <summary>
     /// 게임 시작시 SHIN / HAN 데이터를 미리 생성해서 보관
     /// </summary>
-    private void Init()
+    public void Init()
     {
         Player_SHIN = CreatePlayerData(PlayerType.Player_SHIN);
         Player_HAN = CreatePlayerData(PlayerType.Player_HAN);
@@ -37,7 +36,7 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
 
         // 한세희
         Player_HAN.Inventory.TryAddNewInstance(35200);
-
+        
     }
 
     /// <summary>
