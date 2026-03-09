@@ -28,7 +28,7 @@ jobs:
 
           if [ "$COUNT" -gt 5 ]; then
             REMAIN=$((COUNT - 5))
-            COMMITS="$COMMITS\n\n+ $REMAIN more commits..."
+            COMMITS="$COMMITS"$'\n\n'"+ $REMAIN more commits..."
           fi
 
           if [ "$BRANCH" = "main" ]; then
