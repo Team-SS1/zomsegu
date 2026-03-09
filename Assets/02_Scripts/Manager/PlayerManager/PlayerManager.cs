@@ -24,6 +24,20 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
     {
         Player_SHIN = CreatePlayerData(PlayerType.Player_SHIN);
         Player_HAN = CreatePlayerData(PlayerType.Player_HAN);
+
+        // 임시 세팅
+        // 신재현
+        Player_SHIN.Inventory.TryAddNewInstance(30002);
+        Player_SHIN.Inventory.TryAddStack(31001, 10);
+        Player_SHIN.Inventory.TryAddNewInstance(32000);
+        Player_SHIN.Inventory.TryAddNewInstance(33001);
+        Player_SHIN.Inventory.TryAddNewInstance(34000);
+        Player_SHIN.Inventory.TryAddNewInstance(35101);
+        Player_SHIN.Inventory.TryAddStack(36000, 8);
+
+        // 한세희
+        Player_HAN.Inventory.TryAddNewInstance(35200);
+
     }
 
     /// <summary>
