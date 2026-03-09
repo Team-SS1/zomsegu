@@ -3,7 +3,19 @@ namespace AudioEnum
     public enum AudioCategory
     {
         Bgm,
-        Sfx
+        UI,
+        Gameplay,
+        Ambient,
+    }
+
+    public enum AudioMixerGroupType
+    {
+        Master,
+        Bgm,
+        Sfx,
+        UI,
+        Gameplay,
+        Ambient,
     }
 
     public enum AudioName
@@ -102,10 +114,16 @@ namespace AudioEnum
         Test_Sfx,
     }
 
-    public enum AudioMixerGroupType
+    public enum AudioPriority
     {
-        Master,
-        Bgm,
-        Sfx,
+        None = 0,
+        Music = 5,
+        Ambient = 10,
+        Footstep = 20,
+        Normal = 50,
+        Weapon = 70,
+        UI = 80,
+        Important = 90,
+        Critical = 100
     }
 }

@@ -26,78 +26,94 @@ public class AudioDataEditor : Editor
     {
         serializedObject.Update();
 
-        SerializedProperty categoryProp = serializedObject.FindProperty("audioCategory");
-        EditorGUILayout.PropertyField(categoryProp);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("audioCategory"));
         EditorGUILayout.Space();
+
+        DrawAudioSettings();
 
         list.DoLayoutList();
         HandleDragAndDrop();
         serializedObject.ApplyModifiedProperties();
     }
 
+    #region 오디오 세팅
+    private void DrawAudioSettings()
+    {
+        SerializedProperty loop = serializedObject.FindProperty("loop");
+        SerializedProperty spatial = serializedObject.FindProperty("spatial");
+
+        SerializedProperty randomPitch = serializedObject.FindProperty("randomPitch");
+        SerializedProperty randomVolume = serializedObject.FindProperty("randomVolume");
+        SerializedProperty cooldown = serializedObject.FindProperty("cooldown");
+
+        SerializedProperty priority = serializedObject.FindProperty("priority");
+
+        EditorGUILayout.LabelField("Play Settings", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+        EditorGUILayout.PropertyField(loop);
+        EditorGUILayout.PropertyField(spatial);
+        EditorGUILayout.PropertyField(randomPitch);
+        EditorGUILayout.PropertyField(randomVolume);
+        EditorGUILayout.PropertyField(cooldown);
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Priority");
+
+        DrawPriorityToolbar(priority);
+
+        EditorGUILayout.EndVertical();
+
+        // Audio Entries와 간격
+        EditorGUILayout.Space(8);
+    }
+    #endregion
+
+    private void DrawPriorityToolbar(SerializedProperty priority)
+    {
+        string[] names = priority.enumDisplayNames;
+        int index = priority.enumValueIndex;
+
+        float inspectorWidth = EditorGUIUtility.currentViewWidth - 40f;
+        int perRow = Mathf.Max(1, Mathf.FloorToInt(inspectorWidth / 90f));
+
+        for (int i = 0; i < names.Length; i += perRow)
+        {
+            int count = Mathf.Min(perRow, names.Length - i);
+
+            string[] row = new string[count];
+            for (int j = 0; j < count; j++)
+                row[j] = names[i + j];
+
+            int selected = GUILayout.Toolbar(index - i, row);
+
+            if (selected >= 0)
+                index = i + selected;
+        }
+
+        priority.enumValueIndex = index;
+    }
+
     #region 리스트 관리
     private void InitReorderableList()
     {
-        SerializedProperty listProp = serializedObject.FindProperty("audioEntries");
+        SerializedProperty listProp = serializedObject.FindProperty("audioVariations");
 
         list = new ReorderableList(serializedObject, listProp, true, true, true, true);
 
         list.drawHeaderCallback = rect =>
         {
-            EditorGUI.LabelField(rect, "Audio Entries");
+            EditorGUI.LabelField(rect, "Audio Variations");
         };
 
-        // 높이 자동 계산
         list.elementHeightCallback = index =>
         {
-            var element = listProp.GetArrayElementAtIndex(index);
-            var volumeProp = element.FindPropertyRelative("volume");
-
-            float volumeHeight = EditorGUI.GetPropertyHeight(volumeProp);
-            return Mathf.Max(EditorGUIUtility.singleLineHeight, volumeHeight) + 6;
+            return EditorGUIUtility.singleLineHeight + 6;
         };
 
         list.drawElementCallback = (rect, index, isActive, isFocused) =>
         {
-            var element = listProp.GetArrayElementAtIndex(index);
-            var clipProp = element.FindPropertyRelative("audioClip");
-            var volumeProp = element.FindPropertyRelative("volume");
-
-            rect.y += 3;
-
-            float spacing = 4f;
-            float buttonWidth = 28f;
-
-            float totalButtonWidth = buttonWidth * 2 + spacing * 2;
-            float remainingWidth = rect.width - totalButtonWidth - spacing;
-
-            float clipWidth = remainingWidth * 0.6f;
-            float volumeWidth = remainingWidth * 0.4f;
-
-            float volumeHeight = EditorGUI.GetPropertyHeight(volumeProp);
-
-            Rect clipRect = new Rect(rect.x, rect.y, clipWidth, EditorGUIUtility.singleLineHeight);
-            Rect volumeRect = new Rect(clipRect.xMax + spacing, rect.y, volumeWidth, volumeHeight);
-            Rect playRect = new Rect(volumeRect.xMax + spacing, rect.y, buttonWidth, EditorGUIUtility.singleLineHeight);
-            Rect stopRect = new Rect(playRect.xMax + spacing, rect.y, buttonWidth, EditorGUIUtility.singleLineHeight);
-
-            EditorGUI.BeginChangeCheck();
-            EditorGUI.PropertyField(clipRect, clipProp, GUIContent.none);
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-                SortEntries(list.serializedProperty);
-                return; // 재정렬 후 다시 그리기
-            }
-
-            EditorGUI.PropertyField(clipRect, clipProp, GUIContent.none);
-            EditorGUI.PropertyField(volumeRect, volumeProp, GUIContent.none);
-
-            if (GUI.Button(playRect, playIcon))
-                PlayClip(clipProp.objectReferenceValue as AudioClip, volumeProp.floatValue);
-
-            if (GUI.Button(stopRect, stopIcon))
-                StopAll();
+            DrawEntryElement(rect, index, listProp);
         };
 
         list.onAddCallback = l =>
@@ -106,11 +122,72 @@ public class AudioDataEditor : Editor
             l.serializedProperty.InsertArrayElementAtIndex(index);
 
             var element = l.serializedProperty.GetArrayElementAtIndex(index);
+
             element.FindPropertyRelative("audioClip").objectReferenceValue = null;
             element.FindPropertyRelative("volume").floatValue = 1f;
 
             serializedObject.ApplyModifiedProperties();
         };
+    }
+
+    private void DrawEntryElement(Rect rect, int index, SerializedProperty listProp)
+    {
+        var element = listProp.GetArrayElementAtIndex(index);
+
+        var clipProp = element.FindPropertyRelative("audioClip");
+        var volumeProp = element.FindPropertyRelative("volume");
+
+        rect.y += 3;
+
+        float spacing = 4f;
+        float buttonWidth = 28f;
+
+        float totalButtonWidth = buttonWidth * 2 + spacing * 2;
+        float remainingWidth = rect.width - totalButtonWidth - spacing;
+
+        float clipWidth = remainingWidth * 0.6f;
+        float volumeWidth = remainingWidth * 0.4f;
+
+        Rect clipRect = new Rect(rect.x, rect.y, clipWidth, EditorGUIUtility.singleLineHeight);
+
+        Rect volumeRect = new Rect(
+            clipRect.xMax + spacing,
+            rect.y,
+            volumeWidth,
+            EditorGUIUtility.singleLineHeight
+        );
+
+        Rect playRect = new Rect(
+            volumeRect.xMax + spacing,
+            rect.y,
+            buttonWidth,
+            EditorGUIUtility.singleLineHeight
+        );
+
+        Rect stopRect = new Rect(
+            playRect.xMax + spacing,
+            rect.y,
+            buttonWidth,
+            EditorGUIUtility.singleLineHeight
+        );
+
+        EditorGUI.BeginChangeCheck();
+
+        EditorGUI.PropertyField(clipRect, clipProp, GUIContent.none);
+        EditorGUI.PropertyField(volumeRect, volumeProp, GUIContent.none);
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            serializedObject.ApplyModifiedProperties();
+            SortEntries(list.serializedProperty);
+            return;
+        }
+
+        if (GUI.Button(playRect, playIcon))
+            PlayClip(clipProp.objectReferenceValue as AudioClip, volumeProp.floatValue);
+
+        if (GUI.Button(stopRect, stopIcon))
+            StopAll();
     }
 
     private void HandleDragAndDrop()
@@ -135,7 +212,7 @@ public class AudioDataEditor : Editor
         {
             DragAndDrop.AcceptDrag();
 
-            SerializedProperty listProp = serializedObject.FindProperty("audioEntries");
+            SerializedProperty listProp = serializedObject.FindProperty("audioVariations");
 
             foreach (UnityEngine.Object obj in DragAndDrop.objectReferences)
             {
@@ -206,7 +283,6 @@ public class AudioDataEditor : Editor
     #endregion
 
     #region clip preview
-
     private void EnsurePreviewSource()
     {
         if (previewSource != null) return;

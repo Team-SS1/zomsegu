@@ -1,5 +1,5 @@
+using AudioEnum;
 using UnityEngine;
-using UnityEngine.Audio;
 
 /// <summary>
 /// Unity AudioSource를 감싼 재생 인스턴스
@@ -7,6 +7,7 @@ using UnityEngine.Audio;
 public class AudioInstance : IAudioInstance
 {
     private readonly AudioSource source;
+    private AudioPriority priority;
 
     public AudioInstance(AudioSource source)
     {
@@ -14,7 +15,9 @@ public class AudioInstance : IAudioInstance
     }
 
     public bool IsPlaying => source.isPlaying;
+    public AudioPriority Priority => priority;
 
+    #region AudioSource 재생 관리
     public void Play()
     {
         if (!source.gameObject.activeSelf)
@@ -24,41 +27,65 @@ public class AudioInstance : IAudioInstance
         source.Play();
     }
 
-    public void Stop()
+    public void Pause()
     {
-        source.Stop();
-        source.gameObject.SetActive(false);
-    }
-
-    public void SetClip(object o)
-    {
-        if (o is AudioClip clip)
+        if (source.isPlaying)
         {
-            source.clip = clip;
+            source.Pause();
         }
     }
 
-    public void SetLoop(bool loop) => source.loop = loop;
+    public void UnPause()
+    {
+        if (!source.isPlaying)
+        {
+            source.UnPause();
+        }
+    }
+
+    public void Stop()
+    {
+        source.Stop();
+        source.clip = null;
+        source.gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region AudioSoucre 설정
     public void SetPitch(float pitch) => source.pitch = pitch;
     public void SetVolume(float volume) => source.volume = volume;
     public void SetPosition(Vector3 position) => source.transform.position = position;
 
-    public void SetOutputAudioMixerGroup(AudioMixerGroup audioMixerGroup)
+    public void SetConfig(in AudioPlaybackConfig config)
     {
-        source.outputAudioMixerGroup = audioMixerGroup;
+        source.clip = config.clip;
+        source.outputAudioMixerGroup = config.mixerGroup;
+        source.loop = config.loop;
+
+        if (config.spatial)
+        {
+            Set3D(config.spatialMinDistance, config.spatialMaxDistance);
+        }
+        else
+        {
+            Set2D();
+        }
+
+        priority = config.priority;
     }
 
-    public void Set2D()
+    private void Set2D()
     {
         source.spatialBlend = 0f;
         source.rolloffMode = AudioRolloffMode.Logarithmic;
     }
 
-    public void Set3D(float minDistance, float maxDistance)
+    private void Set3D(float minDistance, float maxDistance)
     {
         source.spatialBlend = 1f;
         source.minDistance = minDistance;
         source.maxDistance = maxDistance;
         source.rolloffMode = AudioRolloffMode.Linear;
     }
+    #endregion
 }

@@ -13,8 +13,10 @@
     "StartHunger": 10,
     "MaxThirst": 10,
     "StartThirst": 10,
-    "HungerDecayAmount": -1,
-    "ThirstDecayAmount": -1,
+    "MaxTired": 20,
+    "StartTired": 0,
+    "MaxShock": 7,
+    "StartShock": 0,
     "NoiseRadiusWalk": 3.0,
     "NoiseRadiusRun": 7.0,
     "NoiseRadiusSilentWalk": 0.0,
@@ -27,7 +29,6 @@
     "VisionFOVAngleMax": 120,
     "VisionFOVAngleLimited": 100,
     "VisionFOVAngleMin": 70,
-    "UnbalanceDuration": 3,
     "DefaultWeaponID": 30000
   },
   {
@@ -44,8 +45,10 @@
     "StartHunger": 10,
     "MaxThirst": 10,
     "StartThirst": 10,
-    "HungerDecayAmount": -1,
-    "ThirstDecayAmount": -1,
+    "MaxTired": 20,
+    "StartTired": 0,
+    "MaxShock": 7,
+    "StartShock": 0,
     "NoiseRadiusWalk": 3.0,
     "NoiseRadiusRun": 7.0,
     "NoiseRadiusSilentWalk": 0.0,
@@ -58,7 +61,6 @@
     "VisionFOVAngleMax": 120,
     "VisionFOVAngleLimited": 100,
     "VisionFOVAngleMin": 70,
-    "UnbalanceDuration": 3,
     "DefaultWeaponID": 30000
   }
 ]

@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c6721ce63232b408c7264e852c9354, type: 3}
   m_Name: Test_Sfx
   m_EditorClassIdentifier: 
-  audioCategory: 1
-  audioEntries:
+  audioCategory: 2
+  loop: 0
+  spatial: 1
+  priority: 50
+  randomPitch: {x: 1, y: 1}
+  randomVolume: {x: 1, y: 1}
+  cooldown: 0.05
+  audioVariations:
   - audioClip: {fileID: 8300000, guid: 8aca60e4077b12b46ab35d188cab1582, type: 3}
     volume: 1

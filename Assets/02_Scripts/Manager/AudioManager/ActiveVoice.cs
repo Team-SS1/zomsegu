@@ -1,8 +1,10 @@
+using AudioEnum;
 using UnityEngine;
 
-public class PlayingAudio
+public class ActiveVoice
 {
     public IAudioInstance instance;
     public Transform follow;
-    public IAudioSourcePool pool;
+
+    public AudioPriority priority;
 }

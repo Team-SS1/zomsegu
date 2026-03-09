@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: Test_Bgm
   m_EditorClassIdentifier: 
   audioCategory: 0
-  audioEntries:
+  loop: 1
+  spatial: 0
+  priority: 5
+  randomPitch: {x: 1, y: 1}
+  randomVolume: {x: 1, y: 1}
+  cooldown: 0.05
+  audioVariations:
   - audioClip: {fileID: 8300000, guid: c6605c8395639b04196da0dae0466e49, type: 3}
     volume: 1

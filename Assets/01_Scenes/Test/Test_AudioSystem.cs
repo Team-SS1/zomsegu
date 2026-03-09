@@ -12,8 +12,10 @@ public class Test_AudioSystem : MonoBehaviour
     [SerializeField] Slider bgmSlider;
     [SerializeField] Slider sfxSlider;
 
-    AudioManager mg;
+    [Header("Cooldown")]
+    [SerializeField] bool lockUpdate = true;
 
+    AudioManager mg;
     #region Unity API
     private void OnEnable()
     {
@@ -35,6 +37,14 @@ public class Test_AudioSystem : MonoBehaviour
         AddSliderListener();
     }
 
+    private void Update()
+    {
+        if (!lockUpdate)
+        {
+            Example_PlayTestSfx2D();
+        }
+    }
+
     private void OnDestroy()
     {
         if (deleteMove)
@@ -49,27 +59,35 @@ public class Test_AudioSystem : MonoBehaviour
     {
         mg.PlayBgm(
             AudioEnum.AudioName.Test_Bgm,   // AudioData SO 이름
-            clipIndex: 0,                   // AudioData의 리스트 index, -1일 경우 random(기본값)
-            loop: false,                    // 루프 기본값 BGM : true / SFX : false
-            pitch: 1f                       // pitch
+            clipIndex: 0                    // AudioData의 리스트 index, -1일 경우 random(기본값)
             );
     }
 
     public void Example_PlayTestSfx2D()
     {
-        mg.PlaySfx2D(AudioEnum.AudioName.Test_Sfx);
+        mg.PlaySfx(AudioEnum.AudioName.Test_Sfx);
     }
 
     public void Example_PlayTestSfx3D_Position()
     {
         // 특정 위치에서 작동하는 sfx
-        mg.PlaySfx3D(AudioEnum.AudioName.Test_Sfx, Vector3.zero);
+        mg.PlaySfxAt(AudioEnum.AudioName.Test_Sfx, Vector3.zero);
     }
 
     public void Example_PlayTestSfx3D_Transform()
     {
         // 특정 대상을 따라가는 sfx
-        mg.PlaySfx3D(AudioEnum.AudioName.Test_Sfx, followTarget);
+        mg.PlaySfxFollow(AudioEnum.AudioName.Test_Sfx, followTarget);
+    }
+
+    public void Example_Pause()
+    {
+        mg.PauseAll();
+    }
+
+    public void Example_UnPause()
+    {
+        mg.ResumeAll();
     }
 
     public void Example_StopBgm()

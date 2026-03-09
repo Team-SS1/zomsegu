@@ -7,12 +7,10 @@ using System.Collections.Generic;
 /// </summary>
 public class AudioRepository
 {
-    private readonly Dictionary<AudioName, List<AudioEntry>> audioDict = new();
-    private readonly IRandom random;
+    private readonly Dictionary<AudioName, AudioData> audioDict = new();
 
-    public AudioRepository(AudioDatabase audioDatabase, IRandom random)
+    public AudioRepository(AudioDatabase audioDatabase)
     {
-        this.random = random ?? new UnityRandom();
         if (audioDatabase == null) throw new ArgumentNullException(nameof(audioDatabase));
 
         foreach (var audioData in audioDatabase.GetDatabase<AudioData>())
@@ -23,26 +21,18 @@ public class AudioRepository
                 continue;
             }
 
-            audioDict[audioName] = audioData.AudioEntries;
+            audioDict[audioName] = audioData;
         }
     }
 
-    public bool TryGetAudioEntry(AudioName audioName, int clipIndex, out AudioEntry entry)
+    public bool TryGetAudioData(AudioName audioName, out AudioData data)
     {
-        entry = null;
-
-        if (!audioDict.TryGetValue(audioName, out List<AudioEntry> entries) || entries == null || entries.Count == 0)
+        if (!audioDict.TryGetValue(audioName, out data) || data == null || data.AudioVariations.Count == 0)
         {
             Logger.LogWarning($"{audioName} 오디오 데이터 없음");
             return false;
         }
 
-        if (clipIndex >= entries.Count || clipIndex < 0)
-        {
-            clipIndex = random.Range(0, entries.Count);
-        }
-
-        entry = entries[clipIndex];
         return true;
     }
 }
