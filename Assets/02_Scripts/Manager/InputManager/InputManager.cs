@@ -31,6 +31,8 @@ public class InputManager : GlobalSingleton<InputManager>
 
     protected override void OnDestroy()
     {
+        base.OnDestroy();
+
         DisposeHandlers();
     }
     #endregion
