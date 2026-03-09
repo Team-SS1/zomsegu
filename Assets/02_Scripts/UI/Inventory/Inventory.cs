@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EventEnum;
 
 public class Inventory
 {
@@ -33,7 +34,11 @@ public class Inventory
     }
 
     // 인벤토리 아이템 정보
-    public InventorySlot GetSlot(int index) => slots[index];
+    public InventorySlot GetSlot(int index)
+    {
+        if(index < 0 || index >= Capacity) return null;
+        return slots[index];
+    }
     public IReadOnlyList<InventorySlot> GetAllSlots() => System.Array.AsReadOnly(slots);
 
     private bool CanAddByCapacity(float addWeight, float addVolume) //용량, 무게 체크
@@ -153,7 +158,7 @@ public class Inventory
         if(slot.amount <= 0)
         {
             int id = slot.itemId;
-            slot.clear();
+            slot.Clear();
             stackToIndex.Remove(id);
         }
 
@@ -174,7 +179,7 @@ public class Inventory
         CurrentWeight = Mathf.Max(0f, CurrentWeight - ItemDB.GetWeight(slot.itemId));
         CurrentVolume = Mathf.Max(0f, CurrentVolume - ItemDB.GetVolume(slot.itemId));
 
-        slot.clear();
+        slot.Clear();
         guidToIndex.Remove(guid);
 
         NotifyChanged();
@@ -187,9 +192,7 @@ public class Inventory
 
         (slots[a], slots[b]) = (slots[b], slots[a]); //슬롯 교환
 
-        UpdateIndexForSlot(a);
-        UpdateIndexForSlot(b);
-
+        RebuildIndicesAndCapacity();
         NotifyChanged();
         return true;
     }
@@ -200,15 +203,16 @@ public class Inventory
 
         InventorySlot fromSlot = slots[from];
         InventorySlot toSlot = slots[to];
+
         if(fromSlot.isEmpty) return false; //이동하려는 슬롯이 빈 슬롯
 
         if (toSlot.isEmpty)
         {
-            CopySlot(slots[from], slots[to]);
-            slots[from].clear();
+            CopySlot(fromSlot, toSlot);
+            fromSlot.Clear();
 
-            UpdateIndexForSlot(from);
-            UpdateIndexForSlot(to);
+            RebuildIndicesAndCapacity();
+            NotifyChanged();
             return true;
         }
 
@@ -219,12 +223,6 @@ public class Inventory
         to.itemId = from.itemId;
         to.amount = from.amount;
         to.instance = from.instance;
-    }
-    private void UpdateIndexForSlot(int index)
-    {
-        InventorySlot slot = slots[index];
-        if(slot.IsInstance) guidToIndex[slot.instance.guid] = index;
-        else if(slot.IsStack) stackToIndex[slot.itemId] = index;
     }
 
     public void RebuildIndicesAndCapacity()
@@ -257,6 +255,6 @@ public class Inventory
     }
     private void NotifyChanged()
     {
-        EventManager.TriggerEvent(EventEnum.EventKey.InventoryChanged, playerType);
-    }
+        EventManager.TriggerEvent(EventKey.InventoryChanged, playerType);
+    } 
 }

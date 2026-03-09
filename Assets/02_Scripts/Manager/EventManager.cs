@@ -10,10 +10,7 @@ public class EventManager : GlobalSingleton<EventManager>
     protected override void Awake()
     {
         base.Awake();
-        if (Instance == null)
-        {
-            eventDictionary = new Dictionary<EventKey, Delegate>();
-        }
+        eventDictionary ??= new Dictionary<EventKey, Delegate>();
     }
 
     public static void Subscribe(EventKey key, Action listener)

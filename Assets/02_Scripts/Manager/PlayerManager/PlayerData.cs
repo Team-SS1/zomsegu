@@ -10,10 +10,14 @@ public class PlayerData
     public int ID { get; private set; }
     public PlayerStat Stat { get; private set; }
 
+    public Inventory Inventory { get; private set; }
+
     public PlayerData(PlayerType type, int id, PlayerStat stat)
     {
         Type = type;
         ID = id;
         Stat = stat;
+
+        Inventory = new Inventory(type);
     }
 }

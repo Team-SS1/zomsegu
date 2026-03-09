@@ -11,15 +11,16 @@ public class UIInventorySlot : MonoBehaviour
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI amountText;
 
+    public SlotRef slotRef { get; private set; }
+
     private int slotIndex;
     private PlayerType player;
 
     public void SetSlot(InventorySlot slot, int index, PlayerType playerType)
     {
-        slotIndex = index;
-        player = playerType;
+        slotRef = SlotRef.Inv(playerType, index);
 
-        if(slot == null || slot.isEmpty)
+        if (slot == null || slot.isEmpty)
         {
             Clear();
             return;
@@ -27,7 +28,7 @@ public class UIInventorySlot : MonoBehaviour
 
         CommonItemData itemData = ItemDB.GetCommon(slot.itemId);
 
-        if(itemData != null)
+        if(itemData != null && !string.IsNullOrEmpty(itemData.Icon))
         {
             Sprite iconSprite = Resources.Load<Sprite>(itemData.Icon);
 
@@ -41,6 +42,11 @@ public class UIInventorySlot : MonoBehaviour
                 icon.enabled = false;
                 icon.sprite = null;
             }
+        }
+        else
+        {
+            icon.enabled = false;
+            icon.sprite = null;
         }
         amountText.text = slot.IsStack ? slot.amount.ToString() : "";
     }
