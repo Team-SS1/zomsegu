@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// InputActionAsset에서 InputLayer에 해당하는 InputActionMap을 활성화/비활성화하여 
@@ -28,7 +29,7 @@ public class InputManager : GlobalSingleton<InputManager>
         }
     }
 
-    private void OnDestroy()
+    protected override void OnDestory()
     {
         DisposeHandlers();
     }
@@ -70,7 +71,12 @@ public class InputManager : GlobalSingleton<InputManager>
         {
             handler.Dispose();
         }
-        handlers.Clear();
+    }
+
+    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        SetMaps(ActionMaps.None);
+        DisposeHandlers();
     }
     #endregion
 

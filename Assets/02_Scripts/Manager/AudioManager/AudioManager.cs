@@ -2,6 +2,7 @@ using AudioEnum;
 using System;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// AudioDatabase로 BGM/SFX 관리
@@ -80,6 +81,11 @@ public class AudioManager : GlobalSingleton<AudioManager>
         GameObject newGo = new("AudioSource_Root");
         newGo.transform.parent = transform;
         return new AudioSourcePool(sourcePrefab, newGo.transform, sfxPoolSize, maxSfxPoolSize);
+    }
+
+    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StopAllSfx();
     }
     #endregion
 

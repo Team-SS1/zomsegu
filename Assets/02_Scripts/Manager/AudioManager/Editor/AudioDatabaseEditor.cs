@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using AudioEnum;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -7,8 +8,8 @@ using UnityEngine;
 [CustomEditor(typeof(AudioDatabase))]
 public class AudioDatabaseEditor : Editor
 {
-    private bool showBgm = true;
-    private bool showSfx = true;
+    private Dictionary<AudioCategory, bool> shows = new();
+    private bool initshows = false;
 
     private string searchText = "";
 
@@ -22,8 +23,16 @@ public class AudioDatabaseEditor : Editor
         DrawToolbar(db);
         EditorGUILayout.Space(8);
 
-        List<AudioData> bgmList = new();
-        List<AudioData> sfxList = new();
+        Dictionary<AudioCategory, List<AudioData>> lists = new();
+
+        foreach (AudioCategory category in Enum.GetValues(typeof(AudioCategory)))
+        {
+            lists[category] = new();
+            if (initshows) continue;
+            shows[category] = true;
+        }
+
+        initshows = true;
 
         for (int i = 0; i < listProp.arraySize; i++)
         {
@@ -34,16 +43,15 @@ public class AudioDatabaseEditor : Editor
                     !data.name.ToLower().Contains(searchText.ToLower()))
                     continue;
 
-                if (data.AudioCategory == AudioCategory.Bgm)
-                    bgmList.Add(data);
-                else
-                    sfxList.Add(data);
+                lists[data.AudioCategory].Add(data);
             }
         }
 
-        DrawGroup("BGM", bgmList, ref showBgm);
-        DrawDivider();
-        DrawGroup("SFX", sfxList, ref showSfx);
+        foreach (var kvp in lists)
+        {
+            DrawGroup(kvp.Key, kvp.Value);
+            DrawDivider();
+        }
 
         serializedObject.ApplyModifiedProperties();
     }
@@ -77,7 +85,7 @@ public class AudioDatabaseEditor : Editor
         }
     }
 
-    private void DrawGroup(string title, List<AudioData> list, ref bool foldout)
+    private void DrawGroup(AudioCategory category, List<AudioData> list)
     {
         EditorGUILayout.Space(6);
 
@@ -88,14 +96,14 @@ public class AudioDatabaseEditor : Editor
 
         EditorGUILayout.BeginVertical(container);
 
-        foldout = EditorGUILayout.Foldout(
-            foldout,
-            $"{title} ({list.Count})",
+        shows[category] = EditorGUILayout.Foldout(
+            shows[category],
+            $"{category} ({list.Count})",
             true,
             EditorStyles.foldoutHeader
         );
 
-        if (foldout)
+        if (shows[category])
         {
             EditorGUILayout.Space(4);
 
