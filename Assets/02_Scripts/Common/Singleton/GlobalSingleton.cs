@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
@@ -43,7 +43,7 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
         }
     }
 
-    protected virtual void OnDestory()
+    protected virtual void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }

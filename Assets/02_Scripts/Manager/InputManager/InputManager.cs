@@ -1,4 +1,4 @@
-using InputEnum;
+﻿using InputEnum;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +29,7 @@ public class InputManager : GlobalSingleton<InputManager>
         }
     }
 
-    protected override void OnDestory()
+    protected override void OnDestroy()
     {
         DisposeHandlers();
     }
