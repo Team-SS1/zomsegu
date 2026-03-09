@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using PlayerEnum;
+using EventEnum;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
@@ -54,26 +55,32 @@ public class Player : MonoBehaviour
     public void AddHunger(int value)
     {
         Hunger = Mathf.Clamp(Hunger + value, 0, MaxHunger);
+        EventManager.TriggerEvent(EventKey.OnHungerChanged);
     }
     public void AddThirst(int value)
     {
         Thirst = Mathf.Clamp(Thirst + value, 0, MaxThirst);
+        EventManager.TriggerEvent(EventKey.OnThirstChanged);
     }
     public void AddShock(int value)
     {
         CurrentShock = Mathf.Clamp(CurrentShock + value, 0, MaxShock);
+        EventManager.TriggerEvent(EventKey.OnShockChanged);
     }
     public void AddStamina(float value)
     {
         CurrentStamina = Mathf.Clamp(CurrentStamina + value, 0, MaxStamina);
+        EventManager.TriggerEvent(EventKey.OnStaminaChanged);
     }
     public void AddInjury(int value)
     {
         Injury = Mathf.Clamp(Injury + value, 0, 4);
+        EventManager.TriggerEvent(EventKey.OnInjuryChanged);
     }
     public void AddTired(int value)
     {
         Tired = Mathf.Clamp(Tired + value, 0, MaxTired);
+        EventManager.TriggerEvent(EventKey.OnTiredChanged);
     }
     public void SetStamina(float value) // 스태미나의 최종 수치값을 계산하는데 사용
     {
