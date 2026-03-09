@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
 {
@@ -34,10 +35,18 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
         {
             instance = this as T;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
             Destroy(gameObject);
         }
     }
+
+    protected virtual void OnDestory()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    protected virtual void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }
 }
