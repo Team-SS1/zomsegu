@@ -48,7 +48,9 @@ public class UIInventorySlot : MonoBehaviour
             icon.enabled = false;
             icon.sprite = null;
         }
-        amountText.text = slot.IsStack ? slot.amount.ToString() : "";
+        if (slot.IsStack) amountText.text = slot.amount.ToString();
+        else if (slot.IsInstance&&slot.instance.HasDurability) amountText.text = $"{slot.instance.durability}/{slot.instance.maxDurability}";
+        else amountText.text = "";
     }
     public void Clear()
     {
