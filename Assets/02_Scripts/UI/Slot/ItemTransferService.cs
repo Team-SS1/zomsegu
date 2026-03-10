@@ -77,21 +77,25 @@ public static class ItemTransferService
     private static bool TryInventoryToEquipment(SlotRef from, SlotRef to) // 인벤에서 장비로 이동
     {
         //아직 구현 안함
+        Debug.Log("인벤 -> 장비");
         return false;
     }
     private static bool TryEquipmentToInventory(SlotRef from, SlotRef to) // 장비에서 인벤으로 이동
     {
         //아직 구현 안함
+        Debug.Log("장비 -> 인벤");
         return false;
     }
     private static bool TryInventoryToQuickSlot(SlotRef from, SlotRef to) // 인벤에서 퀵슬롯으로 이동
     {
         //아직 구현 안함
+        Debug.Log("인벤 -> 퀵슬롯");
         return false;
     }
     private static bool TryDropItemToInventory(SlotRef from, SlotRef to) // 드롭아이템에서 인벤으로 이동
     {
         //아직 구현 안함
+        Debug.Log("드롭 -> 인벤");
         return false;
     }
 
@@ -99,11 +103,13 @@ public static class ItemTransferService
     private static bool TryInventorytoWorldDrop(SlotRef from) // 인벤에서 월드 드롭
     {
         //아직 구현 안함
+        Debug.Log("아이템 버리기");
         return false;
     }
     private static bool TryClearQuickSlot(SlotRef from) // 퀵슬롯에서 외부로 드롭 (퀵슬롯 제외)
     {
         //아직 구현 안함
+        Debug.Log("퀵슬롯 등록 해제");
         return false;
     }
 
