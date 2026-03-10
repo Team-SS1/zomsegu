@@ -69,13 +69,13 @@ public class AudioService
     #region 오디오 재생
     public void PlayBgm(AudioName audioName, int clipIndex)
     {
-        bgmInstance.Stop();
-
         if (!repository.TryGetAudioData(audioName, out AudioData data)) return;
 
         AudioVariation variation = data.GetVariation(clipIndex);
 
         if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime)) return;
+
+        bgmInstance.Stop();
 
         AudioPlaybackConfig config = new(
             clip: variation.AudioClip,
