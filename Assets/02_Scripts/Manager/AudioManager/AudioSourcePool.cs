@@ -10,7 +10,7 @@ public class AudioSourcePool : IAudioSourcePool
     private readonly AudioSource origin;
     private readonly Transform root;
 
-    private readonly List<IAudioInstance> pool = new();
+    private readonly List<AudioPoolObject> pool = new();
 
     private readonly int maxSize;
 
@@ -22,61 +22,83 @@ public class AudioSourcePool : IAudioSourcePool
 
         for (int i = 0; i < size; i++)
         {
-            AudioSource newAudioSource = Object.Instantiate(this.origin, root);
-            newAudioSource.gameObject.SetActive(false);
-            pool.Add(new AudioInstance(newAudioSource));
+            CreatePoolObject();
         }
     }
 
-    public IAudioInstance Get()
+    private void CreatePoolObject()
     {
-        foreach (IAudioInstance instance in pool)
+        AudioSource newAudioSource = Object.Instantiate(origin, root);
+        AudioPoolObject newPo = newAudioSource.GetComponent<AudioPoolObject>();
+        newPo.Create(new AudioInstance(newAudioSource));
+        newPo.gameObject.SetActive(false);
+        pool.Add(newPo);
+    }
+
+    public AudioPoolObject Get()
+    {
+        foreach (AudioPoolObject po in pool)
         {
-            if (!instance.IsPlaying) return instance;
+            if (!po.Instance.IsPlaying) { return po; }
         }
 
-        IAudioInstance newInstance;
+        AudioPoolObject newPo;
 
         if (pool.Count < maxSize)
         {
-            var newGo = Object.Instantiate(origin, root);
-            newInstance = new AudioInstance(newGo);
-            pool.Add(newInstance);
+            CreatePoolObject();
+            newPo = pool[^1];
         }
         else
         {
-            newInstance = LowestPriorityInstance();
-            newInstance.Stop();
+            newPo = LowestPriorityInstance();
+            newPo.gameObject.SetActive(false);
         }
 
-        return newInstance;
+        return newPo;
     }
 
-    public void Release(IAudioInstance instance)
+    public void Release(AudioPoolObject po)
     {
-        instance.Stop();
+        po.gameObject.SetActive(false);
     }
 
     public void ReleaseAll()
     {
-        foreach (var instance in pool)
+        foreach (var po in pool)
         {
-            Release(instance);
+            Release(po);
         }
     }
 
-    private IAudioInstance LowestPriorityInstance()
+    private AudioPoolObject LowestPriorityInstance()
     {
-        AudioInstance lowest = pool[0] as AudioInstance;
+        AudioPoolObject lowest = pool[0];
 
-        foreach (IAudioInstance instance in pool)
+        foreach (AudioPoolObject po in pool)
         {
-            if (lowest.Priority > ((AudioInstance)instance).Priority)
+            if (lowest.Priority > po.Priority)
             {
-                lowest = instance as AudioInstance;
+                lowest = po;
             }
         }
 
         return lowest;
+    }
+
+    public void Pause()
+    {
+        foreach (AudioPoolObject po in pool)
+        {
+            po.Instance.Pause();
+        }
+    }
+
+    public void UnPause()
+    {
+        foreach (AudioPoolObject po in pool)
+        {
+            po.Instance.UnPause();
+        }
     }
 }

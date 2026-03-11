@@ -4,14 +4,17 @@ using UnityEngine.Audio;
 
 public interface IAudioSourcePool
 {
-    public IAudioInstance Get();
-    public void Release(IAudioInstance audioSource);
+    public AudioPoolObject Get();
+    public void Release(AudioPoolObject po);
     public void ReleaseAll();
+    public void Pause();
+    public void UnPause();
 }
 
 public interface IAudioInstance
 {
     public bool IsPlaying { get; }
+    public bool IsPaused { get; }
 
     public void Play();
     public void Pause();

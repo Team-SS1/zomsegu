@@ -1,4 +1,3 @@
-using AudioEnum;
 using UnityEngine;
 
 /// <summary>
@@ -7,7 +6,7 @@ using UnityEngine;
 public class AudioInstance : IAudioInstance
 {
     private readonly AudioSource source;
-    private AudioPriority priority;
+    private bool isPaused;
 
     public AudioInstance(AudioSource source)
     {
@@ -15,7 +14,7 @@ public class AudioInstance : IAudioInstance
     }
 
     public bool IsPlaying => source.isPlaying;
-    public AudioPriority Priority => priority;
+    public bool IsPaused => isPaused;
 
     #region AudioSource 재생 관리
     public void Play()
@@ -29,6 +28,9 @@ public class AudioInstance : IAudioInstance
 
     public void Pause()
     {
+        if (isPaused) return;
+        isPaused = true;
+
         if (source.isPlaying)
         {
             source.Pause();
@@ -37,6 +39,9 @@ public class AudioInstance : IAudioInstance
 
     public void UnPause()
     {
+        if (!isPaused) return;
+        isPaused = false;
+
         if (!source.isPlaying)
         {
             source.UnPause();
@@ -70,8 +75,6 @@ public class AudioInstance : IAudioInstance
         {
             Set2D();
         }
-
-        priority = config.priority;
     }
 
     private void Set2D()

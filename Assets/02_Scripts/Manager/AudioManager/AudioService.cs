@@ -1,5 +1,4 @@
 using AudioEnum;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -11,8 +10,6 @@ public class AudioService
     private readonly AudioRepository repository;
     private readonly IAudioRouter audioRouter;
     private readonly AudioCooldown cooldown = new();
-
-    private readonly List<ActiveVoice> activeVoices = new();
 
     private IAudioInstance[] bgmInstances = new IAudioInstance[2];  // cross fade 용
     private IAudioSourcePool pool;                                  // SFX 풀
@@ -63,25 +60,6 @@ public class AudioService
         // 정지
         if (isPaused) return;
 
-        // todo: active voice 컴포넌트로 빼서 여기서 관리하게 하지 않기
-        // 풀 정리 후 옮기기
-        for (int i = activeVoices.Count - 1; i >= 0; i--)
-        {
-            ActiveVoice active = activeVoices[i];
-
-            if (!active.instance.IsPlaying)
-            {
-                pool.Release(active.instance);
-                activeVoices.RemoveAt(i);
-                continue;
-            }
-
-            if (active.follow != null)
-            {
-                active.instance.SetPosition(active.follow.position);
-            }
-        }
-
         // bgm fading
         if (!isFading) return;
 
@@ -116,8 +94,7 @@ public class AudioService
             clip: variation.AudioClip,
             mixerGroup: audioRouter.GetMixerGroup(GetRoute(AudioCategory.Bgm)),
             loop: data.Loop,
-            spatial: false,
-            priority: data.Priority);
+            spatial: false);
 
         fadeIndex++;
         bgmVolumes[CurIndex] = variation.Volume * data.RandomVolume;
@@ -144,7 +121,8 @@ public class AudioService
 
         if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime)) return;
 
-        IAudioInstance instance = pool.Get();
+        AudioPoolObject po = pool.Get();
+        IAudioInstance instance = po.Instance;
 
         AudioVariation variation = data.GetVariation(clipIndex);
 
@@ -153,7 +131,6 @@ public class AudioService
             mixerGroup: audioRouter.GetMixerGroup(GetRoute(data.AudioCategory)),
             loop: data.Loop,
             spatial: data.Spatial,
-            priority: data.Priority,
             spatialMinDistance: spatialMinDistance,
             spatialMaxDistance: spatialMaxDistance);
 
@@ -164,12 +141,7 @@ public class AudioService
 
         instance.Play();
 
-        activeVoices.Add(new ActiveVoice
-        {
-            instance = instance,
-            follow = target,
-            priority = data.Priority
-        });
+        po.Init(data.Priority, target);
     }
     #endregion
 
@@ -181,11 +153,7 @@ public class AudioService
 
         bgmInstances[0].Pause();
         bgmInstances[1].Pause();
-
-        foreach (ActiveVoice audio in activeVoices)
-        {
-            audio.instance.Pause();
-        }
+        pool.Pause();
     }
 
     public void UnPauseAll()
@@ -195,11 +163,7 @@ public class AudioService
 
         bgmInstances[0].UnPause();
         bgmInstances[1].UnPause();
-
-        foreach (ActiveVoice audio in activeVoices)
-        {
-            audio.instance.UnPause();
-        }
+        pool.UnPause();
     }
     #endregion
 
@@ -212,12 +176,7 @@ public class AudioService
 
     public void StopAllSfx()
     {
-        foreach (ActiveVoice audio in activeVoices)
-        {
-            pool.Release(audio.instance);
-        }
-
-        activeVoices.Clear();
+        pool.ReleaseAll();
     }
     #endregion
 

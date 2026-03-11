@@ -1,4 +1,3 @@
-using AudioEnum;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -24,7 +23,6 @@ public readonly struct AudioPlaybackConfig
     public readonly AudioMixerGroup mixerGroup;
     public readonly bool loop;
     public readonly bool spatial;
-    public readonly AudioPriority priority;
 
     // todo: 확정되면 const로 빼기
     public readonly float spatialMinDistance;
@@ -35,7 +33,6 @@ public readonly struct AudioPlaybackConfig
         AudioMixerGroup mixerGroup,
         bool loop,
         bool spatial,
-        AudioPriority priority,
         float spatialMinDistance = 0f,
         float spatialMaxDistance = 0f)
     {
@@ -43,7 +40,6 @@ public readonly struct AudioPlaybackConfig
         this.mixerGroup = mixerGroup;
         this.loop = loop;
         this.spatial = spatial;
-        this.priority = priority;
         this.spatialMinDistance = spatialMinDistance;
         this.spatialMaxDistance = spatialMaxDistance;
     }
