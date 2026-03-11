@@ -39,10 +39,11 @@ public class AudioManager : GlobalSingleton<AudioManager>
 
         audioService = new AudioService(repository, audioRouter, spatialMinDistance, spatialMaxDistance);
 
-        IAudioInstance bgmInstance = CreateBgmInstance();
+        IAudioInstance bgmInstanceA = CreateBgmInstance();
+        IAudioInstance bgmInstanceB = CreateBgmInstance();
         IAudioSourcePool pool = CreateAudioSourcePool();
 
-        audioService.InitializeRuntime(bgmInstance, pool);
+        audioService.InitializeRuntime(bgmInstanceA, bgmInstanceB, pool);
     }
 
     private void Start()

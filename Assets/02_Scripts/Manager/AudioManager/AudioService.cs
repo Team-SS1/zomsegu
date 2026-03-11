@@ -14,14 +14,24 @@ public class AudioService
 
     private readonly List<ActiveVoice> activeVoices = new();
 
-    private IAudioInstance bgmInstance;     // BGM
-    private IAudioSourcePool pool;          // SFX 풀
+    private IAudioInstance[] bgmInstances = new IAudioInstance[2];  // cross fade 용
+    private IAudioSourcePool pool;                                  // SFX 풀
+    private IAudioInstance curBgm => bgmInstances[CurIndex];
 
     // todo: 확정되면 상수로 빼기
     private readonly float spatialMinDistance;
     private readonly float spatialMaxDistance;
 
     private bool isPaused = false;
+
+    // Fade in / out
+    private float[] bgmVolumes = new float[2];
+    private bool isFading = false;
+    private float fadeElapsed = 0f;
+    private float fadeDuration = 0f;
+    private int fadeIndex = 0;
+    private int CurIndex => fadeIndex % 2;
+    private int PrevIndex => (fadeIndex + 1) % 2;
     #endregion
 
     #region 초기화
@@ -37,17 +47,24 @@ public class AudioService
         spatialMaxDistance = maxDist;
     }
 
-    public void InitializeRuntime(IAudioInstance bgmInstance, IAudioSourcePool pool)
+    public void InitializeRuntime(
+        IAudioInstance bgmInstanceA,
+        IAudioInstance bgmInstanceB,
+        IAudioSourcePool pool)
     {
-        this.bgmInstance = bgmInstance;
+        bgmInstances[0] = bgmInstanceA;
+        bgmInstances[1] = bgmInstanceB;
         this.pool = pool;
     }
     #endregion
 
     public void Update()
     {
+        // 정지
         if (isPaused) return;
 
+        // todo: active voice 컴포넌트로 빼서 여기서 관리하게 하지 않기
+        // 풀 정리 후 옮기기
         for (int i = activeVoices.Count - 1; i >= 0; i--)
         {
             ActiveVoice active = activeVoices[i];
@@ -64,6 +81,24 @@ public class AudioService
                 active.instance.SetPosition(active.follow.position);
             }
         }
+
+        // bgm fading
+        if (!isFading) return;
+
+        fadeElapsed += Time.deltaTime;
+        float t = fadeElapsed / fadeDuration;
+        float outVol = Mathf.Lerp(bgmVolumes[PrevIndex], 0f, t);
+        float inVol = Mathf.Lerp(0f, bgmVolumes[CurIndex], t);
+        bgmInstances[PrevIndex]?.SetVolume(outVol);
+        bgmInstances[CurIndex].SetVolume(inVol);
+
+        if (t >= 1f || outVol == 0f)
+        {
+            bgmInstances[PrevIndex]?.SetVolume(0f);
+            bgmInstances[PrevIndex]?.Stop();
+            bgmInstances[CurIndex].SetVolume(bgmVolumes[CurIndex]);
+            isFading = false;
+        }
     }
 
     #region 오디오 재생
@@ -71,11 +106,11 @@ public class AudioService
     {
         if (!repository.TryGetAudioData(audioName, out AudioData data)) return;
 
+        if (data.AudioCategory != AudioCategory.Bgm) { return; }
+
         AudioVariation variation = data.GetVariation(clipIndex);
 
         if (!cooldown.CanPlay(audioName, data.Cooldown, Time.unscaledTime)) return;
-
-        bgmInstance.Stop();
 
         AudioPlaybackConfig config = new(
             clip: variation.AudioClip,
@@ -84,10 +119,23 @@ public class AudioService
             spatial: false,
             priority: data.Priority);
 
-        bgmInstance.SetConfig(config);
-        bgmInstance.SetVolume(variation.Volume * data.RandomVolume);
-        bgmInstance.SetPitch(data.RandomPitch);
-        bgmInstance.Play();
+        fadeIndex++;
+        bgmVolumes[CurIndex] = variation.Volume * data.RandomVolume;
+
+        curBgm.SetConfig(config);
+        curBgm.SetVolume(0f);
+        curBgm.SetPitch(data.RandomPitch);
+        curBgm.Play();
+
+        fadeDuration = 1f;
+        fadeElapsed = 0f;
+        isFading = true;
+
+        if (!bgmInstances[PrevIndex].IsPlaying)
+        {
+            curBgm.SetVolume(bgmVolumes[CurIndex]);
+            isFading = false;
+        }
     }
 
     public void PlaySfx(AudioName audioName, int clipIndex, Vector3 position = default, Transform target = null)
@@ -131,7 +179,7 @@ public class AudioService
         if (isPaused) return;
         isPaused = true;
 
-        bgmInstance.Pause();
+        curBgm?.Pause();
         foreach (ActiveVoice audio in activeVoices)
         {
             audio.instance.Pause();
@@ -143,7 +191,7 @@ public class AudioService
         if (!isPaused) return;
         isPaused = false;
 
-        bgmInstance.UnPause();
+        curBgm?.UnPause();
         foreach (ActiveVoice audio in activeVoices)
         {
             audio.instance.UnPause();
@@ -154,7 +202,7 @@ public class AudioService
     #region 오디오 정지
     public void StopBgm()
     {
-        bgmInstance.Stop();
+        curBgm?.Stop();
     }
 
     public void StopAllSfx()
