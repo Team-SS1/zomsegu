@@ -35,13 +35,13 @@ public class AudioPoolObject : MonoBehaviour
         // 거리 기반
         if (useSpatial)
         {
-            instance.SetPosition(target.position);
-
             if (target == null)
             {
                 gameObject.SetActive(false);
                 return;
             }
+
+            instance.SetPosition(target.position);
         }
     }
 
