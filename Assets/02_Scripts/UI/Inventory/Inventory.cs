@@ -84,7 +84,7 @@ public class Inventory
     public bool TryAddInstance(int itemId, ItemStack instance) // 외부에서 인스턴스형 아이템 추가
     {
         if(instance == null || instance.itemId != itemId) return false;
-        if(ItemDB.IsStackable(itemId)) return false;
+        if(!ItemDB.UseInstance(itemId)) return false;
         
         float addWeight = ItemDB.GetWeight(itemId);
         float addVolume = ItemDB.GetVolume(itemId);
@@ -98,6 +98,12 @@ public class Inventory
         {
             instance.guid = ItemGuid.NewGuid(); //새로운 GUID 생성
             while (guidToIndex.ContainsKey(instance.guid)) instance.guid = ItemGuid.NewGuid(); //중복되지 않을 때까지 반복
+        }
+
+        if(!ItemDB.HasDurability(itemId)) //내구도가 없는 아이템은 내구도 정보 초기화
+        {
+            instance.durability = 0;
+            instance.maxDurability = 0;
         }
         slots[emptyIndex].itemId = instance.itemId;
         slots[emptyIndex].amount = 0;
@@ -113,7 +119,7 @@ public class Inventory
     }
     public bool TryAddNewInstance(int itemId) //인스턴스형 아이템을 새로 생성하여 추가하는 메서드
     {
-        if(ItemDB.IsStackable(itemId)) return false;
+        if(!ItemDB.UseInstance(itemId)) return false;
 
         float addWeight = ItemDB.GetWeight(itemId);
         float addVolume = ItemDB.GetVolume(itemId);
@@ -123,8 +129,14 @@ public class Inventory
         int emptyIndex = FindEmptySlot();
         if(emptyIndex < 0) return false; //빈 슬롯 없음
 
-        int maxDurability = ItemDB.GetDefaultDurability(itemId);
-        int currentDurability = maxDurability; // 새로 생성하는 아이템은 내구도가 최대인 상태로 시작
+        int maxDurability = 0;
+        int currentDurability = 0;
+
+        if (ItemDB.HasDurability(itemId))
+        {
+            maxDurability = ItemDB.GetDefaultDurability(itemId);
+            currentDurability = maxDurability;
+        }
 
         ItemStack inst = new ItemStack(itemId, currentDurability, maxDurability);
         while(guidToIndex.ContainsKey(inst.guid)) inst.guid = ItemGuid.NewGuid(); //중복되지 않을 때까지 반복

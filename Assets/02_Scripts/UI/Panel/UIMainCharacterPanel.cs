@@ -11,6 +11,8 @@ public class UIMainCharacterPanel : MonoBehaviour
     [SerializeField] private Button shinButton;
     [SerializeField] private Button hanButton;
 
+    [SerializeField] private ScrollRect inventoryScrollRect;
+
     private void Awake()
     {
         shinButton.onClick.AddListener(OnClickShin);
@@ -20,9 +22,18 @@ public class UIMainCharacterPanel : MonoBehaviour
     public void OnClickShin()
     {
         selectedCharacterContext.SetInspectPlayer(PlayerType.Player_SHIN);
+        ResetScroll();
     }
     public void OnClickHan()
     {
         selectedCharacterContext.SetInspectPlayer(PlayerType.Player_HAN);
+        ResetScroll();
+    }
+    private void ResetScroll()
+    {
+        if (inventoryScrollRect == null) return;
+
+        Canvas.ForceUpdateCanvases();
+        inventoryScrollRect.verticalNormalizedPosition = 1f;
     }
 }
