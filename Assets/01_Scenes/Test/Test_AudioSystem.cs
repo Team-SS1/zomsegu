@@ -63,6 +63,11 @@ public class Test_AudioSystem : MonoBehaviour
             );
     }
 
+    public void Example_PlayBgm_Fade()
+    {
+        mg.PlayBgm(AudioEnum.AudioName.Test_Bgm, fadeDuration: 1f);
+    }
+
     public void Example_PlayTestSfx2D()
     {
         mg.PlaySfx(AudioEnum.AudioName.Test_Sfx);
