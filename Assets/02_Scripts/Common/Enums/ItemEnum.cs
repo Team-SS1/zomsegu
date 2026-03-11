@@ -36,4 +36,10 @@ namespace ItemEnum
         Index,
         EquipSlot
     }
+    public enum ItemAmountPopupMode
+    {
+        None,
+        GiveToOtherPlayer,
+        DropToWorld
+    }
 }
