@@ -106,22 +106,21 @@ public class UIItemAmountPopup : MonoBehaviour
         if (amountInputField == null) return;
         if(string.IsNullOrWhiteSpace(value)) return;
 
-        if(!int.TryParse(value, out int parsed))
+        if(!int.TryParse(value, out _))
         {
-            amountInputField.text = "1";
-            return;
+            amountInputField.text = "";
         }
-
-        parsed = Mathf.Clamp(parsed, 1, maxAmount);
-
-        if(amountInputField.text != parsed.ToString())
-            amountInputField.text = parsed.ToString();
     }
 
     private void OnClickConfirm()
     {
         int amount = GetValidAmount();
-        if (amount <= 0) return;
+
+        if (amount <= 0||amount > maxAmount)
+        {
+            Debug.Log("보유 개수를 학인해주세요 팝업 (나중에 만들 예정)");
+            return;
+        }
 
         switch (currentMode)
         {
@@ -140,6 +139,6 @@ public class UIItemAmountPopup : MonoBehaviour
         if(amountInputField == null) return 0;
         if(!int.TryParse(amountInputField.text, out int amount)) return 0;
 
-        return Mathf.Clamp(amount, 1, maxAmount);
+        return amount;
     }
 }
