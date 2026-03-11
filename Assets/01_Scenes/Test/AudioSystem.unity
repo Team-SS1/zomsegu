@@ -2730,7 +2730,7 @@ Transform:
   m_GameObject: {fileID: 1539388219}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -8, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3753,7 +3753,7 @@ MonoBehaviour:
   bgmSlider: {fileID: 2017902109}
   sfxSlider: {fileID: 1081118515}
   lockUpdate: 1
-  followTarget: {fileID: 1539388221}
+  prefab: {fileID: 1539388219}
   startPos: -15
   duration: 3
   repeatingTime: 0.3

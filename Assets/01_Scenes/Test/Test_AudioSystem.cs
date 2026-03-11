@@ -79,10 +79,10 @@ public class Test_AudioSystem : MonoBehaviour
         mg.PlaySfxAt(AudioEnum.AudioName.Test_Sfx, Vector3.zero);
     }
 
-    public void Example_PlayTestSfx3D_Transform()
+    public void Example_PlayTestSfx3D_Transform(Transform target)
     {
         // 특정 대상을 따라가는 sfx
-        mg.PlaySfxFollow(AudioEnum.AudioName.Test_Sfx, followTarget);
+        mg.PlaySfxFollow(AudioEnum.AudioName.Test_Sfx, target);
     }
 
     public void Example_Pause()
@@ -132,28 +132,28 @@ public class Test_AudioSystem : MonoBehaviour
 
     #region Example - Follow Movable 3D SFX
     [Header("설정 - 이동 가능 타겟 SFX")]
-    [SerializeField] Transform followTarget;
+    [SerializeField] GameObject prefab;
     [SerializeField] float startPos = -10f;
     [SerializeField] float duration = 3f;
     [SerializeField] float repeatingTime = 1f;
 
-    Tween tween;
-    Coroutine coroutine;
-
     public void Example_Movable3DSFX()
     {
-        tween?.Kill();
-        followTarget.position = (Vector3)new Vector2(startPos, 0);
-        if (coroutine != null) StopCoroutine(coroutine);
-        coroutine = StartCoroutine(Repeat3DSfx());
-        tween = followTarget.DOMoveX(-startPos, duration).OnComplete(() => StopCoroutine(coroutine));
+        Transform target = Instantiate(prefab).transform;
+        target.position = (Vector3)new Vector2(startPos, 0);
+        Coroutine coroutine = StartCoroutine(Repeat3DSfx(target));
+        target.DOMoveX(-startPos, duration).OnComplete(() =>
+        {
+            StopCoroutine(coroutine);
+            Destroy(target.gameObject);
+        });
     }
 
-    private IEnumerator Repeat3DSfx()
+    private IEnumerator Repeat3DSfx(Transform target)
     {
         while (true)
         {
-            Example_PlayTestSfx3D_Transform();
+            Example_PlayTestSfx3D_Transform(target);
             yield return new WaitForSeconds(repeatingTime);
         }
     }
