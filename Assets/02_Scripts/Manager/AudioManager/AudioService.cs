@@ -179,7 +179,9 @@ public class AudioService
         if (isPaused) return;
         isPaused = true;
 
-        curBgm?.Pause();
+        bgmInstances[0].Pause();
+        bgmInstances[1].Pause();
+
         foreach (ActiveVoice audio in activeVoices)
         {
             audio.instance.Pause();
@@ -191,7 +193,9 @@ public class AudioService
         if (!isPaused) return;
         isPaused = false;
 
-        curBgm?.UnPause();
+        bgmInstances[0].UnPause();
+        bgmInstances[1].UnPause();
+
         foreach (ActiveVoice audio in activeVoices)
         {
             audio.instance.UnPause();
@@ -202,7 +206,8 @@ public class AudioService
     #region 오디오 정지
     public void StopBgm()
     {
-        curBgm?.Stop();
+        bgmInstances[0].Stop();
+        bgmInstances[1].Stop();
     }
 
     public void StopAllSfx()
