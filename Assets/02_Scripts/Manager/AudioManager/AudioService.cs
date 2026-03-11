@@ -19,8 +19,8 @@ public class AudioService
     private IAudioInstance curBgm => bgmInstances[CurIndex];
 
     // todo: 확정되면 상수로 빼기
-    private readonly float spatialMinDistance;
-    private readonly float spatialMaxDistance;
+    private float spatialMinDistance;
+    private float spatialMaxDistance;
 
     private bool isPaused = false;
 
@@ -35,16 +35,10 @@ public class AudioService
     #endregion
 
     #region 초기화
-    public AudioService(
-        AudioRepository repository,
-        IAudioRouter audioRouter,
-        float minDist,
-        float maxDist)
+    public AudioService(AudioRepository repository, IAudioRouter audioRouter)
     {
         this.repository = repository;
         this.audioRouter = audioRouter;
-        spatialMinDistance = minDist;
-        spatialMaxDistance = maxDist;
     }
 
     public void InitializeRuntime(
@@ -55,6 +49,12 @@ public class AudioService
         bgmInstances[0] = bgmInstanceA;
         bgmInstances[1] = bgmInstanceB;
         this.pool = pool;
+    }
+
+    public void SetSpatialDistance(float min, float max)
+    {
+        spatialMinDistance = min;
+        spatialMaxDistance = max;
     }
     #endregion
 

@@ -34,16 +34,17 @@ public class AudioManager : GlobalSingleton<AudioManager>
     {
         base.Awake();
 
-        var repository = new AudioRepository(audioDatabase);
-        var audioRouter = new AudioMixerRouter(audioMixer);
+        AudioRepository repository = new(audioDatabase);
+        AudioMixerRouter audioRouter = new(audioMixer);
 
-        audioService = new AudioService(repository, audioRouter, spatialMinDistance, spatialMaxDistance);
+        audioService = new AudioService(repository, audioRouter);
 
         IAudioInstance bgmInstanceA = CreateBgmInstance();
         IAudioInstance bgmInstanceB = CreateBgmInstance();
         IAudioSourcePool pool = CreateAudioSourcePool();
 
         audioService.InitializeRuntime(bgmInstanceA, bgmInstanceB, pool);
+        audioService.SetSpatialDistance(spatialMinDistance, spatialMaxDistance);
     }
 
     private void Start()
@@ -181,6 +182,12 @@ public class AudioManager : GlobalSingleton<AudioManager>
         audioDatabase = AssetLoader.FindAndLoadByName<AudioDatabase>("AudioDatabase");
         sourcePrefab = AssetLoader.FindAndLoadByName("AudioSource").GetComponent<AudioSource>();
         audioMixer = AssetLoader.FindAndLoadByName<AudioMixer>("AudioMixer");
+    }
+
+    private void OnValidate()
+    {
+        if (audioService == null) return;
+        audioService.SetSpatialDistance(spatialMinDistance, spatialMaxDistance);
     }
 #endif
     #endregion
