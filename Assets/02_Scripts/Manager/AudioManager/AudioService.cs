@@ -86,7 +86,7 @@ public class AudioService
         if (!isFading) return;
 
         fadeElapsed += Time.deltaTime;
-        float t = fadeElapsed / fadeDuration;
+        float t = fadeElapsed / Mathf.Max(fadeDuration, 0.0001f);
         float outVol = Mathf.Lerp(bgmVolumes[PrevIndex], 0f, t);
         float inVol = Mathf.Lerp(0f, bgmVolumes[CurIndex], t);
         bgmInstances[PrevIndex]?.SetVolume(outVol);
@@ -102,7 +102,7 @@ public class AudioService
     }
 
     #region 오디오 재생
-    public void PlayBgm(AudioName audioName, int clipIndex)
+    public void PlayBgm(AudioName audioName, int clipIndex, float fadeDuration = 0)
     {
         if (!repository.TryGetAudioData(audioName, out AudioData data)) return;
 
@@ -127,7 +127,7 @@ public class AudioService
         curBgm.SetPitch(data.RandomPitch);
         curBgm.Play();
 
-        fadeDuration = 1f;
+        this.fadeDuration = fadeDuration;
         fadeElapsed = 0f;
         isFading = true;
 

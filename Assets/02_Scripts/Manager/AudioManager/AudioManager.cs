@@ -95,9 +95,9 @@ public class AudioManager : GlobalSingleton<AudioManager>
     /// <summary>
     /// BGM 재생
     /// </summary>
-    public void PlayBgm(AudioName audioName, int clipIndex = -1)
+    public void PlayBgm(AudioName audioName, int clipIndex = -1, float fadeDuration = 0)
     {
-        audioService.PlayBgm(audioName, clipIndex);
+        audioService.PlayBgm(audioName, clipIndex, fadeDuration);
     }
 
     /// <summary>
