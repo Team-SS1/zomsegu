@@ -1,4 +1,5 @@
 using AudioEnum;
+using System;
 using UnityEngine;
 
 public class AudioPoolObject : MonoBehaviour
@@ -10,6 +11,8 @@ public class AudioPoolObject : MonoBehaviour
 
     public IAudioInstance Instance => instance;
     public AudioPriority Priority => priority;
+
+    public event Action<AudioPoolObject> OnEnd;
 
     #region Unity API
     private void OnEnable()
@@ -49,6 +52,11 @@ public class AudioPoolObject : MonoBehaviour
     {
         DisableInteral();
     }
+
+    private void OnDestroy()
+    {
+        OnEnd = null;
+    }
     #endregion
 
     public void Create(IAudioInstance instance)
@@ -70,5 +78,6 @@ public class AudioPoolObject : MonoBehaviour
     private void DisableInteral()
     {
         instance?.Stop();
+        OnEnd?.Invoke(this);
     }
 }
