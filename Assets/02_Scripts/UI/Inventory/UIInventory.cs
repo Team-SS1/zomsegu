@@ -33,7 +33,7 @@ public class UIInventory : MonoBehaviour
         new Color(164f / 255f, 164f / 255f, 164f / 255f);
 
     private InventoryFilterType currentFilter = InventoryFilterType.All;
-    private bool sortAllMode = false;
+
     private void Awake()
     {
         if (allButton != null) allButton.onClick.AddListener(OnClickAll);
@@ -108,6 +108,16 @@ public class UIInventory : MonoBehaviour
     {
         List<int> indices = new List<int>();  // 정렬 아이템 인덱스
 
+        if(currentFilter == InventoryFilterType.All)
+        {
+            for(int i = 0; i<inventory.Capacity; i++)
+            {
+                indices.Add(i);
+            }
+
+            return indices;
+        }
+
         for(int i = 0; i < inventory.Capacity; i++)
         {
             InventorySlot slot = inventory.GetSlot(i);
@@ -116,11 +126,8 @@ public class UIInventory : MonoBehaviour
             if(IsMatchFilter(slot))
                 indices.Add(i);
         }
+        indices = indices.OrderBy(i => inventory.GetSlot(i).itemId).ThenBy(i => i).ToList();
 
-        if (currentFilter != InventoryFilterType.All || sortAllMode)
-        {
-            indices = indices.OrderBy(i => inventory.GetSlot(i).itemId).ThenBy(i => i).ToList();
-        }
         return indices;
     }
     private bool IsMatchFilter(InventorySlot slot) //정렬필터에 맞는 아이템인지 구분
@@ -177,43 +184,41 @@ public class UIInventory : MonoBehaviour
     public void OnClickAll()
     {
         currentFilter = InventoryFilterType.All;
-        sortAllMode = false;
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }
     public void OnClickWeapon()
     {
         currentFilter = InventoryFilterType.Weapon;
-        sortAllMode = false;
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }
     public void OnClickEquipment()
     {
         currentFilter = InventoryFilterType.Equipment;
-        sortAllMode = false;
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }
     public void OnClickConsumable()
     {
         currentFilter = InventoryFilterType.Consumable;
-        sortAllMode = false;
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }
     public void OnClickMisc()
     {
         currentFilter = InventoryFilterType.Misc;
-        sortAllMode = false;
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }
     public void OnClickAccessory()
     {
         currentFilter = InventoryFilterType.Accessory;
-        sortAllMode = false;
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }
     public void OnClickSort()
     {
+        Inventory inventory = GetInventory(selectedCharacterContext.CurrentInspectPlayer);
+        if (inventory == null) return;
+
+        inventory.SortByItemId();
+
         currentFilter = InventoryFilterType.All;
-        sortAllMode = true;
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }
 }
