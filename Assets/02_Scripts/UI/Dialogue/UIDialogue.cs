@@ -174,6 +174,7 @@ public class UIDialogue : MonoBehaviour
 
         if (skipMode)
         {
+            SetAutoMode(false);
             skipCoroutine = StartCoroutine(SkipDialogue());
         }
     }
@@ -187,6 +188,7 @@ public class UIDialogue : MonoBehaviour
 
         if (autoMode)
         {
+            SetSkipMode(false);
             if (!typer.IsTyping) PlayLine();
             typer.OnEnd += PlayLine;
         }
