@@ -1,4 +1,5 @@
 using InputEnum;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -19,15 +20,21 @@ public class UIDialogue : MonoBehaviour
     [SerializeField] Image portrait;
     [SerializeField] TMP_Text characterName;
     [SerializeField] DialogueTyper typer;
+    [SerializeField] float skipDelayTime = 0.3f;
 
     [Header("Extra")]
     [SerializeField] GameObject autoPlaying;
 
-    private bool autoMode = false;
-
     private List<DialogueData> dialogues = new();
     private int index = 0;
 
+    // skip
+    private Coroutine skipCoroutine;
+    private WaitForSecondsRealtime skipDelay;
+    private bool skipMode = false;
+
+    // auto
+    private bool autoMode = false;
     #region Unity API
     private void Awake()
     {
@@ -36,6 +43,8 @@ public class UIDialogue : MonoBehaviour
         backlogBtn.onClick.AddListener(OnClickBacklogBtn);
         optionBtn.onClick.AddListener(OnClickOptionBtn);
         dialogueWindowBtn.onClick.AddListener(OnClickDialogueWindowBtn);
+
+        skipDelay = new WaitForSecondsRealtime(skipDelayTime);
     }
 
     private void OnEnable()
@@ -62,6 +71,7 @@ public class UIDialogue : MonoBehaviour
         mg.RemoveMaps(ActionMaps.Dialogue);
 
         SetAutoMode(false);
+        SetSkipMode(false);
         typer.Clear();
     }
     #endregion
@@ -69,7 +79,7 @@ public class UIDialogue : MonoBehaviour
     #region 버튼 이벤트
     private void OnClickSkipBtn()
     {
-
+        SetSkipMode(!skipMode);
     }
 
     private void OnClickAutoBtn()
@@ -89,7 +99,7 @@ public class UIDialogue : MonoBehaviour
 
     private void OnClickDialogueWindowBtn()
     {
-        PlayNextLine();
+        PlayLineManunal();
         EventSystem.current?.SetSelectedGameObject(null);   // 버튼 캐싱 삭제
     }
     #endregion
@@ -100,15 +110,13 @@ public class UIDialogue : MonoBehaviour
         gameObject.SetActive(true);
         this.dialogues = dialogues;
         index = 0;
-        PlayNextLine();
+        PlayLineManunal();
     }
 
-    private void PlayNextLine()
+    private void PlayLineManunal()
     {
-        if (autoMode)
-        {
-            SetAutoMode(false);
-        }
+        SetAutoMode(false);
+        SetSkipMode(false);
 
         if (typer.IsTyping)
         {
@@ -137,10 +145,38 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.started)
         {
-            PlayNextLine();
+            PlayLineManunal();
+        }
+    }
+
+    private IEnumerator SkipDialogue()
+    {
+        while (true)
+        {
+            PlayLine();
+            typer.SkipOrComplete();
+            yield return skipDelay;
         }
     }
     #endregion
+
+    private void SetSkipMode(bool value)
+    {
+        if (skipMode == value) return;
+
+        skipMode = value;
+
+        if (skipCoroutine != null)
+        {
+            StopCoroutine(skipCoroutine);
+            skipCoroutine = null;
+        }
+
+        if (skipMode)
+        {
+            skipCoroutine = StartCoroutine(SkipDialogue());
+        }
+    }
 
     private void SetAutoMode(bool value)
     {
@@ -151,6 +187,7 @@ public class UIDialogue : MonoBehaviour
 
         if (autoMode)
         {
+            if (!typer.IsTyping) PlayLine();
             typer.OnEnd += PlayLine;
         }
         else
@@ -174,6 +211,11 @@ public class UIDialogue : MonoBehaviour
         typer = transform.FindChild<DialogueTyper>("Text_Dialogue");
 
         autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying").gameObject;
+    }
+
+    private void OnValidate()
+    {
+        skipDelay = new WaitForSecondsRealtime(skipDelayTime);
     }
 #endif
     #endregion
