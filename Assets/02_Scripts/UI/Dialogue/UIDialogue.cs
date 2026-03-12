@@ -25,6 +25,7 @@ public class UIDialogue : MonoBehaviour
     private bool autoMode = false;
 
     private List<DialogueData> dialogues = new();
+    private int index = 0;
 
     #region Unity API
     private void Awake()
@@ -74,12 +75,12 @@ public class UIDialogue : MonoBehaviour
 
     private void OnClickBacklogBtn()
     {
-
+        // todo: 백로그 ui 띄우기
     }
 
     private void OnClickOptionBtn()
     {
-
+        // todo: 옵션 ui 띄우기
     }
 
     private void OnClickDialogueWindowBtn()
@@ -88,23 +89,14 @@ public class UIDialogue : MonoBehaviour
     }
     #endregion
 
-    private int index = 0;
-
-    public void SetDialogues(List<DialogueData> dialogues)
+    #region 대화 관리
+    public void StartDialogues(List<DialogueData> dialogues)
     {
+        gameObject.SetActive(true);
         this.dialogues = dialogues;
         index = 0;
+        PlayNextLine();
     }
-
-    #region Dialogue Input 이벤트
-    private void OnNext(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            PlayNextLine();
-        }
-    }
-    #endregion
 
     private void PlayNextLine()
     {
@@ -124,6 +116,15 @@ public class UIDialogue : MonoBehaviour
         typer.PlayLine(data.text);
         index++;
     }
+
+    private void OnNext(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            PlayNextLine();
+        }
+    }
+    #endregion
 
     private void SetAutoMode(bool value)
     {

@@ -48,12 +48,12 @@ public class Test_DialogueSystem : MonoBehaviour
     private void Start()
     {
         AudioManager.Instance.PlayBgm(AudioEnum.AudioName.Test_Bgm, fadeDuration: 1f);
-        ui.SetDialogues(testList);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Logger.Log("trigger enter");
-        ui.gameObject.SetActive(true);
+        // todo: 나중에는 data 전달이 아니라 db에서 검색해서 지정
+        ui.StartDialogues(testList);
     }
 }
