@@ -2,6 +2,7 @@ using InputEnum;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -87,6 +88,7 @@ public class UIDialogue : MonoBehaviour
     private void OnClickDialogueWindowBtn()
     {
         PlayNextLine();
+        EventSystem.current?.SetSelectedGameObject(null);   // 버튼 캐싱 삭제
     }
     #endregion
 
