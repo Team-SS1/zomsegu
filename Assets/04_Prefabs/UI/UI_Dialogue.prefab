@@ -383,6 +383,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5734896668109098565}
   - component: {fileID: 6500454364788021389}
+  - component: {fileID: 4174267858724849839}
   - component: {fileID: 3974607777163903217}
   m_Layer: 5
   m_Name: Text_Dialogue
@@ -418,6 +419,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1821884773297028977}
   m_CullTransparentMesh: 1
+--- !u!114 &4174267858724849839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1821884773297028977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f131a5b9542b46488bd8160f215b7f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 3974607777163903217}
+  charInterval: 0.03
+  useUnscaledTime: 1
 --- !u!114 &3974607777163903217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,17 +454,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC9C0\uAE08 \uC774 \uC21C\uAC04\uC774 \uC5BC\uB9C8\uB098 \uC791\uACE0
-    \uD3C9\uBC94\uD574 \uBCF4\uC774\uB354\uB77C\uB3C4 \uAD1C\uCC2E\uB2E4. \uB300\uBD80\uBD84\uC758
-    \uBCC0\uD654\uB294 \uC544\uC8FC \uC0AC\uC18C\uD55C \uACB0\uC2EC\uC5D0\uC11C \uC2DC\uC791\uB418\uACE0,
-    \uADF8 \uACB0\uC2EC\uC774 \uC313\uC5EC \uACB0\uAD6D \uD070 \uD750\uB984\uC774
-    \uB41C\uB2E4. \uC624\uB298 \uC870\uAE08 \uB354 \uBC30\uC6B0\uACE0, \uC870\uAE08
-    \uB354 \uBC84\uD2F0\uACE0, \uC870\uAE08 \uB354 \uC55E\uC73C\uB85C \uB098\uC544\uAC14\uB2E4\uBA74
-    \uC774\uBBF8 \uCDA9\uBD84\uD788 \uC798\uD558\uACE0 \uC788\uB294 \uAC83\uC774\uB2E4.
-    \uAE38\uC774 \uBA40\uC5B4 \uBCF4\uC77C\uC218\uB85D \uC18D\uB3C4\uB97C \uC7AC\uCD09\uD558\uAE30\uBCF4\uB2E4
-    \uBC29\uD5A5\uC744 \uC783\uC9C0 \uC54A\uB294 \uAC83\uC774 \uB354 \uC911\uC694\uD558\uB2E4.
-    \uACB0\uAD6D \uB05D\uAE4C\uC9C0 \uAC78\uC5B4\uAC04 \uC0AC\uB78C\uB9CC\uC774 \uC790\uC2E0\uC774
-    \uC5BC\uB9C8\uB098 \uBA40\uB9AC \uC654\uB294\uC9C0 \uC54C\uAC8C \uB41C\uB2E4."
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0d527d03562050e47bc8a51506182914, type: 2}
   m_sharedMaterial: {fileID: -7287411867066478508, guid: 0d527d03562050e47bc8a51506182914, type: 2}
@@ -1199,6 +1205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9069192410726290125}
   - component: {fileID: 6763308879668881339}
+  - component: {fileID: 5197666398879651322}
   - component: {fileID: 3628550799970573062}
   m_Layer: 5
   m_Name: UI_Dialogue
@@ -1235,6 +1242,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6056247306251950821}
   m_CullTransparentMesh: 1
+--- !u!114 &5197666398879651322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6056247306251950821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1916e164712c64e89c028b69e934e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skipBtn: {fileID: 1368502756872811854}
+  autoBtn: {fileID: 7553546739465886406}
+  backlogBtn: {fileID: 197013125349527516}
+  optionBtn: {fileID: 5884300027909687212}
+  dialogueWindowBtn: {fileID: 3333776795290106756}
+  portrait: {fileID: 631175679155018061}
+  characterName: {fileID: 7282039423806790239}
+  typer: {fileID: 4174267858724849839}
+  autoPlaying: {fileID: 6839979405298839454}
 --- !u!114 &3628550799970573062
 MonoBehaviour:
   m_ObjectHideFlags: 0
