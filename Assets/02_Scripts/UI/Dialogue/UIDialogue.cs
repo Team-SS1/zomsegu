@@ -119,7 +119,9 @@ public class UIDialogue : MonoBehaviour
             return;
         }
 
-        typer.PlayLine(dialogues[index].text);
+        DialogueData data = dialogues[index];
+        characterName.text = data.name;
+        typer.PlayLine(data.text);
         index++;
     }
 
