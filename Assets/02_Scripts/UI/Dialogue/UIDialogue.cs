@@ -1,5 +1,8 @@
+using InputEnum;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIDialogue : MonoBehaviour
@@ -21,6 +24,8 @@ public class UIDialogue : MonoBehaviour
 
     private bool autoMode = false;
 
+    private List<DialogueData> dialogues = new();
+
     #region Unity API
     private void Awake()
     {
@@ -29,6 +34,30 @@ public class UIDialogue : MonoBehaviour
         backlogBtn.onClick.AddListener(OnClickBacklogBtn);
         optionBtn.onClick.AddListener(OnClickOptionBtn);
         dialogueWindowBtn.onClick.AddListener(OnClickDialogueWindowBtn);
+    }
+
+    private void OnEnable()
+    {
+        Time.timeScale = 0f;
+        InputManager mg = InputManager.Instance;
+        mg.RemoveMaps(ActionMaps.Gameplay);
+        mg.RemoveMaps(ActionMaps.UI);
+        mg.AddMaps(ActionMaps.Dialogue);
+    }
+
+    private void Start()
+    {
+        InputManager mg = InputManager.Instance;
+        mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
+    }
+
+    private void OnDisable()
+    {
+        Time.timeScale = 1f;
+        InputManager mg = InputManager.Instance;
+        mg.AddMaps(ActionMaps.Gameplay);
+        mg.AddMaps(ActionMaps.UI);
+        mg.RemoveMaps(ActionMaps.Dialogue);
     }
     #endregion
 
@@ -55,12 +84,44 @@ public class UIDialogue : MonoBehaviour
 
     private void OnClickDialogueWindowBtn()
     {
+        PlayNextLine();
+    }
+    #endregion
+
+    private int index = 0;
+
+    public void SetDialogues(List<DialogueData> dialogues)
+    {
+        this.dialogues = dialogues;
+        index = 0;
+    }
+
+    #region Dialogue Input 이벤트
+    private void OnNext(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            PlayNextLine();
+        }
+    }
+    #endregion
+
+    private void PlayNextLine()
+    {
         if (autoMode)
         {
             SetAutoMode(false);
         }
+
+        if (dialogues.Count <= index)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
+        typer.PlayLine(dialogues[index].text);
+        index++;
     }
-    #endregion
 
     private void SetAutoMode(bool value)
     {
