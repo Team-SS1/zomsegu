@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,9 @@ public class DialogueTyper : MonoBehaviour
     private Coroutine typingCo;
     private string fullText;
     private bool isTyping;
+
+    private WaitForSecondsRealtime endDelay = new(1f);
+    public event Action OnEnd;
 
     public bool IsTyping => isTyping;
 
@@ -83,6 +87,12 @@ public class DialogueTyper : MonoBehaviour
                 yield return waitForSecondsRealtime;
             else
                 yield return waitForSeconds;
+        }
+
+        if (OnEnd != null)
+        {
+            yield return endDelay;
+            OnEnd.Invoke();
         }
 
         isTyping = false;

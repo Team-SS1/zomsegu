@@ -60,6 +60,8 @@ public class UIDialogue : MonoBehaviour
         mg.AddMaps(ActionMaps.Gameplay);
         mg.AddMaps(ActionMaps.UI);
         mg.RemoveMaps(ActionMaps.Dialogue);
+
+        SetAutoMode(false);
         typer.Clear();
     }
     #endregion
@@ -108,15 +110,20 @@ public class UIDialogue : MonoBehaviour
             SetAutoMode(false);
         }
 
-        if (dialogues.Count <= index)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
         if (typer.IsTyping)
         {
             typer.SkipOrComplete();
+            return;
+        }
+
+        PlayLine();
+    }
+
+    private void PlayLine()
+    {
+        if (dialogues.Count <= index)
+        {
+            gameObject.SetActive(false);
             return;
         }
 
@@ -137,8 +144,19 @@ public class UIDialogue : MonoBehaviour
 
     private void SetAutoMode(bool value)
     {
+        if (autoMode == value) return;
+
         autoMode = value;
         autoPlaying.SetActive(autoMode);
+
+        if (autoMode)
+        {
+            typer.OnEnd += PlayLine;
+        }
+        else
+        {
+            typer.OnEnd -= PlayLine;
+        }
     }
 
     #region 유니티 전용
