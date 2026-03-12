@@ -59,6 +59,7 @@ public class UIDialogue : MonoBehaviour
         mg.AddMaps(ActionMaps.Gameplay);
         mg.AddMaps(ActionMaps.UI);
         mg.RemoveMaps(ActionMaps.Dialogue);
+        typer.Clear();
     }
     #endregion
 
@@ -108,6 +109,12 @@ public class UIDialogue : MonoBehaviour
         if (dialogues.Count <= index)
         {
             gameObject.SetActive(false);
+            return;
+        }
+
+        if (typer.IsTyping)
+        {
+            typer.SkipOrComplete();
             return;
         }
 

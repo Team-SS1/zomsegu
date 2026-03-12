@@ -50,6 +50,13 @@ public class DialogueTyper : MonoBehaviour
     private void Complete()
     {
         isTyping = false;
+
+        if (typingCo != null)
+        {
+            StopCoroutine(typingCo);
+            typingCo = null;
+        }
+
         // TMP는 RichText 태그 포함 문자열 길이와 실제 표시 글자 수가 다르므로,
         // textInfo.characterCount(표시 가능한 실제 글자 수)를 사용.
         target.ForceMeshUpdate();
