@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using EventEnum;
+using System.Linq;
 
 public class Inventory
 {
@@ -116,6 +117,41 @@ public class Inventory
 
         NotifyChanged();
         return true;
+    }
+    public void SortByItemId() //인벤 아이템 itemId에 따라 앞으로 정렬하기
+    {
+        List<InventorySlot> filledSlots = new List<InventorySlot>();
+
+        for(int i = 0; i<Capacity; i++)
+        {
+            if (!slots[i].isEmpty)
+            {
+                InventorySlot slot = slots[i];
+
+                InventorySlot copy = new InventorySlot //참조로 이상한 아이템이 삭제되길래 그냥 복사 붙여넣기로 함
+                {
+                    itemId = slot.itemId,
+                    amount = slot.amount,
+                    instance = slot.instance
+                };
+                filledSlots.Add(copy);
+            }
+        }
+        filledSlots = filledSlots.OrderBy(x => x.itemId).ToList();
+
+        for(int i = 0; i<Capacity; i++)
+        {
+            if(i < filledSlots.Count)
+            {
+                slots[i] = filledSlots[i];
+            }
+            else
+            {
+                slots[i] = new InventorySlot();
+            }
+        }
+        RebuildIndicesAndCapacity();
+        NotifyChanged();
     }
     public bool TryAddNewInstance(int itemId) //인스턴스형 아이템을 새로 생성하여 추가하는 메서드
     {

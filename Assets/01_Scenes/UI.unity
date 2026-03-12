@@ -16600,6 +16600,15 @@ MonoBehaviour:
   - {fileID: 32659689}
   - {fileID: 1236056870}
   - {fileID: 1693094452}
+  allButton: {fileID: 374141644}
+  weaponButton: {fileID: 130735850}
+  equipmentButton: {fileID: 75515844}
+  accessoryButton: {fileID: 1149278452}
+  consumableButton: {fileID: 512340065}
+  miscButton: {fileID: 175909699}
+  sortButton: {fileID: 1504619820}
+  normalButtonColor: {r: 0.4627451, g: 0.44313726, b: 0.44313726, a: 1}
+  selectedButtonColor: {r: 0.6431373, g: 0.6431373, b: 0.6431373, a: 1}
 --- !u!1001 &2036415100
 PrefabInstance:
   m_ObjectHideFlags: 0
