@@ -1,0 +1,62 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using PlayerEnum;
+using ItemEnum;
+using TMPro;
+
+public class UIEquipmentSlot : MonoBehaviour, IDropHandler
+{
+    [SerializeField] private Image icon;
+    [SerializeField] private TextMeshProUGUI amountTXT;
+
+    public SlotRef slotRef { get; private set; }
+
+    public void SetSlot(EquipSlotType equipSlotType, PlayerType playerType, EquipmentSlot slot)
+    {
+        slotRef = SlotRef.Equip(playerType, equipSlotType);
+
+        if (slot == null || slot.isEmpty || slot.equippedItem == null)
+        {
+            Clear();
+            return;
+        }
+        CommonItemData itemData = ItemDB.GetCommon(slot.equippedItem.itemId);
+
+        if(itemData != null && !string.IsNullOrEmpty(itemData.Icon))
+        {
+            Sprite iconSprite = Resources.Load<Sprite>(itemData.Icon);
+            icon.sprite = iconSprite;
+            icon.enabled = iconSprite != null;
+        }
+        else
+        {
+            icon.sprite = null;
+            icon.enabled = false;
+        }
+
+        if (slot.equippedItem.HasDurability)
+            amountTXT.text = $"{slot.equippedItem.durability}/{slot.equippedItem.maxDurability}";
+        else
+            amountTXT.text = "";
+    }
+    public void Clear()
+    {
+        if(icon != null)
+        {
+            icon.sprite = null;
+            icon.enabled = false;
+        }
+        if (amountTXT != null)
+            amountTXT.text = "";
+    }
+    public void OnDrop(PointerEventData eventData)
+    {
+        if(DragContext.payload == null) return;
+
+        DragContext.payload.SetTo(slotRef);
+        ItemTransferService.TryTransferBetweenSlots(DragContext.payload);
+    }
+}
