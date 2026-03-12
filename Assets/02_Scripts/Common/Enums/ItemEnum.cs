@@ -42,4 +42,13 @@ namespace ItemEnum
         GiveToOtherPlayer,
         DropToWorld
     }
+    public enum InventoryFilterType
+    {
+        All,
+        Weapon,
+        Equipment,
+        Accessory,
+        Consumable,
+        Misc
+    }
 }
