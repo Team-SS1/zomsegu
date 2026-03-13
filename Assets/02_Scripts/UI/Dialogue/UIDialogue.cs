@@ -52,7 +52,9 @@ public class UIDialogue : MonoBehaviour
     private void OnEnable()
     {
         Time.timeScale = 0f;
+
         InputManager mg = InputManager.Instance;
+        if (mg == null) return;
         mg.RemoveMaps(ActionMaps.Gameplay);
         mg.RemoveMaps(ActionMaps.UI);
         mg.AddMaps(ActionMaps.Dialogue);
@@ -68,13 +70,14 @@ public class UIDialogue : MonoBehaviour
     private void OnDisable()
     {
         Time.timeScale = 1f;
+        SetMode(DialogueMode.None);
+        typer.Clear();
+
         InputManager mg = InputManager.Instance;
+        if (mg == null) return;
         mg.AddMaps(ActionMaps.Gameplay);
         mg.AddMaps(ActionMaps.UI);
         mg.RemoveMaps(ActionMaps.Dialogue);
-
-        SetMode(DialogueMode.None);
-        typer.Clear();
     }
     #endregion
 
