@@ -166,7 +166,7 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removedItem.itemId, removedItem);
                 return false;
             }
-            if(!inventory.TryAddInstance(oldInstance.itemId, oldInstance))
+            if(!inventory.TryPlaceInstanceAt(from.index, oldInstance))
             {
                 equipment.SwapInstance(to.equipSlot, oldInstance, out _, out _);
                 inventory.TryAddInstance(removedItem.itemId, removedItem);
@@ -204,7 +204,7 @@ public static class ItemTransferService
         {
             if (!equipment.UnEquip(from.equipSlot, out ItemStack removed, out _)) return false;
 
-            if (!inventory.TryAddInstance(equippedItem.itemId, equippedItem))
+            if (!inventory.TryPlaceInstanceAt(to.index, removed))
             {
                 equipment.EquipInstance(from.equipSlot, removed);
                 return false;
@@ -226,7 +226,7 @@ public static class ItemTransferService
         }
         
 
-        if(!inventory.TryAddInstance(oldInstance.itemId, oldInstance))
+        if(!inventory.TryPlaceInstanceAt(to.index, oldInstance))
         {
             equipment.SwapInstance(from.equipSlot, oldInstance, out _, out _);
             inventory.TryAddInstance(removedItem.itemId, removedItem);

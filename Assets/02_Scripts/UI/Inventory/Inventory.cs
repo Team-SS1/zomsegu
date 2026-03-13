@@ -317,4 +317,42 @@ public class Inventory
         }
         return 0;
     }
+    public bool TryPlaceInstanceAt(int index, ItemStack instance)
+    {
+        if (index < 0 || index > Capacity) return false;
+        if (instance == null) return false;
+        if (!ItemDB.UseInstance(instance.itemId)) return false;
+
+        InventorySlot slot = GetSlot(index);
+        if (slot == null || !slot.isEmpty) return false;
+
+        float addWeight = ItemDB.GetWeight(instance.itemId);
+        float addVolume = ItemDB.GetVolume(instance.itemId);
+
+        if (!CanAddByCapacity(addWeight, addVolume)) return false;
+
+        if (string.IsNullOrEmpty(instance.guid) || guidToIndex.ContainsKey(instance.guid))
+        {
+            instance.guid = ItemGuid.NewGuid();
+            while (guidToIndex.ContainsKey(instance.guid)) instance.guid = ItemGuid.NewGuid(); //중복되지 않을 때까지 반복
+        }
+
+        if (!ItemDB.HasDurability(instance.itemId))
+        {
+            instance.durability = 0;
+            instance.maxDurability = 0;
+        }
+
+        slot.itemId = instance.itemId;
+        slot.amount = 0;
+        slot.instance = instance;
+
+        guidToIndex[instance.guid] = index;
+
+        CurrentWeight += addWeight;
+        CurrentVolume += addVolume;
+
+        NotifyChanged();
+        return true;
+    }
 }
