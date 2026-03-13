@@ -67,6 +67,7 @@ public class UIDialogue : MonoBehaviour
         InputManager mg = InputManager.Instance;
         mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
         mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
+        mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
     }
 
     private void OnDisable()
@@ -191,6 +192,18 @@ public class UIDialogue : MonoBehaviour
             SetMode(DialogueMode.None);
             if (typer.IsTyping) typer.SkipOrComplete();
             PlayPrevLine();
+        }
+    }
+
+    private void OnSkip(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            SetMode(DialogueMode.Skip);
+        }
+        else if (context.canceled)
+        {
+            SetMode(DialogueMode.None);
         }
     }
     #endregion
