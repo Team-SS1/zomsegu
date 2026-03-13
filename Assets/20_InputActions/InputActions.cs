@@ -647,6 +647,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AllSkip"",
+                    ""type"": ""Button"",
+                    ""id"": ""50fe1b39-993d-4141-9a0e-9c203cf7c5bf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -770,6 +779,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Navigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9aa7eeaf-b5bc-4245-867b-e61e93a5d0c6"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": ""Hold(duration=3)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AllSkip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -843,6 +863,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Dialogue_Navigate = m_Dialogue.FindAction("Navigate", throwIfNotFound: true);
         m_Dialogue_Select = m_Dialogue.FindAction("Select", throwIfNotFound: true);
         m_Dialogue_Skip = m_Dialogue.FindAction("Skip", throwIfNotFound: true);
+        m_Dialogue_AllSkip = m_Dialogue.FindAction("AllSkip", throwIfNotFound: true);
         // System
         m_System = asset.FindActionMap("System", throwIfNotFound: true);
         m_System_StopGame = m_System.FindAction("StopGame", throwIfNotFound: true);
@@ -1349,6 +1370,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Dialogue_Navigate;
     private readonly InputAction m_Dialogue_Select;
     private readonly InputAction m_Dialogue_Skip;
+    private readonly InputAction m_Dialogue_AllSkip;
     /// <summary>
     /// Provides access to input actions defined in input action map "Dialogue".
     /// </summary>
@@ -1380,6 +1402,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Dialogue/Skip".
         /// </summary>
         public InputAction @Skip => m_Wrapper.m_Dialogue_Skip;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialogue/AllSkip".
+        /// </summary>
+        public InputAction @AllSkip => m_Wrapper.m_Dialogue_AllSkip;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1421,6 +1447,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Skip.started += instance.OnSkip;
             @Skip.performed += instance.OnSkip;
             @Skip.canceled += instance.OnSkip;
+            @AllSkip.started += instance.OnAllSkip;
+            @AllSkip.performed += instance.OnAllSkip;
+            @AllSkip.canceled += instance.OnAllSkip;
         }
 
         /// <summary>
@@ -1447,6 +1476,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Skip.started -= instance.OnSkip;
             @Skip.performed -= instance.OnSkip;
             @Skip.canceled -= instance.OnSkip;
+            @AllSkip.started -= instance.OnAllSkip;
+            @AllSkip.performed -= instance.OnAllSkip;
+            @AllSkip.canceled -= instance.OnAllSkip;
         }
 
         /// <summary>
@@ -1873,6 +1905,13 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSkip(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AllSkip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAllSkip(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "System" which allows adding and removing callbacks.

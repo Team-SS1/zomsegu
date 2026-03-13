@@ -68,6 +68,7 @@ public class UIDialogue : MonoBehaviour
         mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
         mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
         mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
+        mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
     }
 
     private void OnDisable()
@@ -204,6 +205,14 @@ public class UIDialogue : MonoBehaviour
         else if (context.canceled)
         {
             SetMode(DialogueMode.None);
+        }
+    }
+
+    private void OnAllSkip(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Logger.Log("대화 전체 스킵");
         }
     }
     #endregion

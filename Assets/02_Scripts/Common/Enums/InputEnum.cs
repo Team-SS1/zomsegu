@@ -46,6 +46,7 @@ namespace InputEnum
         Navigate,
         Select,
         Skip,
+        AllSkip,
 
         // === System ===
         StopGame,
