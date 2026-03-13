@@ -186,7 +186,7 @@ public class UIDialogue : MonoBehaviour
 
     private void ShowLine(DialogueData data)
     {
-        characterName.text = data.name;
+        characterName.text = data.characterName;
         typer.PlayLine(data.text);
     }
 
