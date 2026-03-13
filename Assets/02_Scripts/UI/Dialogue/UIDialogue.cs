@@ -10,6 +10,7 @@ using UnityEngine.UI;
 
 public class UIDialogue : MonoBehaviour
 {
+    #region 필드
     [Header("Buttons")]
     [SerializeField] Button skipBtn;
     [SerializeField] Button autoBtn;
@@ -36,6 +37,7 @@ public class UIDialogue : MonoBehaviour
     // skip
     private Coroutine skipCoroutine;
     private WaitForSecondsRealtime skipDelay;
+    #endregion
 
     #region Unity API
     private void Awake()
@@ -160,6 +162,18 @@ public class UIDialogue : MonoBehaviour
         typer.PlayLine(data.text);
     }
 
+    private IEnumerator SkipDialogue()
+    {
+        while (true)
+        {
+            yield return skipDelay;
+            PlayNextLine();
+            typer.SkipOrComplete();
+        }
+    }
+    #endregion
+
+    #region Input 이벤트
     private void OnNext(InputAction.CallbackContext context)
     {
         if (context.started)
@@ -179,18 +193,9 @@ public class UIDialogue : MonoBehaviour
             PlayPrevLine();
         }
     }
-
-    private IEnumerator SkipDialogue()
-    {
-        while (true)
-        {
-            yield return skipDelay;
-            PlayNextLine();
-            typer.SkipOrComplete();
-        }
-    }
     #endregion
 
+    #region 모드 설정
     private void SetMode(DialogueMode mode)
     {
         if (curMode == mode) return;
@@ -246,6 +251,7 @@ public class UIDialogue : MonoBehaviour
             index = 0;
         }
     }
+    #endregion
 
     #region 유니티 전용
 #if UNITY_EDITOR
