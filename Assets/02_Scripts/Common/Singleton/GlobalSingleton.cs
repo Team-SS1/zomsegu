@@ -9,6 +9,7 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
     {
         get
         {
+            if (isQuitting) return null;
             if (instance == null)
             {
                 instance = FindAnyObjectByType<T>();
@@ -40,6 +41,8 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
         }
     }
 
+    private static bool isQuitting = false;
+
     protected virtual void Awake()
     {
         if (instance == null)
@@ -61,4 +64,17 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
     }
 
     protected virtual void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }
+
+    private void OnApplicationQuit()
+    {
+        isQuitting = true;
+    }
+
+    // 플레이 시작 시 이전 play 정보 없게 하기
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        instance = null;
+        isQuitting = false;
+    }
 }
