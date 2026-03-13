@@ -30,7 +30,7 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler
             Clear();
             return;
         }
-        CommonItemData itemData = ItemDB.GetCommon(slot.equippedItem.itemId);
+        CommonItemData itemData = ItemDB.GetCommon(itemId);
 
         if(itemData != null && !string.IsNullOrEmpty(itemData.Icon))
         {
@@ -46,9 +46,14 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler
 
         if (slot.HasInstance && slot.equippedItem != null && slot.equippedItem.HasDurability)
             amountTXT.text = $"{slot.equippedItem.durability}/{slot.equippedItem.maxDurability}";
-        else if(slot.HasRangedWeapon && slot.rangedWeaponItem != 0)
+        else if (slot.HasRangedWeapon)
         {
-
+            PlayerData data = PlayerManager.Instance.GetPlayerData(playerType);
+            if(data != null && data.Inventory != null)
+            {
+                int amount = data.Inventory.GetStackAmount(slot.rangedWeaponItem);
+                amountTXT.text = amount > 0 ? amount.ToString() : "";
+            }
         }
         else
             amountTXT.text = "";

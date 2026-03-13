@@ -305,4 +305,16 @@ public class Inventory
     {
         EventManager.TriggerEvent(EventKey.InventoryChanged, playerType);
     } 
+    public int GetStackAmount(int itemId)
+    {
+        if (itemId == 0) return 0;
+
+        if(stackToIndex.TryGetValue(itemId, out int index))
+        {
+            InventorySlot slot = GetSlot(index);
+            if(slot != null && slot.IsStack)
+                return slot.amount;
+        }
+        return 0;
+    }
 }

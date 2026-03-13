@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using ItemEnum;
 using PlayerEnum;
-using UnityEngine.Scripting.APIUpdating;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
-
 public static class ItemTransferService
 {
     public static bool TryTransferBetweenSlots(DragPayload payload) // 슬롯 간 이동
@@ -113,8 +110,20 @@ public static class ItemTransferService
             if (equipSlot.HasRangedWeapon)
             {
                 return equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
+            }else if(equipSlot.HasInstance&&equipSlot.equippedItem != null)
+            {
+                ItemStack oldInstance = equipSlot.equippedItem;
+
+                if (!inventory.TryAddInstance(oldInstance.itemId, oldInstance)) return false;
+
+                if(!equipment.UnEquip(to.equipSlot, out _, out _))
+                {
+                    inventory.TryRemoveInstance(oldInstance.guid, out _);
+                    return false;
+                }
+                return equipment.EquipRangedItem(to.equipSlot, itemId);
             }
-            
+            return false;
         }
 
         if(!fromSlot.IsInstance || fromSlot.instance == null) return false; // 여기서부턴 인스턴스형 아이템 장착 
@@ -135,16 +144,35 @@ public static class ItemTransferService
 
         if (equipSlot.HasRangedWeapon) //기존 장착 아이템이 원거리면 인벤쪽 인스턴스형 아이템 제거
         {
-            if (!equipment.SwapInstance(to.equipSlot, instance, out _, out _)) return false;
-            return inventory.TryRemoveInstance(guid, out _);
+            if (!inventory.TryRemoveInstance(guid, out ItemStack removed)) return false;
+            if (!equipment.UnEquip(to.equipSlot, out _, out _))
+            {
+                inventory.TryAddInstance(removed.itemId, removed);
+                return false;
+            }
+            if (!equipment.EquipInstance(to.equipSlot, removed))
+            {
+                inventory.TryAddInstance(removed.itemId, removed);
+                return false;
+            }
+            return true;
         }
-        if (equipSlot.HasInstance) // 기존 장착 아이템이 인스턴스형이면 스왑
+        if (equipSlot.HasInstance && equipSlot.equippedItem != null) // 기존 장착 아이템이 인스턴스형이면 스왑
         {
             ItemStack equippedItem = equipSlot.equippedItem;
-            if(!equipment.SwapInstance(to.equipSlot, instance, out ItemStack oldStack, out _)) return false;
-            if(!inventory.TryRemoveInstance(guid, out _)) return false;
-
-            return inventory.TryAddInstance(oldStack.itemId, oldStack);
+            if(!inventory.TryRemoveInstance(guid,out ItemStack removedItem)) return false;
+            if(!equipment.SwapInstance(to.equipSlot, removedItem,out ItemStack oldInstance, out _))
+            {
+                inventory.TryAddInstance(removedItem.itemId, removedItem);
+                return false;
+            }
+            if(!inventory.TryAddInstance(oldInstance.itemId, oldInstance))
+            {
+                equipment.SwapInstance(to.equipSlot, oldInstance, out _, out _);
+                inventory.TryAddInstance(removedItem.itemId, removedItem);
+                return false;
+            }
+            return true;
         }
         return false;
     }
@@ -168,15 +196,15 @@ public static class ItemTransferService
         {
             return equipment.UnEquip(from.equipSlot, out _, out _);
         }
-        if(!equipSlot.HasInstance || equipSlot.equippedItem == null) return false;
+        if (!equipSlot.HasInstance || equipSlot.equippedItem == null) return false;
 
         ItemStack equippedItem = equipSlot.equippedItem;
 
         if (inventorySlot.isEmpty) //장비 -> 인벤 그냥 옮기기
         {
-            if(!equipment.UnEquip(from.equipSlot, out  ItemStack removed, out _))return false;
+            if (!equipment.UnEquip(from.equipSlot, out ItemStack removed, out _)) return false;
 
-            if(!inventory.TryAddInstance(equippedItem.itemId, equippedItem))
+            if (!inventory.TryAddInstance(equippedItem.itemId, equippedItem))
             {
                 equipment.EquipInstance(from.equipSlot, removed);
                 return false;
@@ -184,16 +212,27 @@ public static class ItemTransferService
             return true;
         }
 
-        if(!inventorySlot.IsInstance || inventorySlot.instance == null)return false;
-        if(!ItemDB.CanEquipToSlot(inventorySlot.itemId, from.equipSlot)) return false;
+        if (!inventorySlot.IsInstance || inventorySlot.instance == null) return false;
+        if (!ItemDB.CanEquipToSlot(inventorySlot.itemId, from.equipSlot)) return false;
 
         ItemStack invItem = inventorySlot.instance;
         string invGuid = invItem.guid;
 
-        if (!equipment.SwapInstance(from.equipSlot, invItem, out ItemStack oldInstance, out _)) return false;
-        if(!inventory.TryRemoveInstance(invGuid, out _)) return false;
+        if (!inventory.TryRemoveInstance(invGuid, out ItemStack removedItem)) return false;
+        if (!equipment.SwapInstance(from.equipSlot, invItem, out ItemStack oldInstance, out _))
+        {
+            inventory.TryAddInstance(removedItem.itemId, removedItem);
+            return false;
+        }
+        
 
-        return inventory.TryAddInstance(oldInstance.itemId, oldInstance);
+        if(!inventory.TryAddInstance(oldInstance.itemId, oldInstance))
+        {
+            equipment.SwapInstance(from.equipSlot, oldInstance, out _, out _);
+            inventory.TryAddInstance(removedItem.itemId, removedItem);
+            return false;
+        }
+        return true;
     }
     private static bool TryInventoryToQuickSlot(SlotRef from, SlotRef to) // 인벤에서 퀵슬롯으로 이동
     {

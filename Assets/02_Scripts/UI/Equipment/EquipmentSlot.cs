@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ItemEnum;
 using System;
-
+using PlayerEnum;
 [Serializable]
 public class EquipmentSlot
 {

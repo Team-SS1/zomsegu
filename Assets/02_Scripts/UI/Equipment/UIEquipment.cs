@@ -22,6 +22,7 @@ public class UIEquipment : MonoBehaviour
     private void OnEnable()
     {
         EventManager.Subscribe<PlayerType>(EventKey.EquipmentChanged, OnEquipmentChanged);
+        EventManager.Subscribe<PlayerType>(EventKey.InventoryChanged, OnInventoryChanged);
         EventManager.Subscribe<PlayerType>(EventKey.InspectCharacterChanged, OnInspectCharacterChanged);
 
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
@@ -29,6 +30,7 @@ public class UIEquipment : MonoBehaviour
     private void OnDisable()
     {
         EventManager.UnSubscribe<PlayerType>(EventKey.EquipmentChanged, OnEquipmentChanged);
+        EventManager.UnSubscribe<PlayerType>(EventKey.InventoryChanged, OnInventoryChanged);
         EventManager.UnSubscribe<PlayerType>(EventKey.InspectCharacterChanged, OnInspectCharacterChanged);
     }
     private void OnEquipmentChanged(PlayerType playerType)
@@ -38,6 +40,11 @@ public class UIEquipment : MonoBehaviour
     }
     private void OnInspectCharacterChanged(PlayerType playerType)
     {
+        Refresh(playerType);
+    }
+    private void OnInventoryChanged(PlayerType playerType)
+    {
+        if (playerType != selectedCharacterContext.CurrentInspectPlayer) return;
         Refresh(playerType);
     }
     private void Refresh(PlayerType playerType)
