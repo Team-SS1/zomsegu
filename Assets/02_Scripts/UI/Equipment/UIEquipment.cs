@@ -22,7 +22,7 @@ public class UIEquipment : MonoBehaviour
     private void OnEnable()
     {
         EventManager.Subscribe<PlayerType>(EventKey.EquipmentChanged, OnEquipmentChanged);
-        EventManager.Subscribe<PlayerType>(EventKey.InspectCharacterChanged, OnInspecCharacterChanged);
+        EventManager.Subscribe<PlayerType>(EventKey.InspectCharacterChanged, OnInspectCharacterChanged);
 
         Refresh(selectedCharacterContext.CurrentInspectPlayer);
     }

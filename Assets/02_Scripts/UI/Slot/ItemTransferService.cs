@@ -4,6 +4,7 @@ using UnityEngine;
 using ItemEnum;
 using PlayerEnum;
 using UnityEngine.Scripting.APIUpdating;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 
 public static class ItemTransferService
 {
@@ -85,15 +86,114 @@ public static class ItemTransferService
     }
     private static bool TryInventoryToEquipment(SlotRef from, SlotRef to) // 인벤에서 장비로 이동
     {
-        //아직 구현 안함
-        Debug.Log("인벤 -> 장비");
+        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if(data == null) return false;
+
+        Inventory inventory = data.Inventory;
+        Equipment equipment = data.Equipment;
+
+        if(inventory == null || equipment == null) return false;
+
+        InventorySlot fromSlot = inventory.GetSlot(from.index);
+        if(fromSlot == null || fromSlot.isEmpty) return false;
+        
+        int itemId = fromSlot.itemId;
+        if(!ItemDB.CanEquipToSlot(itemId, to.equipSlot)) return false;
+
+        EquipmentSlot equipSlot = equipment.GetSlot(to.equipSlot);
+        if(equipSlot == null) return false;
+
+        if (fromSlot.IsStack && ItemDB.IsRangedWeapon(itemId)) //인벤 아이템 : 원거리 아이템
+        {
+            if (equipSlot.isEmpty)
+            {
+                return equipment.EquipRangedItem(to.equipSlot, itemId);
+            }
+
+            if (equipSlot.HasRangedWeapon)
+            {
+                return equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
+            }
+            
+        }
+
+        if(!fromSlot.IsInstance || fromSlot.instance == null) return false; // 여기서부턴 인스턴스형 아이템 장착 
+
+        ItemStack instance = fromSlot.instance;
+        string guid = instance.guid;
+
+        if (equipSlot.isEmpty)
+        {
+            if (!inventory.TryRemoveInstance(guid, out ItemStack removed)) return false;
+            if(!equipment.EquipInstance(to.equipSlot, removed))
+            {
+                inventory.TryAddInstance(removed.itemId, removed);
+                return false;
+            }
+            return true;
+        }
+
+        if (equipSlot.HasRangedWeapon) //기존 장착 아이템이 원거리면 인벤쪽 인스턴스형 아이템 제거
+        {
+            if (!equipment.SwapInstance(to.equipSlot, instance, out _, out _)) return false;
+            return inventory.TryRemoveInstance(guid, out _);
+        }
+        if (equipSlot.HasInstance) // 기존 장착 아이템이 인스턴스형이면 스왑
+        {
+            ItemStack equippedItem = equipSlot.equippedItem;
+            if(!equipment.SwapInstance(to.equipSlot, instance, out ItemStack oldStack, out _)) return false;
+            if(!inventory.TryRemoveInstance(guid, out _)) return false;
+
+            return inventory.TryAddInstance(oldStack.itemId, oldStack);
+        }
         return false;
     }
     private static bool TryEquipmentToInventory(SlotRef from, SlotRef to) // 장비에서 인벤으로 이동
     {
-        //아직 구현 안함
-        Debug.Log("장비 -> 인벤");
-        return false;
+        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if (data == null) return false;
+
+        Inventory inventory = data.Inventory;
+        Equipment equipment = data.Equipment;
+
+        if (equipment == null || inventory == null) return false;
+
+        InventorySlot inventorySlot = inventory.GetSlot(to.index);
+        if (inventorySlot == null) return false;
+
+        EquipmentSlot equipSlot = equipment.GetSlot(from.equipSlot);
+        if (equipSlot == null) return false;
+
+        if (equipSlot.HasRangedWeapon) //아이템이 원거리 아이템이면 그냥 등록 해제
+        {
+            return equipment.UnEquip(from.equipSlot, out _, out _);
+        }
+        if(!equipSlot.HasInstance || equipSlot.equippedItem == null) return false;
+
+        ItemStack equippedItem = equipSlot.equippedItem;
+
+        if (inventorySlot.isEmpty) //장비 -> 인벤 그냥 옮기기
+        {
+            if(!equipment.UnEquip(from.equipSlot, out  ItemStack removed, out _))return false;
+
+            if(!inventory.TryAddInstance(equippedItem.itemId, equippedItem))
+            {
+                equipment.EquipInstance(from.equipSlot, removed);
+                return false;
+            }
+            return true;
+        }
+
+        if(!inventorySlot.IsInstance || inventorySlot.instance == null)return false;
+        if(!ItemDB.CanEquipToSlot(inventorySlot.itemId, from.equipSlot)) return false;
+
+        ItemStack invItem = inventorySlot.instance;
+        string invGuid = invItem.guid;
+
+        if (!equipment.SwapInstance(from.equipSlot, invItem, out ItemStack oldInstance, out _)) return false;
+        if(!inventory.TryRemoveInstance(invGuid, out _)) return false;
+
+        return inventory.TryAddInstance(oldInstance.itemId, oldInstance);
     }
     private static bool TryInventoryToQuickSlot(SlotRef from, SlotRef to) // 인벤에서 퀵슬롯으로 이동
     {
@@ -111,7 +211,6 @@ public static class ItemTransferService
     //외부로 드래그 관련
     private static bool TryInventorytoWorldDrop(SlotRef from, int amount) // 인벤에서 월드 드롭
     {
-        //아직 구현 안함
         PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
         if (data == null || data.Inventory == null) return false;
 
@@ -130,7 +229,7 @@ public static class ItemTransferService
             bool removed = inventory.TryRemoveStack(from.index, removeAmount);
             if (!removed) return false;
 
-            Debug.Log($"스택 아이템 {itemId} 버리기 {removeAmount}개");
+            Debug.Log($"스택 아이템 {itemId} 버리기 {removeAmount}개"); //아직 구현 다 안끝남
 
             return true;
         }

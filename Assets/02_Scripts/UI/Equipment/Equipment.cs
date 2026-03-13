@@ -32,39 +32,68 @@ public class Equipment
         return slot;
     }
 
-    public bool Equip(EquipSlotType slotType, ItemStack item)
+    public bool EquipInstance(EquipSlotType slotType, ItemStack item)
     {
-        if (item == null) return false;
+        if(item == null)return false;
         if(!slots.TryGetValue(slotType, out var slot)) return false;
         if (!slot.isEmpty) return false;
-
-        slot.equippedItem = item;
+        slot.SetInstance(item);
         NotifyChanged();
         return true;
     }
-    public bool UnEquip(EquipSlotType slotType, out ItemStack item)
+    public bool EquipRangedItem(EquipSlotType slotType, int itemId)
+    {
+        if (itemId == 0) return false;
+        if (!slots.TryGetValue(slotType, out var slot)) return false;
+        if(!slot.isEmpty) return false;
+
+        slot.SetRangedItem(itemId);
+        NotifyChanged();
+        return true;
+    }
+    public bool UnEquip(EquipSlotType slotType, out ItemStack item, out int itemId)
     {
         item = null;
+        itemId = 0;
 
         if(!slots.TryGetValue(slotType, out var slot)) return false;
         if (slot.isEmpty) return false;
 
         item = slot.equippedItem;
-        slot.Clear();
+        itemId = slot.rangedWeaponItem;
 
+        slot.Clear();
         NotifyChanged();
         return true;
     }
-    public bool SwapEquip(EquipSlotType slotType, ItemStack newItem, out ItemStack oldItem)
+    //기존 아이템 교환 메서드 / 새로운 아이템 : 인스턴스 형
+    public bool SwapInstance(EquipSlotType slotType, ItemStack newInstance, out ItemStack oldInstance, out int oldRangedItem)
     {
-        oldItem = null;
+        oldInstance = null;
+        oldRangedItem = 0;
 
-        if(newItem == null) return false;
-        if(!slots.TryGetValue(slotType, out var slot)) return false;
+        if(newInstance == null) return false;
+        if(!slots.TryGetValue(slotType,out var slot)) return false;
 
-        oldItem = slot.equippedItem;
-        slot.equippedItem = newItem;
+        oldInstance = slot.equippedItem;
+        oldRangedItem= slot.rangedWeaponItem;
 
+        slot.SetInstance(newInstance);
+        NotifyChanged();
+        return true;
+    }
+    public bool SwapRangedItem(EquipSlotType slotType, int newRangedItem, out ItemStack oldInstance, out int oldRangedItem)
+    {
+        oldInstance = null;
+        oldRangedItem = 0;
+
+        if (newRangedItem == 0) return false;
+        if(!slots.TryGetValue(slotType, out var slot) ) return false;
+
+        oldInstance = slot.equippedItem;
+        oldRangedItem = slot.rangedWeaponItem;
+
+        slot.SetRangedItem(newRangedItem);
         NotifyChanged();
         return true;
     }

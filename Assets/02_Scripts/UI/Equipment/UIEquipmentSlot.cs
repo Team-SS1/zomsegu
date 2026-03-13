@@ -18,7 +18,14 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler
     {
         slotRef = SlotRef.Equip(playerType, equipSlotType);
 
-        if (slot == null || slot.isEmpty || slot.equippedItem == null)
+        if (slot == null || slot.isEmpty)
+        {
+            Clear();
+            return;
+        }
+
+        int itemId = slot.GetItemId();
+        if(itemId == 0)
         {
             Clear();
             return;
@@ -37,8 +44,12 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler
             icon.enabled = false;
         }
 
-        if (slot.equippedItem.HasDurability)
+        if (slot.HasInstance && slot.equippedItem != null && slot.equippedItem.HasDurability)
             amountTXT.text = $"{slot.equippedItem.durability}/{slot.equippedItem.maxDurability}";
+        else if(slot.HasRangedWeapon && slot.rangedWeaponItem != 0)
+        {
+
+        }
         else
             amountTXT.text = "";
     }
