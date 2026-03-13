@@ -31,6 +31,7 @@ public class UIDialogue : MonoBehaviour
 
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
+    private NavigationDirection curDirection = NavigationDirection.Next;
 
     // skip
     private Coroutine skipCoroutine;
@@ -61,6 +62,7 @@ public class UIDialogue : MonoBehaviour
     {
         InputManager mg = InputManager.Instance;
         mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
+        mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
     }
 
     private void OnDisable()
@@ -123,10 +125,10 @@ public class UIDialogue : MonoBehaviour
             return;
         }
 
-        PlayLine();
+        PlayNextLine();
     }
 
-    private void PlayLine()
+    private void PlayNextLine()
     {
         if (dialogues.Count <= index)
         {
@@ -140,11 +142,38 @@ public class UIDialogue : MonoBehaviour
         index++;
     }
 
+
+    private void PlayPrevLine()
+    {
+        index--;
+        if (index < 0)
+        {
+            index = 0;
+            return;
+        }
+
+        DialogueData data = dialogues[index];
+        characterName.text = data.name;
+        typer.PlayLine(data.text);
+    }
+
     private void OnNext(InputAction.CallbackContext context)
     {
         if (context.started)
         {
+            SetDirection(NavigationDirection.Next);
             PlayLineManunal();
+        }
+    }
+
+    private void OnPrev(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            SetDirection(NavigationDirection.Prev);
+            SetMode(DialogueMode.None);
+            if (typer.IsTyping) typer.SkipOrComplete();
+            PlayPrevLine();
         }
     }
 
@@ -153,7 +182,7 @@ public class UIDialogue : MonoBehaviour
         while (true)
         {
             yield return skipDelay;
-            PlayLine();
+            PlayNextLine();
             typer.SkipOrComplete();
         }
     }
@@ -174,8 +203,8 @@ public class UIDialogue : MonoBehaviour
                 break;
             case DialogueMode.Auto:
                 autoPlaying.SetActive(true);
-                if (!typer.IsTyping) PlayLine();
-                typer.OnEnd += PlayLine;
+                if (!typer.IsTyping) PlayNextLine();
+                typer.OnEnd += PlayNextLine;
                 break;
             default:
                 break;
@@ -191,7 +220,28 @@ public class UIDialogue : MonoBehaviour
         }
 
         autoPlaying.SetActive(false);
-        typer.OnEnd -= PlayLine;
+        typer.OnEnd -= PlayNextLine;
+    }
+
+    private void SetDirection(NavigationDirection direction)
+    {
+        if (curDirection != direction)
+        {
+            if (curDirection == NavigationDirection.Next)
+            {
+                index--;
+            }
+            else
+            {
+                index++;
+            }
+            curDirection = direction;
+        }
+
+        if (index < 0)
+        {
+            index = 0;
+        }
     }
 
     #region 유니티 전용

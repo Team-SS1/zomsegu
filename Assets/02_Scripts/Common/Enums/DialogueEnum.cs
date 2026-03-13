@@ -6,4 +6,10 @@ namespace DialogueEnum
         Skip,
         Auto
     }
+
+    public enum NavigationDirection
+    {
+        Next,
+        Prev,
+    }
 }
