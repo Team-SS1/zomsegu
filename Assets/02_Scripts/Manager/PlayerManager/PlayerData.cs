@@ -11,6 +11,7 @@ public class PlayerData
     public PlayerStat Stat { get; private set; }
 
     public Inventory Inventory { get; private set; }
+    public Equipment Equipment { get; private set; }
 
     public PlayerData(PlayerType type, int id, PlayerStat stat)
     {
@@ -19,5 +20,6 @@ public class PlayerData
         Stat = stat;
 
         Inventory = new Inventory(type);
+        Equipment = new Equipment(type);
     }
 }

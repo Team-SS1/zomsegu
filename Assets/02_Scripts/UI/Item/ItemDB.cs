@@ -1,6 +1,7 @@
 ﻿using ItemEnum;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public static class ItemDB // 스택이 가능한 아이템 : 스택형 , 스택이 불가능한 아이템 : 인스턴스형
@@ -56,5 +57,41 @@ public static class ItemDB // 스택이 가능한 아이템 : 스택형 , 스택
         if (WeaponStat.tableDic.TryGetValue(itemId, out var weaponStat)) return weaponStat.Durability;
         else if(ArmorStat.tableDic.TryGetValue(itemId, out var armorStat)) return armorStat.Durability;
         return 0;
+    }
+    public static bool CanEquipToSlot(int itemId, EquipSlotType slotType)
+    {
+        CommonItemData common = GetCommon(itemId);
+        if (common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+
+        switch (slotType)
+        {
+            case EquipSlotType.Head:
+                return itemType == ItemType.Head;
+            case EquipSlotType.Body:
+                return itemType == ItemType.Body;
+            case EquipSlotType.Leg:
+                return itemType == ItemType.Leg;
+            case EquipSlotType.Shoes:
+                return itemType == ItemType.Shoes;
+            case EquipSlotType.Bag:
+                return itemType == ItemType.Bag;
+            case EquipSlotType.Weapon:
+                return itemType == ItemType.Weapon;
+            case EquipSlotType.Accessory1:
+            case EquipSlotType.Accessory2:
+                return itemType == ItemType.Accessory;
+            default:
+                return false;
+        }
+    }
+    public static bool IsRangedWeapon(int itemId)
+    {
+        CommonItemData common = GetCommon(itemId);
+        if(common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+        return itemType == ItemType.Weapon && common.IsStackable;
     }
 }
