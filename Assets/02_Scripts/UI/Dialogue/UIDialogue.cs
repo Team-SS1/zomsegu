@@ -1,3 +1,4 @@
+using DialogueEnum;
 using InputEnum;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,13 +29,13 @@ public class UIDialogue : MonoBehaviour
     private List<DialogueData> dialogues = new();
     private int index = 0;
 
+    // dialogue mode
+    private DialogueMode curMode = DialogueMode.None;
+
     // skip
     private Coroutine skipCoroutine;
     private WaitForSecondsRealtime skipDelay;
-    private bool skipMode = false;
 
-    // auto
-    private bool autoMode = false;
     #region Unity API
     private void Awake()
     {
@@ -70,8 +71,7 @@ public class UIDialogue : MonoBehaviour
         mg.AddMaps(ActionMaps.UI);
         mg.RemoveMaps(ActionMaps.Dialogue);
 
-        SetAutoMode(false);
-        SetSkipMode(false);
+        SetMode(DialogueMode.None);
         typer.Clear();
     }
     #endregion
@@ -79,12 +79,12 @@ public class UIDialogue : MonoBehaviour
     #region 버튼 이벤트
     private void OnClickSkipBtn()
     {
-        SetSkipMode(!skipMode);
+        SetMode(curMode != DialogueMode.Skip ? DialogueMode.Skip : DialogueMode.None);
     }
 
     private void OnClickAutoBtn()
     {
-        SetAutoMode(!autoMode);
+        SetMode(curMode != DialogueMode.Auto ? DialogueMode.Auto : DialogueMode.None);
     }
 
     private void OnClickBacklogBtn()
@@ -115,8 +115,7 @@ public class UIDialogue : MonoBehaviour
 
     private void PlayLineManunal()
     {
-        SetAutoMode(false);
-        SetSkipMode(false);
+        SetMode(DialogueMode.None);
 
         if (typer.IsTyping)
         {
@@ -153,49 +152,46 @@ public class UIDialogue : MonoBehaviour
     {
         while (true)
         {
+            yield return skipDelay;
             PlayLine();
             typer.SkipOrComplete();
-            yield return skipDelay;
         }
     }
     #endregion
 
-    private void SetSkipMode(bool value)
+    private void SetMode(DialogueMode mode)
     {
-        if (skipMode == value) return;
+        if (curMode == mode) return;
 
-        skipMode = value;
+        curMode = mode;
 
+        ResetMode();
+
+        switch (curMode)
+        {
+            case DialogueMode.Skip:
+                skipCoroutine = StartCoroutine(SkipDialogue());
+                break;
+            case DialogueMode.Auto:
+                autoPlaying.SetActive(true);
+                if (!typer.IsTyping) PlayLine();
+                typer.OnEnd += PlayLine;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ResetMode()
+    {
         if (skipCoroutine != null)
         {
             StopCoroutine(skipCoroutine);
             skipCoroutine = null;
         }
 
-        if (skipMode)
-        {
-            SetAutoMode(false);
-            skipCoroutine = StartCoroutine(SkipDialogue());
-        }
-    }
-
-    private void SetAutoMode(bool value)
-    {
-        if (autoMode == value) return;
-
-        autoMode = value;
-        autoPlaying.SetActive(autoMode);
-
-        if (autoMode)
-        {
-            SetSkipMode(false);
-            if (!typer.IsTyping) PlayLine();
-            typer.OnEnd += PlayLine;
-        }
-        else
-        {
-            typer.OnEnd -= PlayLine;
-        }
+        autoPlaying.SetActive(false);
+        typer.OnEnd -= PlayLine;
     }
 
     #region 유니티 전용
