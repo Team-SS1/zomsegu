@@ -28,11 +28,11 @@ public class UIDialogue : MonoBehaviour
     [SerializeField] GameObject autoPlaying;
 
     private List<DialogueData> dialogues = new();
+    private DialogueData curDialogue;
     private int index = 0;
 
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
-    private NavigationDirection curDirection = NavigationDirection.Next;
 
     // skip
     private Coroutine skipCoroutine;
@@ -76,6 +76,8 @@ public class UIDialogue : MonoBehaviour
         Time.timeScale = 1f;
         SetMode(DialogueMode.None);
         typer.Clear();
+        dialogues.Clear();
+        curDialogue = null;
 
         InputManager mg = InputManager.Instance;
         if (mg == null) return;
@@ -114,12 +116,10 @@ public class UIDialogue : MonoBehaviour
     #endregion
 
     #region 대화 관리
-    public void StartDialogues(List<DialogueData> dialogues)
+    public void StartDialogues(int id)
     {
         gameObject.SetActive(true);
-        this.dialogues = dialogues;
-        index = 0;
-        PlayLineManunal();
+        TryGetDialogueAndPlayLine(id);
     }
 
     private void PlayLineManunal()
@@ -137,18 +137,35 @@ public class UIDialogue : MonoBehaviour
 
     private void PlayNextLine()
     {
-        if (dialogues.Count <= index)
+        index++;
+
+        if (index < dialogues.Count)
+        {
+            PlayLine(dialogues[index]);
+        }
+        else
+        {
+            TryGetDialogueAndPlayLine(curDialogue.nextDialogueId);
+        }
+    }
+
+    private void TryGetDialogueAndPlayLine(int id)
+    {
+        if (id == -1)
         {
             gameObject.SetActive(false);
             return;
         }
 
-        DialogueData data = dialogues[index];
-        characterName.text = data.name;
-        typer.PlayLine(data.text);
-        index++;
-    }
+        DialogueData.tableDic.TryGetValue(id, out curDialogue);
 
+        if (!dialogues.Contains(curDialogue))
+        {
+            dialogues.Add(curDialogue);
+        }
+
+        PlayLine(curDialogue);
+    }
 
     private void PlayPrevLine()
     {
@@ -158,8 +175,17 @@ public class UIDialogue : MonoBehaviour
             index = 0;
             return;
         }
+        else if (index >= dialogues.Count)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
 
-        DialogueData data = dialogues[index];
+        PlayLine(dialogues[index]);
+    }
+
+    private void PlayLine(DialogueData data)
+    {
         characterName.text = data.name;
         typer.PlayLine(data.text);
     }
@@ -180,7 +206,6 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.started)
         {
-            SetDirection(NavigationDirection.Next);
             PlayLineManunal();
         }
     }
@@ -189,7 +214,6 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.started)
         {
-            SetDirection(NavigationDirection.Prev);
             SetMode(DialogueMode.None);
             if (typer.IsTyping) typer.SkipOrComplete();
             PlayPrevLine();
@@ -251,27 +275,6 @@ public class UIDialogue : MonoBehaviour
 
         autoPlaying.SetActive(false);
         typer.OnEnd -= PlayNextLine;
-    }
-
-    private void SetDirection(NavigationDirection direction)
-    {
-        if (curDirection != direction)
-        {
-            if (curDirection == NavigationDirection.Next)
-            {
-                index--;
-            }
-            else
-            {
-                index++;
-            }
-            curDirection = direction;
-        }
-
-        if (index < 0)
-        {
-            index = 0;
-        }
     }
     #endregion
 
