@@ -74,7 +74,7 @@ public class UIDialogue : MonoBehaviour
     private void OnDisable()
     {
         Time.timeScale = 1f;
-        SetMode(DialogueMode.None);
+        ChangeMode(DialogueMode.None);
         typer.Clear();
         dialogues.Clear();
         curDialogue = null;
@@ -90,12 +90,12 @@ public class UIDialogue : MonoBehaviour
     #region 버튼 이벤트
     private void OnClickSkipBtn()
     {
-        SetMode(curMode != DialogueMode.Skip ? DialogueMode.Skip : DialogueMode.None);
+        ChangeMode(curMode != DialogueMode.Skip ? DialogueMode.Skip : DialogueMode.None);
     }
 
     private void OnClickAutoBtn()
     {
-        SetMode(curMode != DialogueMode.Auto ? DialogueMode.Auto : DialogueMode.None);
+        ChangeMode(curMode != DialogueMode.Auto ? DialogueMode.Auto : DialogueMode.None);
     }
 
     private void OnClickBacklogBtn()
@@ -110,21 +110,21 @@ public class UIDialogue : MonoBehaviour
 
     private void OnClickDialogueWindowBtn()
     {
-        PlayLineManunal();
+        AdvanceOrCompleteCurrentLine();
         EventSystem.current?.SetSelectedGameObject(null);   // 버튼 캐싱 삭제
     }
     #endregion
 
     #region 대화 관리
-    public void StartDialogues(int id)
+    public void StartDialogue(int id)
     {
         gameObject.SetActive(true);
-        TryGetDialogueAndPlayLine(id);
+        TryShowDialogue(id);
     }
 
-    private void PlayLineManunal()
+    private void AdvanceOrCompleteCurrentLine()
     {
-        SetMode(DialogueMode.None);
+        ChangeMode(DialogueMode.None);
 
         if (typer.IsTyping)
         {
@@ -132,24 +132,24 @@ public class UIDialogue : MonoBehaviour
             return;
         }
 
-        PlayNextLine();
+        ShowNextLine();
     }
 
-    private void PlayNextLine()
+    private void ShowNextLine()
     {
         index++;
 
         if (index < dialogues.Count)
         {
-            PlayLine(dialogues[index]);
+            ShowLine(dialogues[index]);
         }
         else
         {
-            TryGetDialogueAndPlayLine(curDialogue.nextDialogueId);
+            TryShowDialogue(curDialogue.nextDialogueId);
         }
     }
 
-    private void TryGetDialogueAndPlayLine(int id)
+    private void TryShowDialogue(int id)
     {
         if (id == -1)
         {
@@ -164,10 +164,10 @@ public class UIDialogue : MonoBehaviour
             dialogues.Add(curDialogue);
         }
 
-        PlayLine(curDialogue);
+        ShowLine(curDialogue);
     }
 
-    private void PlayPrevLine()
+    private void ShowPreviousLine()
     {
         index--;
         if (index < 0)
@@ -181,21 +181,21 @@ public class UIDialogue : MonoBehaviour
             return;
         }
 
-        PlayLine(dialogues[index]);
+        ShowLine(dialogues[index]);
     }
 
-    private void PlayLine(DialogueData data)
+    private void ShowLine(DialogueData data)
     {
         characterName.text = data.name;
         typer.PlayLine(data.text);
     }
 
-    private IEnumerator SkipDialogue()
+    private IEnumerator SkipDialogueRoutine()
     {
         while (true)
         {
             yield return skipDelay;
-            PlayNextLine();
+            ShowNextLine();
             typer.SkipOrComplete();
         }
     }
@@ -206,7 +206,7 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.started)
         {
-            PlayLineManunal();
+            AdvanceOrCompleteCurrentLine();
         }
     }
 
@@ -214,9 +214,9 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.started)
         {
-            SetMode(DialogueMode.None);
+            ChangeMode(DialogueMode.None);
             if (typer.IsTyping) typer.SkipOrComplete();
-            PlayPrevLine();
+            ShowPreviousLine();
         }
     }
 
@@ -224,11 +224,11 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.started)
         {
-            SetMode(DialogueMode.Skip);
+            ChangeMode(DialogueMode.Skip);
         }
         else if (context.canceled)
         {
-            SetMode(DialogueMode.None);
+            ChangeMode(DialogueMode.None);
         }
     }
 
@@ -242,30 +242,30 @@ public class UIDialogue : MonoBehaviour
     #endregion
 
     #region 모드 설정
-    private void SetMode(DialogueMode mode)
+    private void ChangeMode(DialogueMode mode)
     {
         if (curMode == mode) return;
 
         curMode = mode;
 
-        ResetMode();
+        ClearModeState();
 
         switch (curMode)
         {
             case DialogueMode.Skip:
-                skipCoroutine = StartCoroutine(SkipDialogue());
+                skipCoroutine = StartCoroutine(SkipDialogueRoutine());
                 break;
             case DialogueMode.Auto:
                 autoPlaying.SetActive(true);
-                if (!typer.IsTyping) PlayNextLine();
-                typer.OnEnd += PlayNextLine;
+                if (!typer.IsTyping) ShowNextLine();
+                typer.OnEnd += ShowNextLine;
                 break;
             default:
                 break;
         }
     }
 
-    private void ResetMode()
+    private void ClearModeState()
     {
         if (skipCoroutine != null)
         {
@@ -274,7 +274,7 @@ public class UIDialogue : MonoBehaviour
         }
 
         autoPlaying.SetActive(false);
-        typer.OnEnd -= PlayNextLine;
+        typer.OnEnd -= ShowNextLine;
     }
     #endregion
 

@@ -13,6 +13,6 @@ public class Test_DialogueSystem : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Logger.Log("trigger enter");
-        ui.StartDialogues(1);
+        ui.StartDialogue(1);
     }
 }
