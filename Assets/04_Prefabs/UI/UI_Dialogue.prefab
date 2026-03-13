@@ -434,6 +434,7 @@ MonoBehaviour:
   target: {fileID: 3974607777163903217}
   charInterval: 0.03
   useUnscaledTime: 1
+  endDelayMultiplier: 0.02
 --- !u!114 &3974607777163903217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1262,6 +1263,7 @@ MonoBehaviour:
   portrait: {fileID: 631175679155018061}
   characterName: {fileID: 7282039423806790239}
   typer: {fileID: 4174267858724849839}
+  skipDelayTime: 0.3
   autoPlaying: {fileID: 6839979405298839454}
 --- !u!114 &3628550799970573062
 MonoBehaviour:
