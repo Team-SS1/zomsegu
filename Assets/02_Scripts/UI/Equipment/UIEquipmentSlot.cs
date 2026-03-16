@@ -8,7 +8,7 @@ using ItemEnum;
 using TMPro;
 using Newtonsoft.Json.Bson;
 
-public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler
 {
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI amountTXT;
@@ -21,6 +21,11 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
     [Header("Drag")]
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private Vector2 dragIconOffset = new Vector2(30f, -30f);
+
+    [Header("Click")]
+    [SerializeField] private float doubleClick = 0.25f;
+
+    private float lastClickTime = -1f;
 
     private GameObject dragIcon;
     private RectTransform dragIconRect;
@@ -183,6 +188,43 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         {
             canvasGroup.blocksRaycasts = true;
             canvasGroup.alpha = 1f;
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(eventData.button == PointerEventData.InputButton.Right)
+        {
+            TryUnEquipByClick();
+            return;
+        }
+
+        if(eventData.button == PointerEventData.InputButton.Left)
+        {
+            if(Time.unscaledTime - lastClickTime <= doubleClick)
+            {
+                TryUnEquipByClick();
+                lastClickTime = -1f;
+            }
+            else
+            {
+                lastClickTime = Time.unscaledTime;
+            }
+        }
+    }
+    private void TryUnEquipByClick()
+    {
+        Equipment equipment = GetEquipment();
+        if (equipment == null) return;
+
+        EquipmentSlot equipmentSlot = equipment.GetSlot(slotRef.equipSlot);
+        if(equipmentSlot == null || equipmentSlot.isEmpty) return;
+
+        bool success = ItemTransferService.TryUnEquipToFirshEmptyInventory(slotRef);
+
+        if (!success)
+        {
+            //나중에 장착 해제 팝업 띄울 시 사용
         }
     }
 }

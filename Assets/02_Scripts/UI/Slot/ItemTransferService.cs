@@ -299,6 +299,42 @@ public static class ItemTransferService
         }
         return true;
     }
+    public static bool TryUnEquipToFirshEmptyInventory(SlotRef from)
+    {
+        if (from.slotType != SlotType.Equipment) return false;
+
+        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if (data == null) return false;
+
+        Inventory inventory = data.Inventory;
+        Equipment equipment = data.Equipment;
+
+        if(inventory == null || equipment == null) return false;
+
+        EquipmentSlot equipmentSlot = equipment.GetSlot(from.equipSlot);
+        if(equipmentSlot == null || equipmentSlot.isEmpty) return false;
+
+        int emptyIndex = FindEmptySlot(inventory);
+        if(emptyIndex <0) return false;
+
+        if (equipmentSlot.HasRangedWeapon) //원거리 아이템의 경우 그냥 해제
+        {
+            return equipment.UnEquip(from.equipSlot, out _, out _);
+        }
+
+        if (equipmentSlot.HasInstance&&equipmentSlot.equippedItem != null)
+        {
+            if(!equipment.UnEquip(from.equipSlot, out ItemStack removed, out _)) return false;
+
+            if(!inventory.TryPlaceInstanceAt(emptyIndex, removed))
+            {
+                equipment.EquipInstance(from.equipSlot, removed);
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
     private static bool TryInventoryToQuickSlot(SlotRef from, SlotRef to) // 인벤에서 퀵슬롯으로 이동
     {
         //아직 구현 안함
