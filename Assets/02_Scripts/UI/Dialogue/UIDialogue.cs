@@ -40,7 +40,20 @@ public class UIDialogue : MonoBehaviour
 
     private int index = 0;
     private int lockIndex = 0;
-    private int curChoiceIndex = 0;
+    private int curChoiceIndex = -1;
+    private int CurChoiceIndex
+    {
+        get { return curChoiceIndex; }
+        set
+        {
+            if (curChoiceIndex != -1)
+            {
+                choiceBtns[curChoiceIndex].UnselectChoice();
+            }
+            curChoiceIndex = value;
+            choiceBtns[curChoiceIndex].SelectChoice();
+        }
+    }
 
     private bool needChoice = false;
 
@@ -84,6 +97,7 @@ public class UIDialogue : MonoBehaviour
         mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
         mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
         mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
+        mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
     }
 
     private void OnDisable()
@@ -242,7 +256,7 @@ public class UIDialogue : MonoBehaviour
             choiceBtn.Init(choiceData, i + 1);
         }
 
-        curChoiceIndex = 0;
+        curChoiceIndex = -1;
 
         typer.OnEnd -= CreateChoiceButton;
     }
@@ -281,8 +295,6 @@ public class UIDialogue : MonoBehaviour
     }
     #endregion
 
-    // todo: 선택지 선택 로직
-
     #region Input 이벤트
     private void OnNext(InputAction.CallbackContext context)
     {
@@ -319,6 +331,30 @@ public class UIDialogue : MonoBehaviour
         if (context.performed)
         {
             Logger.Log("대화 전체 스킵");
+        }
+    }
+
+    private void OnNavigate(InputAction.CallbackContext context)
+    {
+        int count = curDialogue.choiceIds.Count;
+        if (count <= 0) return;
+
+        if (context.started)
+        {
+            AdvanceOrCompleteCurrentLine();
+
+            float axis = context.ReadValue<float>();
+            if (Mathf.Approximately(axis, 0f)) return;
+
+            int dir = axis > 0f ? count - 1 : 1;
+
+            if (CurChoiceIndex == -1)   // 처음 선택
+            {
+                CurChoiceIndex = dir > 0f ? 0 : count - 1;
+                return;
+            }
+
+            CurChoiceIndex = (curChoiceIndex + dir) % count;
         }
     }
     #endregion

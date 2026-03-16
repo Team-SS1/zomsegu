@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 [System.Serializable]
 public class DialogueChoiceData
@@ -19,6 +19,12 @@ public class DialogueChoiceData
             id = 2,
             text = "2번을 고른다",
             nextDialogueId = 4,
-        } }
+        } },
+        { 3, new DialogueChoiceData()
+        {
+            id = 3,
+            text = "3번을 고른다",
+            nextDialogueId = 5,
+        } },
     };
 }
