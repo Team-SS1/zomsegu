@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 3222971651676225617}
   - component: {fileID: 5790952020552348305}
   - component: {fileID: 3333776795290106756}
+  - component: {fileID: 8459416694161135913}
   m_Layer: 5
   m_Name: Panel_Dialogue
   m_TagString: Untagged
@@ -237,6 +238,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8459416694161135913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759315179169981193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btn: {fileID: 3333776795290106756}
+  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  text: {fileID: 7282039423806790239}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &1496406944993889769
 GameObject:
   m_ObjectHideFlags: 0
@@ -876,6 +894,7 @@ GameObject:
   - component: {fileID: 7450505670559743052}
   - component: {fileID: 8303993765627453621}
   - component: {fileID: 1368502756872811854}
+  - component: {fileID: 2367953511028775999}
   m_Layer: 5
   m_Name: Btn_Skip
   m_TagString: Untagged
@@ -985,6 +1004,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2367953511028775999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3619888491511110786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btn: {fileID: 1368502756872811854}
+  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  text: {fileID: 3324555974294759005}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &4004982323515337901
 GameObject:
   m_ObjectHideFlags: 0
@@ -1291,17 +1327,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1916e164712c64e89c028b69e934e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skipBtn: {fileID: 1368502756872811854}
-  autoBtn: {fileID: 7553546739465886406}
-  backlogBtn: {fileID: 197013125349527516}
-  optionBtn: {fileID: 5884300027909687212}
-  dialogueWindowBtn: {fileID: 3333776795290106756}
+  skipBtn: {fileID: 2367953511028775999}
+  autoBtn: {fileID: 3373362028615953753}
+  backlogBtn: {fileID: 2531512765773606541}
+  optionBtn: {fileID: 468561651607704826}
+  dialogueWindowBtn: {fileID: 8459416694161135913}
   portrait: {fileID: 631175679155018061}
   characterName: {fileID: 7282039423806790239}
   typer: {fileID: 4174267858724849839}
   skipDelayTime: 0.3
   autoPlaying: {fileID: 6839979405298839454}
-  choicePrefab: {fileID: 3386374728156396511, guid: c0a9f10eff54d9842b7945e309f1f626, type: 3}
+  choiceBtnPrefab: {fileID: 8499851076070543193, guid: c0a9f10eff54d9842b7945e309f1f626, type: 3}
+  choiceRoot: {fileID: 2843505739152388389}
 --- !u!114 &3628550799970573062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1344,6 +1381,7 @@ GameObject:
   - component: {fileID: 7266041424037424566}
   - component: {fileID: 1560789315850337874}
   - component: {fileID: 5884300027909687212}
+  - component: {fileID: 468561651607704826}
   m_Layer: 5
   m_Name: Btn_Option
   m_TagString: Untagged
@@ -1453,6 +1491,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &468561651607704826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6755495684377564349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btn: {fileID: 5884300027909687212}
+  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  text: {fileID: 1048466800034990787}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &6775463124931979580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1733,6 +1788,7 @@ GameObject:
   - component: {fileID: 7276505784012097119}
   - component: {fileID: 8465421378410849266}
   - component: {fileID: 7553546739465886406}
+  - component: {fileID: 3373362028615953753}
   m_Layer: 5
   m_Name: Btn_Auto
   m_TagString: Untagged
@@ -1842,6 +1898,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3373362028615953753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6970216305730290068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btn: {fileID: 7553546739465886406}
+  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  text: {fileID: 5901350048602086601}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &7989811350650264180
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,6 +2116,7 @@ GameObject:
   - component: {fileID: 1028331577376556211}
   - component: {fileID: 404762668573583624}
   - component: {fileID: 197013125349527516}
+  - component: {fileID: 2531512765773606541}
   m_Layer: 5
   m_Name: Btn_Backlog
   m_TagString: Untagged
@@ -2152,3 +2226,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2531512765773606541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977784025577428208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btn: {fileID: 197013125349527516}
+  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  text: {fileID: 3282807613832009770}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

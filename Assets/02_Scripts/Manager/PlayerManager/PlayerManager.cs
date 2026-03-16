@@ -39,7 +39,7 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
         Player_SHIN.Inventory.TryAddNewInstance(33001);
         Player_SHIN.Inventory.TryAddNewInstance(34000);
         Player_SHIN.Inventory.TryAddNewInstance(35101);
-        Player_SHIN.Inventory.TryAddStack(36000, 8);
+        Player_SHIN.Inventory.TryAddStack(36000, 10);
 
         // 한세희
         Player_HAN.Inventory.TryAddNewInstance(35200);

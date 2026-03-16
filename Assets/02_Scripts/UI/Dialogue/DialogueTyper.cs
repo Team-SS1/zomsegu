@@ -65,6 +65,8 @@ public class DialogueTyper : MonoBehaviour
         // textInfo.characterCount(표시 가능한 실제 글자 수)를 사용.
         target.ForceMeshUpdate();
         target.maxVisibleCharacters = target.textInfo.characterCount;
+
+        OnEnd?.Invoke();
     }
 
     private IEnumerator TypeRoutine()

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9121045176253953892}
   - component: {fileID: 1094360499053203754}
+  - component: {fileID: 8915176339494202396}
   m_Layer: 0
   m_Name: EquipSlot
   m_TagString: Untagged
@@ -53,6 +54,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1773142663391229585}
   amountTXT: {fileID: 2224649128108134914}
+  bgImg: {fileID: 153999697917869141}
+  normalBG: {fileID: 0}
+  equipBG: {fileID: 21300000, guid: 486972175142c5141a9f2f3638f0917b, type: 3}
+  canvasGroup: {fileID: 8915176339494202396}
+  dragIconOffset: {x: 30, y: -30}
+--- !u!225 &8915176339494202396
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250067132072162846}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2305755741063326203
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,7 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8666667, g: 0.8961066, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

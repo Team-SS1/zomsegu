@@ -1,23 +1,59 @@
-using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class DialogueChoiceButton : MonoBehaviour
+public class DialogueChoiceButton : BaseButton, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private Button button;
-    [SerializeField] private TMP_Text text;
+    [SerializeField] private float horizontalPadding = 16f;
 
-    private int id;
+    private RectTransform rect;
+    private DialogueChoiceData data;
 
-    public void Init(int id, string text)
+    protected override void AwakeInternal()
     {
-        this.id = id;
-        this.text.text = text;
+        base.AwakeInternal();
+        rect = GetComponent<RectTransform>();
+    }
+
+    public void Init(DialogueChoiceData data, int no)
+    {
+        this.data = data;
+        text.text = $"{no}. {data.text}";
 
         // text 길이에 맞게 width 조정하기
+        float width = text.preferredWidth + horizontalPadding;
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+    }
 
+    protected override void OnClickInternal()
+    {
+        ConfirmChoice();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        SelectChoice();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        UnselectChoice();
     }
 
     // hover 또는 select 시 폰트 수정
+    public void SelectChoice()
+    {
+        text.fontStyle |= TMPro.FontStyles.Bold;
+        text.color = selectedColor;
+    }
 
+    public void UnselectChoice()
+    {
+        text.fontStyle &= ~TMPro.FontStyles.Bold;
+        text.color = defaultColor;
+    }
+
+    public void ConfirmChoice()
+    {
+
+    }
 }

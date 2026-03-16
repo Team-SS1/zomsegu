@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 [System.Serializable]
 public class DialogueData
@@ -28,7 +28,7 @@ public class DialogueData
                 id = 2,
                 characterName = "2",
                 text = "처음에는 누구나 서툴다. 중요한 것은 얼마나 빨리 잘하느냐가 아니라, 포기하지 않고 계속 시도하느냐이다. 실수는 방향을 수정하는 과정일 뿐 실패가 아니다.",
-                choiceIds = new List<int>(2) { 1, 2 }
+                choiceIds = new List<int>(2) { 1, 2, 3 }
             }
         },
         { 3, new DialogueData()

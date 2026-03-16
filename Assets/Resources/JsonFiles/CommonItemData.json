@@ -21,7 +21,9 @@
     "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 1
+    "PlayerAudioType": 1,
+    "ItemVolume": 2.5,
+    "ItemWeight": 2.5
   },
   {
     "ItemID": 30002,
@@ -33,7 +35,9 @@
     "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 2
+    "PlayerAudioType": 2,
+    "ItemVolume": 2.5,
+    "ItemWeight": 1.8
   },
   {
     "ItemID": 30003,
@@ -156,7 +160,9 @@
     "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 8
+    "PlayerAudioType": 8,
+    "ItemVolume": 0.5,
+    "ItemWeight": 0.5
   },
   {
     "ItemID": 31002,
@@ -213,7 +219,9 @@
     "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 10
+    "PlayerAudioType": 10,
+    "ItemVolume": 0.8,
+    "ItemWeight": 0.4
   },
   {
     "ItemID": 32001,
@@ -367,7 +375,9 @@
     "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 10
+    "PlayerAudioType": 10,
+    "ItemVolume": 1.2,
+    "ItemWeight": 0.6
   },
   {
     "ItemID": 33001,
@@ -378,7 +388,9 @@
     "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 10
+    "PlayerAudioType": 10,
+    "ItemVolume": 1.5,
+    "ItemWeight": 1.2
   },
   {
     "ItemID": 33002,
@@ -576,7 +588,9 @@
     "IsStackable": false,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 10
+    "PlayerAudioType": 10,
+    "ItemVolume": 1.5,
+    "ItemWeight": 1.5
   },
   {
     "ItemID": 34001,
@@ -663,7 +677,9 @@
     "ItemRarity": 0,
     "IsStackable": false,
     "IsSellable": true,
-    "IsDroppable": true
+    "IsDroppable": true,
+    "ItemVolume": 3.0,
+    "ItemWeight": 1.0
   },
   {
     "ItemID": 35001,
@@ -733,7 +749,9 @@
     "ItemRarity": 2,
     "IsStackable": false,
     "IsSellable": true,
-    "IsDroppable": true
+    "IsDroppable": true,
+    "ItemVolume": 0.7,
+    "ItemWeight": 1.1
   },
   {
     "ItemID": 35102,
@@ -826,7 +844,9 @@
     "ItemRarity": 3,
     "IsStackable": false,
     "IsSellable": true,
-    "IsDroppable": true
+    "IsDroppable": true,
+    "ItemVolume": 0.4,
+    "ItemWeight": 0.7
   },
   {
     "ItemID": 35201,
@@ -870,7 +890,9 @@
     "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 11
+    "PlayerAudioType": 11,
+    "ItemVolume": 0.3,
+    "ItemWeight": 0.5
   },
   {
     "ItemID": 36001,
@@ -881,7 +903,9 @@
     "IsStackable": true,
     "IsSellable": true,
     "IsDroppable": true,
-    "PlayerAudioType": 11
+    "PlayerAudioType": 11,
+    "ItemVolume": 1.0,
+    "ItemWeight": 2.0
   },
   {
     "ItemID": 36002,

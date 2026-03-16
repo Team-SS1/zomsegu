@@ -1,4 +1,4 @@
-using DialogueEnum;
+﻿using DialogueEnum;
 using InputEnum;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,11 +12,11 @@ public class UIDialogue : MonoBehaviour
 {
     #region 필드
     [Header("Buttons")]
-    [SerializeField] Button skipBtn;
-    [SerializeField] Button autoBtn;
-    [SerializeField] Button backlogBtn;
-    [SerializeField] Button optionBtn;
-    [SerializeField] Button dialogueWindowBtn;
+    [SerializeField] BaseButton skipBtn;
+    [SerializeField] BaseButton autoBtn;
+    [SerializeField] BaseButton backlogBtn;
+    [SerializeField] BaseButton optionBtn;
+    [SerializeField] BaseButton dialogueWindowBtn;
 
     [Header("Dialogue")]
     [SerializeField] Image portrait;
@@ -28,12 +28,34 @@ public class UIDialogue : MonoBehaviour
     [SerializeField] GameObject autoPlaying;
 
     [Header("Choice")]
-    [SerializeField] GameObject choicePrefab;
+    [SerializeField] DialogueChoiceButton choiceBtnPrefab;
+    [SerializeField] RectTransform choiceRoot;
+    private float choiceBtnHeight;
 
     private List<DialogueData> dialogues = new();
+    private List<DialogueChoiceButton> choiceBtns = new();
+
     private DialogueData curDialogue;
+    private DialogueChoiceData curChoice;
+
     private int index = 0;
     private int lockIndex = 0;
+    private int curChoiceIndex = -1;
+    private int CurChoiceIndex
+    {
+        get { return curChoiceIndex; }
+        set
+        {
+            if (curChoiceIndex != -1)
+            {
+                choiceBtns[curChoiceIndex].UnselectChoice();
+            }
+            curChoiceIndex = value;
+            choiceBtns[curChoiceIndex].SelectChoice();
+        }
+    }
+
+    private bool needChoice = false;
 
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
@@ -53,6 +75,8 @@ public class UIDialogue : MonoBehaviour
         dialogueWindowBtn.onClick.AddListener(OnClickDialogueWindowBtn);
 
         skipDelay = new WaitForSecondsRealtime(skipDelayTime);
+
+        choiceBtnHeight = choiceBtnPrefab.GetComponent<RectTransform>().rect.height;
     }
 
     private void OnEnable()
@@ -73,6 +97,7 @@ public class UIDialogue : MonoBehaviour
         mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
         mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
         mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
+        mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
     }
 
     private void OnDisable()
@@ -82,6 +107,11 @@ public class UIDialogue : MonoBehaviour
         typer.Clear();
         dialogues.Clear();
         curDialogue = null;
+        for (int i = choiceBtns.Count - 1; i >= 0; i--)
+        {
+            Destroy(choiceBtns[i].gameObject);
+        }
+        choiceBtns.Clear();
 
         index = 0;
         lockIndex = 0;
@@ -144,9 +174,19 @@ public class UIDialogue : MonoBehaviour
 
     private void ShowNextLine()
     {
+        if (needChoice) return;
+
         index++;
 
-        if (index < dialogues.Count)
+        if (curChoice != null)
+        {
+            TryShowDialogue(curChoice.nextDialogueId);
+            curChoice = null;
+            lockIndex = index;
+            choiceBtns.ForEach(btn => btn.gameObject.SetActive(false));
+        }
+
+        if (index < dialogues.Count)        // 새로운 대화가 아니면 캐싱된 거 가지고 오기
         {
             ShowLine(dialogues[index]);
         }
@@ -171,9 +211,10 @@ public class UIDialogue : MonoBehaviour
             dialogues.Add(curDialogue);
         }
 
-        if (curDialogue.HasChoice)
+        if (curDialogue.HasChoice)          // 선택지 index 캐싱해서 선택지 전으로 못 돌아가게 하기
         {
             lockIndex = index;
+            needChoice = true;
             ShowChoice(curDialogue);
         }
         else
@@ -185,7 +226,39 @@ public class UIDialogue : MonoBehaviour
     private void ShowChoice(DialogueData data)
     {
         characterName.text = data.characterName;
+        typer.OnEnd += CreateChoiceButton;
+        typer.PlayLine(data.text);
+    }
 
+    private void CreateChoiceButton()
+    {
+        DialogueData data = curDialogue;
+        for (int i = 0; i < data.choiceIds.Count; i++)
+        {
+            DialogueChoiceData.tableDic.TryGetValue(data.choiceIds[i], out DialogueChoiceData choiceData);
+
+            DialogueChoiceButton choiceBtn;
+            if (choiceBtns.Count < i)
+            {
+                choiceBtn = choiceBtns[i];
+            }
+            else
+            {
+                choiceBtn = Instantiate(choiceBtnPrefab);
+                choiceBtns.Add(choiceBtn);
+            }
+            choiceBtn.gameObject.SetActive(true);
+
+            RectTransform rect = choiceBtn.GetComponent<RectTransform>();
+            rect.SetParent(choiceRoot);
+            rect.anchoredPosition = new Vector2(0, -choiceBtnHeight * i);
+
+            choiceBtn.Init(choiceData, i + 1);
+        }
+
+        curChoiceIndex = -1;
+
+        typer.OnEnd -= CreateChoiceButton;
     }
 
     private void ShowPreviousLine()
@@ -260,6 +333,30 @@ public class UIDialogue : MonoBehaviour
             Logger.Log("대화 전체 스킵");
         }
     }
+
+    private void OnNavigate(InputAction.CallbackContext context)
+    {
+        int count = curDialogue.choiceIds.Count;
+        if (count <= 0) return;
+
+        if (context.started)
+        {
+            AdvanceOrCompleteCurrentLine();
+
+            float axis = context.ReadValue<float>();
+            if (Mathf.Approximately(axis, 0f)) return;
+
+            int dir = axis > 0f ? count - 1 : 1;
+
+            if (CurChoiceIndex == -1)   // 처음 선택
+            {
+                CurChoiceIndex = dir > 0f ? 0 : count - 1;
+                return;
+            }
+
+            CurChoiceIndex = (curChoiceIndex + dir) % count;
+        }
+    }
     #endregion
 
     #region 모드 설정
@@ -295,6 +392,10 @@ public class UIDialogue : MonoBehaviour
         }
 
         autoPlaying.SetActive(false);
+
+        skipBtn.ResetState();
+        autoBtn.ResetState();
+
         typer.OnEnd -= ShowNextLine;
     }
     #endregion
@@ -303,11 +404,11 @@ public class UIDialogue : MonoBehaviour
 #if UNITY_EDITOR
     private void Reset()
     {
-        skipBtn = transform.FindChild<Button>("Btn_Skip");
-        autoBtn = transform.FindChild<Button>("Btn_Auto");
-        backlogBtn = transform.FindChild<Button>("Btn_Backlog");
-        optionBtn = transform.FindChild<Button>("Btn_Option");
-        dialogueWindowBtn = transform.FindChild<Button>("Panel_Dialogue");
+        skipBtn = transform.FindChild<BaseButton>("Btn_Skip");
+        autoBtn = transform.FindChild<BaseButton>("Btn_Auto");
+        backlogBtn = transform.FindChild<BaseButton>("Btn_Backlog");
+        optionBtn = transform.FindChild<BaseButton>("Btn_Option");
+        dialogueWindowBtn = transform.FindChild<BaseButton>("Panel_Dialogue");
 
         portrait = transform.FindChild<Image>("Portrait");
         characterName = transform.FindChild<TMP_Text>("Text_Name");
@@ -315,7 +416,8 @@ public class UIDialogue : MonoBehaviour
 
         autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying").gameObject;
 
-        choicePrefab = AssetLoader.FindAndLoadByName("Btn_Choice");
+        choiceBtnPrefab = AssetLoader.FindAndLoadByName("Btn_Choice").GetComponent<DialogueChoiceButton>();
+        choiceRoot = transform.FindChild<RectTransform>("ChoiceGroup");
     }
 
     private void OnValidate()
