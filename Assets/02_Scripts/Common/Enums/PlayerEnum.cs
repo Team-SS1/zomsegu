@@ -12,7 +12,8 @@ namespace PlayerEnum
         Hunger,
         Thirst,
         Shock,
-        Tired
+        Tired,
+        Injury
     }
 
     public enum AbnormalDebuffType
