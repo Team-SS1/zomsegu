@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using PlayerEnum;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEditor.ShaderGraph.Internal;
 
 public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
@@ -15,6 +16,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     [Header("Drag")]
     [SerializeField] private Vector2 dragIconOffset = new Vector2(30f, -30f);
+
 
     private GameObject dragIcon;
     private RectTransform dragIconRect;
@@ -167,4 +169,5 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             canvasGroup.alpha = 1f;
         }
     }
+
 }
