@@ -43,11 +43,17 @@ public class PlayerAttack : MonoBehaviour
     public IEnumerator Attack()
     {
         if (IsAttacking)
+        {
+#if UNITY_EDITOR
+            Debug.Log("Attack Return");
+#endif
             yield break;
+        }
+
 
         IsAttacking = true;
 
-        AttackDirection = Aim.mouseDir.GetLocalMouseDirection(transform.position);
+        AttackDirection = Aim.Mousedir.GetLocalMouseDirection(transform.position);
 
         yield return new WaitForSeconds(HalfAttackDuration());
 
