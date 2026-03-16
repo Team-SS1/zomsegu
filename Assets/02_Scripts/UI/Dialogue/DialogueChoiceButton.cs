@@ -1,7 +1,7 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class DialogueChoiceButton : BaseButton
+public class DialogueChoiceButton : BaseButton, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private float horizontalPadding = 16f;
 
@@ -26,17 +26,34 @@ public class DialogueChoiceButton : BaseButton
 
     protected override void OnClickInternal()
     {
-        throw new System.NotImplementedException();
+        ConfirmChoice();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        SelectChoice();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        UnselectChoice();
     }
 
     // hover 또는 select 시 폰트 수정
-
-    #region 에디터 전용
-#if UNITY_EDITOR
-    private void Reset()
+    public void SelectChoice()
     {
-        text = GetComponentInChildren<TMP_Text>();
+        text.fontStyle |= TMPro.FontStyles.Bold;
+        text.color = selectedColor;
     }
-#endif
-    #endregion
+
+    public void UnselectChoice()
+    {
+        text.fontStyle &= ~TMPro.FontStyles.Bold;
+        text.color = defaultColor;
+    }
+
+    public void ConfirmChoice()
+    {
+
+    }
 }

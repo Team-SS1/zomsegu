@@ -8,13 +8,13 @@ public class BaseButton : MonoBehaviour
 {
     [Header("Button Settings")]
     [SerializeField] protected Button btn;
-    [SerializeField] private AudioData audioData;
+    [SerializeField] protected AudioData audioData;
     private AudioEnum.AudioName audioName;
 
     [Header("(Optional) Text Settings")]
     [SerializeField] protected TMP_Text text;
-    [SerializeField] private Color defaultColor = Color.white;
-    [SerializeField] private Color selectedColor = Color.gray;
+    [SerializeField] protected Color defaultColor = Color.white;
+    [SerializeField] protected Color selectedColor = Color.gray;
 
     public Button.ButtonClickedEvent onClick => btn.onClick;
 
