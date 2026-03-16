@@ -27,9 +27,13 @@ public class UIDialogue : MonoBehaviour
     [Header("Extra")]
     [SerializeField] GameObject autoPlaying;
 
+    [Header("Choice")]
+    [SerializeField] GameObject choicePrefab;
+
     private List<DialogueData> dialogues = new();
     private DialogueData curDialogue;
     private int index = 0;
+    private int lockIndex = 0;
 
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
@@ -78,6 +82,9 @@ public class UIDialogue : MonoBehaviour
         typer.Clear();
         dialogues.Clear();
         curDialogue = null;
+
+        index = 0;
+        lockIndex = 0;
 
         InputManager mg = InputManager.Instance;
         if (mg == null) return;
@@ -164,15 +171,29 @@ public class UIDialogue : MonoBehaviour
             dialogues.Add(curDialogue);
         }
 
-        ShowLine(curDialogue);
+        if (curDialogue.HasChoice)
+        {
+            lockIndex = index;
+            ShowChoice(curDialogue);
+        }
+        else
+        {
+            ShowLine(curDialogue);
+        }
+    }
+
+    private void ShowChoice(DialogueData data)
+    {
+        characterName.text = data.characterName;
+
     }
 
     private void ShowPreviousLine()
     {
         index--;
-        if (index < 0)
+        if (index < lockIndex)
         {
-            index = 0;
+            index = lockIndex;
             return;
         }
         else if (index >= dialogues.Count)
@@ -293,6 +314,8 @@ public class UIDialogue : MonoBehaviour
         typer = transform.FindChild<DialogueTyper>("Text_Dialogue");
 
         autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying").gameObject;
+
+        choicePrefab = AssetLoader.FindAndLoadByName("Btn_Choice");
     }
 
     private void OnValidate()
