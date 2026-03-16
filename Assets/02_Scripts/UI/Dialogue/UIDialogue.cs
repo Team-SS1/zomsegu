@@ -1,4 +1,4 @@
-using DialogueEnum;
+﻿using DialogueEnum;
 using InputEnum;
 using System.Collections;
 using System.Collections.Generic;
@@ -356,6 +356,10 @@ public class UIDialogue : MonoBehaviour
         }
 
         autoPlaying.SetActive(false);
+
+        skipBtn.ResetState();
+        autoBtn.ResetState();
+
         typer.OnEnd -= ShowNextLine;
     }
     #endregion
