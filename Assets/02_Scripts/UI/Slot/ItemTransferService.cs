@@ -159,7 +159,6 @@ public static class ItemTransferService
         }
         if (equipSlot.HasInstance && equipSlot.equippedItem != null) // 기존 장착 아이템이 인스턴스형이면 스왑
         {
-            ItemStack equippedItem = equipSlot.equippedItem;
             if(!inventory.TryRemoveInstance(guid,out ItemStack removedItem)) return false;
             if(!equipment.SwapInstance(to.equipSlot, removedItem,out ItemStack oldInstance, out _))
             {
@@ -192,15 +191,58 @@ public static class ItemTransferService
         EquipmentSlot equipSlot = equipment.GetSlot(from.equipSlot);
         if (equipSlot == null) return false;
 
-        if (equipSlot.HasRangedWeapon) //아이템이 원거리 아이템이면 그냥 등록 해제
+        if (equipSlot.HasRangedWeapon) //장착 아이템 : 원거리
         {
-            return equipment.UnEquip(from.equipSlot, out _, out _);
+            int equippedRangedItemId = equipSlot.rangedWeaponItem;
+
+            if (inventorySlot.isEmpty) //빈슬롯이면 장착 해제
+            {
+                return equipment.UnEquip(from.equipSlot, out _, out _);
+            }
+            else if (inventorySlot.IsInstance && inventorySlot.instance != null) //근접 무기면 스왑
+            {
+                if (!ItemDB.CanEquipToSlot(inventorySlot.itemId, from.equipSlot)) return false;
+
+                ItemStack inventoryItem = inventorySlot.instance;
+                string inventoryGuid = inventoryItem.guid;
+
+                if (!inventory.TryRemoveInstance(inventoryGuid, out ItemStack removed)) return false;
+
+                if(!equipment.UnEquip(from.equipSlot, out _, out _))
+                {
+                    inventory.TryAddInstance(removed.itemId, removed);
+                    return false;
+                }
+                if(!equipment.EquipInstance(from.equipSlot, removed))
+                {
+                    inventory.TryAddInstance(removed.itemId, removed);
+                    equipment.EquipRangedItem(from.equipSlot, equippedRangedItemId);
+                    return false;
+                }
+                return true;
+            }
+            else if (inventorySlot.IsStack && ItemDB.IsRangedWeapon(inventorySlot.itemId)) // 원거리 아이템이라면 스왑
+            {
+                if (!ItemDB.CanEquipToSlot(inventorySlot.itemId, from.equipSlot)) return false;
+
+                int targetRangedItemId = inventorySlot.itemId;
+
+                if (targetRangedItemId == equippedRangedItemId) return true;
+
+                if(!equipment.UnEquip(from.equipSlot, out _, out _)) return false;
+
+                if(!equipment.EquipRangedItem(from.equipSlot, targetRangedItemId))
+                {
+                    equipment.EquipRangedItem(from.equipSlot, equippedRangedItemId);
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
-        if (!equipSlot.HasInstance || equipSlot.equippedItem == null) return false;
+        if (!equipSlot.HasInstance || equipSlot.equippedItem == null) return false; //장착 아이템 : 인스턴스형 아이템
 
-        ItemStack equippedItem = equipSlot.equippedItem;
-
-        if (inventorySlot.isEmpty) //장비 -> 인벤 그냥 옮기기
+        if (inventorySlot.isEmpty) // 빈슬롯이면 장착 해제
         {
             if (!equipment.UnEquip(from.equipSlot, out ItemStack removed, out _)) return false;
 
@@ -211,11 +253,34 @@ public static class ItemTransferService
             }
             return true;
         }
+        if (inventorySlot.IsStack && ItemDB.IsRangedWeapon(inventorySlot.itemId)) // 인벤 아이템 : 원거리 아이템 (스왑)
+        {
+            if (!ItemDB.CanEquipToSlot(inventorySlot.itemId, from.equipSlot)) return false;
 
-        if (!inventorySlot.IsInstance || inventorySlot.instance == null) return false;
+            int emptyIndex = FindEmptySlot(inventory);
+            if(emptyIndex < 0) return false;
+
+            if (!equipment.UnEquip(from.equipSlot, out ItemStack removed, out _)) return false;
+
+            if (!inventory.TryPlaceInstanceAt(emptyIndex, removed)){
+                equipment.EquipInstance(from.equipSlot, removed);
+                return false;
+            }
+
+            if(!equipment.EquipRangedItem(from.equipSlot, inventorySlot.itemId))
+            {
+                inventory.TryRemoveInstance(removed.guid, out _);
+                equipment.EquipInstance(from.equipSlot, removed);
+                return false;
+            }
+
+            return true;
+        }
+
+        if (!inventorySlot.IsInstance || inventorySlot.instance == null) return false; // 인벤 아이템 : 근접 아이템 (스왑)
         if (!ItemDB.CanEquipToSlot(inventorySlot.itemId, from.equipSlot)) return false;
 
-        ItemStack invItem = inventorySlot.instance;
+        ItemStack invItem = inventorySlot.instance;   
         string invGuid = invItem.guid;
 
         if (!inventory.TryRemoveInstance(invGuid, out ItemStack removedItem)) return false;
@@ -318,7 +383,7 @@ public static class ItemTransferService
         if(fromSlot == null || fromSlot.isEmpty) return false;
         if(toSlot == null || !toSlot.isEmpty) return false;
 
-        if (fromSlot.IsStack)
+        if (fromSlot.IsStack)  
         {
             int itemId = fromSlot.itemId;
             int moveAmount = amount <= 0 ? fromSlot.amount : amount;
