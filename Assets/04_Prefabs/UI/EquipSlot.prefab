@@ -53,6 +53,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1773142663391229585}
   amountTXT: {fileID: 2224649128108134914}
+  bgImg: {fileID: 153999697917869141}
+  normalBG: {fileID: 0}
+  equipBG: {fileID: 21300000, guid: 486972175142c5141a9f2f3638f0917b, type: 3}
 --- !u!1 &2305755741063326203
 GameObject:
   m_ObjectHideFlags: 0

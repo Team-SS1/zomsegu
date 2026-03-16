@@ -6,12 +6,17 @@ using UnityEngine.EventSystems;
 using PlayerEnum;
 using ItemEnum;
 using TMPro;
+using Newtonsoft.Json.Bson;
 
 public class UIEquipmentSlot : MonoBehaviour, IDropHandler
 {
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI amountTXT;
 
+    [Header("BG")]
+    [SerializeField] private Image bgImg;
+    [SerializeField] private Sprite normalBG;
+    [SerializeField] private Sprite equipBG;
     public SlotRef slotRef { get; private set; }
 
     public void SetSlot(EquipSlotType equipSlotType, PlayerType playerType, EquipmentSlot slot)
@@ -57,6 +62,12 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler
         }
         else
             amountTXT.text = "";
+        SetBG(true);
+    }
+    private void SetBG(bool equipped)
+    {
+        if (bgImg == null) return;
+        bgImg.sprite = equipped ? equipBG : normalBG;
     }
     public void Clear()
     {
@@ -67,6 +78,8 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler
         }
         if (amountTXT != null)
             amountTXT.text = "";
+
+        SetBG(false);
     }
     public void OnDrop(PointerEventData eventData)
     {
