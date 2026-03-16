@@ -7,7 +7,7 @@ namespace PlayerEnum
         Player_HAN
     }
 
-    public enum AbnomalType
+    public enum AbnormalType
     {
         Hunger,
         Thirst,
@@ -15,7 +15,7 @@ namespace PlayerEnum
         Tired
     }
 
-    public enum AbnomalDebuffType
+    public enum AbnormalDebuffType
     {
         Attack,
         AttackSpeed,
