@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class BaseButton : MonoBehaviour
 {
     [Header("Button Settings")]
+    [SerializeField] protected Button btn;
     [SerializeField] private AudioData audioData;
     private AudioEnum.AudioName audioName;
 
@@ -15,7 +16,6 @@ public class BaseButton : MonoBehaviour
     [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Color selectedColor = Color.gray;
 
-    protected Button btn;
     public Button.ButtonClickedEvent onClick => btn.onClick;
 
     protected bool isPressed = false;
@@ -23,7 +23,6 @@ public class BaseButton : MonoBehaviour
     // ===== Unity API ===== 
     protected virtual void Awake()
     {
-        btn = GetComponent<Button>();
         if (audioData != null)
         {
             Enum.TryParse(audioData.name, out audioName);
@@ -75,6 +74,7 @@ public class BaseButton : MonoBehaviour
 #if UNITY_EDITOR
     private void Reset()
     {
+        btn = GetComponent<Button>();
         audioData = AssetLoader.FindAndLoadByName<AudioData>("UI_Button_Click");
         text = GetComponentInChildren<TMP_Text>();
     }

@@ -250,6 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btn: {fileID: 3333776795290106756}
   audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
   text: {fileID: 7282039423806790239}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1015,6 +1016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btn: {fileID: 1368502756872811854}
   audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
   text: {fileID: 3324555974294759005}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1329,7 +1331,7 @@ MonoBehaviour:
   autoBtn: {fileID: 3373362028615953753}
   backlogBtn: {fileID: 2531512765773606541}
   optionBtn: {fileID: 468561651607704826}
-  dialogueWindowBtn: {fileID: 0}
+  dialogueWindowBtn: {fileID: 8459416694161135913}
   portrait: {fileID: 631175679155018061}
   characterName: {fileID: 7282039423806790239}
   typer: {fileID: 4174267858724849839}
@@ -1501,6 +1503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btn: {fileID: 5884300027909687212}
   audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
   text: {fileID: 1048466800034990787}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1907,6 +1910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btn: {fileID: 7553546739465886406}
   audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
   text: {fileID: 5901350048602086601}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
@@ -2234,6 +2238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btn: {fileID: 197013125349527516}
   audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
   text: {fileID: 3282807613832009770}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
