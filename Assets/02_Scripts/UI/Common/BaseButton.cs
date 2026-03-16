@@ -1,10 +1,15 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
 public class BaseButton : MonoBehaviour
 {
+    [Header("Button Settings")]
+    [SerializeField] private AudioData audioData;
+    private AudioEnum.AudioName audioName;
+
     [Header("(Optional) Text Settings")]
     [SerializeField] protected TMP_Text text;
     [SerializeField] private Color defaultColor = Color.white;
@@ -19,6 +24,10 @@ public class BaseButton : MonoBehaviour
     protected virtual void Awake()
     {
         btn = GetComponent<Button>();
+        if (audioData != null)
+        {
+            Enum.TryParse(audioData.name, out audioName);
+        }
         AwakeInternal();
     }
 
@@ -45,8 +54,8 @@ public class BaseButton : MonoBehaviour
     private void OnClick()
     {
         isPressed = true;
-        // todo: 공통 로직 추가히기
-        // 사운드 / button vfx
+        // todo: 공통 로직 추가히기 (효과음 / 애니메이션)
+        AudioManager.Instance.PlaySfx(audioName);
         OnClickInternal();
 
         if (text == null) return;
@@ -66,6 +75,7 @@ public class BaseButton : MonoBehaviour
 #if UNITY_EDITOR
     private void Reset()
     {
+        audioData = AssetLoader.FindAndLoadByName<AudioData>("UI_Button_Click");
         text = GetComponentInChildren<TMP_Text>();
     }
 #endif

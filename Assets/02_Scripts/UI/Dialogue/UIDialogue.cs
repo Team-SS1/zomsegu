@@ -12,11 +12,11 @@ public class UIDialogue : MonoBehaviour
 {
     #region 필드
     [Header("Buttons")]
-    [SerializeField] Button skipBtn;
-    [SerializeField] Button autoBtn;
-    [SerializeField] Button backlogBtn;
-    [SerializeField] Button optionBtn;
-    [SerializeField] Button dialogueWindowBtn;
+    [SerializeField] BaseButton skipBtn;
+    [SerializeField] BaseButton autoBtn;
+    [SerializeField] BaseButton backlogBtn;
+    [SerializeField] BaseButton optionBtn;
+    [SerializeField] BaseButton dialogueWindowBtn;
 
     [Header("Dialogue")]
     [SerializeField] Image portrait;
@@ -364,11 +364,11 @@ public class UIDialogue : MonoBehaviour
 #if UNITY_EDITOR
     private void Reset()
     {
-        skipBtn = transform.FindChild<Button>("Btn_Skip");
-        autoBtn = transform.FindChild<Button>("Btn_Auto");
-        backlogBtn = transform.FindChild<Button>("Btn_Backlog");
-        optionBtn = transform.FindChild<Button>("Btn_Option");
-        dialogueWindowBtn = transform.FindChild<Button>("Panel_Dialogue");
+        skipBtn = transform.FindChild<BaseButton>("Btn_Skip");
+        autoBtn = transform.FindChild<BaseButton>("Btn_Auto");
+        backlogBtn = transform.FindChild<BaseButton>("Btn_Backlog");
+        optionBtn = transform.FindChild<BaseButton>("Btn_Option");
+        dialogueWindowBtn = transform.FindChild<BaseButton>("Panel_Dialogue");
 
         portrait = transform.FindChild<Image>("Portrait");
         characterName = transform.FindChild<TMP_Text>("Text_Name");
