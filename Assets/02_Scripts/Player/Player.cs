@@ -8,18 +8,10 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     /*----- Field -----*/
-    public int Hunger { get; private set; }
-    public int MaxHunger { get; private set; }
-    public int Thirst { get; private set; }
-    public int MaxThirst { get; private set; }
-    public int MaxShock { get; private set; }
-    public int CurrentShock { get; private set; }
     public float MaxStamina { get; private set; }
     public float CurrentStamina { get; private set; }
-    public float Tired { get; private set; }
-    public float MaxTired { get; private set; }
-    public int Injury { get; private set; } // enum type ?
 
+    public bool IsDead { get; private set; } = false;
 
     public PlayerType playerType;
 
@@ -31,56 +23,23 @@ public class Player : MonoBehaviour
         data = PlayerManager.Instance.GetPlayerData(playerType);
         var BaseStat = data.Stat;
 
-        Hunger = BaseStat.StartHunger;
-        MaxHunger = BaseStat.MaxHunger;
-
-        Thirst = BaseStat.StartThirst;
-        MaxThirst = BaseStat.MaxThirst;
-
-        MaxShock = BaseStat.MaxShock;
-        CurrentShock = BaseStat.StartShock;
-
         MaxStamina = BaseStat.BaseMaxStamina; // 추후 최대 계산값 적용
         CurrentStamina = BaseStat.BaseStamina;
-
-        Tired = BaseStat.StartTired;
-        MaxTired = BaseStat.MaxTired;
-
-        Injury = 0;
     }
 
-    public void AddHunger(int value)
+    public void SetDead(bool value)
     {
-        Hunger = Mathf.Clamp(Hunger + value, 0, MaxHunger);
-        EventManager.TriggerEvent(EventKey.OnHungerChanged);
+        IsDead = value;
     }
-    public void AddThirst(int value)
-    {
-        Thirst = Mathf.Clamp(Thirst + value, 0, MaxThirst);
-        EventManager.TriggerEvent(EventKey.OnThirstChanged);
-    }
-    public void AddShock(int value)
-    {
-        CurrentShock = Mathf.Clamp(CurrentShock + value, 0, MaxShock);
-        EventManager.TriggerEvent(EventKey.OnShockChanged);
-    }
+
     public void AddStamina(float value)
     {
         CurrentStamina = Mathf.Clamp(CurrentStamina + value, 0, MaxStamina);
         EventManager.TriggerEvent(EventKey.OnStaminaChanged);
     }
-    public void AddInjury(int value)
-    {
-        Injury = Mathf.Clamp(Injury + value, 0, 4);
-        EventManager.TriggerEvent(EventKey.OnInjuryChanged);
-    }
-    public void AddTired(int value)
-    {
-        Tired = Mathf.Clamp(Tired + value, 0, MaxTired);
-        EventManager.TriggerEvent(EventKey.OnTiredChanged);
-    }
-    public void SetStamina(float value) // 스태미나의 최종 수치값을 계산하는데 사용
+    public void SetMaxStamina(float value) // 스태미나의 최종 수치값을 계산하는데 사용
     {
         MaxStamina += value;
+        CurrentStamina = Mathf.Clamp(CurrentStamina, 0f, MaxStamina);
     }
 }

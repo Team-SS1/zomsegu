@@ -6,4 +6,21 @@ namespace PlayerEnum
         Player_SHIN,
         Player_HAN
     }
+
+    public enum AbnormalType
+    {
+        Hunger,
+        Thirst,
+        Shock,
+        Tired,
+        Injury
+    }
+
+    public enum AbnormalDebuffType
+    {
+        Attack,
+        AttackSpeed,
+        MoveSpeed,
+        Stamina
+    }
 }

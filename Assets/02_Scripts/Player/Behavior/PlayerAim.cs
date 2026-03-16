@@ -3,7 +3,7 @@
 public class PlayerAim : MonoBehaviour
 {
     [SerializeField] private Camera cam;
-    public MouseDirection mouseDir { get; private set; }  
+    public MouseDirection Mousedir { get; private set; }  
 
     private void Start()
     {
@@ -13,6 +13,6 @@ public class PlayerAim : MonoBehaviour
         {
             cam = Camera.main;
         }
-        mouseDir = new MouseDirection(cam);
+        Mousedir = new MouseDirection(cam);
     }
 }
