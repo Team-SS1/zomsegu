@@ -48,19 +48,26 @@ public abstract class GlobalSingleton<T> : MonoBehaviour where T : Component
         if (instance == null)
         {
             instance = this as T;
-            DontDestroyOnLoad(gameObject);
-            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else if (instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        // instance가 null이 아니고, 새로 만들어진 게 아닐 때
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     protected virtual void OnDestroy()
     {
         if (instance == this)
+        {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            if (!isQuitting) instance = null;
+        }
     }
 
     protected virtual void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }
