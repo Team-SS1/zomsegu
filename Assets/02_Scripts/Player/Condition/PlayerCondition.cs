@@ -249,15 +249,15 @@ public class PlayerCondition : MonoBehaviour
     {
         float hunger = abnormal.CurValue;
 
-        ApplyDebuffSet(abnormal, debuffData.common);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (hunger >= 1 && hunger <= 3)
         {
-            ApplyDebuffSet(abnormal, debuffData.hungry);
+            ApplyDebuffSet(abnormal, debuffData.Hungry);
         }
         else if (hunger == 0)
         {
-            ApplyDebuffSet(abnormal, debuffData.starving);
+            ApplyDebuffSet(abnormal, debuffData.Starving);
         }
     }
 
@@ -269,15 +269,15 @@ public class PlayerCondition : MonoBehaviour
     {
         float thirst = abnormal.CurValue;
 
-        ApplyDebuffSet(abnormal, debuffData.common);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (thirst >= 1 && thirst <= 3)
         {
-            ApplyDebuffSet(abnormal, debuffData.thirsty);
+            ApplyDebuffSet(abnormal, debuffData.Thirsty);
         }
         else if (thirst == 0)
         {
-            ApplyDebuffSet(abnormal, debuffData.dehydrated);
+            ApplyDebuffSet(abnormal, debuffData.Dehydrated);
         }
     }
 
@@ -289,19 +289,19 @@ public class PlayerCondition : MonoBehaviour
     {
         float shock = abnormal.CurValue;
 
-        ApplyDebuffSet(abnormal, debuffData.common);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (shock >= 2 && shock <= 3)
         {
-            ApplyDebuffSet(abnormal, debuffData.shock);
+            ApplyDebuffSet(abnormal, debuffData.Shock);
         }
         else if (shock >= 4 && shock <= 5)
         {
-            ApplyDebuffSet(abnormal, debuffData.heavyShock);
+            ApplyDebuffSet(abnormal, debuffData.HeavyShock);
         }
         else if (shock >= 6)
         {
-            ApplyDebuffSet(abnormal, debuffData.severeShock);
+            ApplyDebuffSet(abnormal, debuffData.SevereShock);
         }
     }
 
@@ -313,11 +313,11 @@ public class PlayerCondition : MonoBehaviour
     {
         float tired = abnormal.CurValue;
 
-        ApplyDebuffSet(abnormal, debuffData.common);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (tired <= 0)
         {
-            ApplyDebuffSet(abnormal, debuffData.tired);
+            ApplyDebuffSet(abnormal, debuffData.Tired);
         }
     }
 
@@ -329,11 +329,11 @@ public class PlayerCondition : MonoBehaviour
     {
         float injury = abnormal.CurValue;
 
-        ApplyDebuffSet(abnormal, debuffData.common);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (injury > 0)
         {
-            ApplyDebuffSet(abnormal, debuffData.injured);
+            ApplyDebuffSet(abnormal, debuffData.Injured);
         }
     }
 }

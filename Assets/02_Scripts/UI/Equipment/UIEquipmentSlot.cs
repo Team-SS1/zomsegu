@@ -131,11 +131,16 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         if (canvasGroup != null)
         {
             canvasGroup.blocksRaycasts = false;
-            canvasGroup.alpha = 0.4f;
         }
+        SetIconAlpha(0.4f);
         CreateDragIcon(eventData.position);
     }
-
+    private void SetIconAlpha(float alpha)
+    {
+        Color color = icon.color;
+        color.a = alpha;
+        icon.color = color;
+    }
     public void OnEndDrag(PointerEventData eventData)
     {
         if (eventData.button != PointerEventData.InputButton.Left) return;
@@ -187,8 +192,8 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         if(canvasGroup != null)
         {
             canvasGroup.blocksRaycasts = true;
-            canvasGroup.alpha = 1f;
         }
+        SetIconAlpha(1f);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -204,7 +209,7 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
             if(Time.unscaledTime - lastClickTime <= doubleClick)
             {
                 TryUnEquipByClick();
-                lastClickTime = -1f;
+                lastClickTime = -1f; 
             }
             else
             {
@@ -220,7 +225,7 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         EquipmentSlot equipmentSlot = equipment.GetSlot(slotRef.equipSlot);
         if(equipmentSlot == null || equipmentSlot.isEmpty) return;
 
-        bool success = ItemTransferService.TryUnEquipToFirshEmptyInventory(slotRef);
+        bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(slotRef);
 
         if (!success)
         {
