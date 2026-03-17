@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 3529190132731599798}
-  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  audioName: 300
   text: {fileID: 8776466499985062663}
   defaultColor: {r: 0, g: 0, b: 0, a: 1}
   selectedColor: {r: 1, g: 0, b: 0, a: 1}

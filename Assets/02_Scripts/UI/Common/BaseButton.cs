@@ -8,8 +8,7 @@ public class BaseButton : MonoBehaviour
 {
     [Header("Button Settings")]
     [SerializeField] protected Button btn;
-    [SerializeField] protected AudioData audioData;
-    private AudioEnum.AudioName audioName;
+    [SerializeField] protected AudioEnum.AudioName audioName;
 
     [Header("(Optional) Text Settings")]
     [SerializeField] protected TMP_Text text;
@@ -23,10 +22,6 @@ public class BaseButton : MonoBehaviour
     // ===== Unity API ===== 
     protected virtual void Awake()
     {
-        if (audioData != null)
-        {
-            Enum.TryParse(audioData.name, out audioName);
-        }
         AwakeInternal();
     }
 
@@ -67,6 +62,8 @@ public class BaseButton : MonoBehaviour
     public virtual void ResetState()
     {
         isPressed = false;
+
+        if (text == null) return;
         text.color = defaultColor;
     }
 
@@ -75,7 +72,7 @@ public class BaseButton : MonoBehaviour
     private void Reset()
     {
         btn = GetComponent<Button>();
-        audioData = AssetLoader.FindAndLoadByName<AudioData>("UI_Button_Click");
+        Enum.TryParse("UI_Button_Click", out audioName);
         text = GetComponentInChildren<TMP_Text>();
     }
 #endif

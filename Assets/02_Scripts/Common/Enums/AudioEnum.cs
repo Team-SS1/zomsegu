@@ -110,7 +110,7 @@
         Zombie_Scream,
 
         // UI
-        UI_Button_Click,
+        UI_Button_Click = 300,
 
         // === Test ===
         Test_Bgm,

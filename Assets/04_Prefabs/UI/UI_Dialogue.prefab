@@ -251,8 +251,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 3333776795290106756}
-  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
-  text: {fileID: 7282039423806790239}
+  audioName: 300
+  text: {fileID: 0}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &1496406944993889769
@@ -1017,7 +1017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 1368502756872811854}
-  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  audioName: 300
   text: {fileID: 3324555974294759005}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
@@ -1504,7 +1504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 5884300027909687212}
-  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  audioName: 300
   text: {fileID: 1048466800034990787}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
@@ -1911,7 +1911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 7553546739465886406}
-  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  audioName: 300
   text: {fileID: 5901350048602086601}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
@@ -2239,7 +2239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 197013125349527516}
-  audioData: {fileID: 11400000, guid: eb911c045ab3ab84da9e2fbf8995ca56, type: 2}
+  audioName: 300
   text: {fileID: 3282807613832009770}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
