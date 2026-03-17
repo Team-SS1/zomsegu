@@ -355,4 +355,12 @@ public class Inventory
         NotifyChanged();
         return true;
     }
+    public int FindIndexByGuid(string guid)
+    {
+        if(string.IsNullOrEmpty(guid)) return -1;
+
+        if(guidToIndex.TryGetValue(guid, out int index)) return index;
+
+        return -1;
+    }
 }
