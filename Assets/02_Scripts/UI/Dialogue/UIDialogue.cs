@@ -161,6 +161,7 @@ public class UIDialogue : MonoBehaviour
 
     private void OnClickDialogueWindowBtn()
     {
+        ChangeMode(DialogueMode.None);
         AdvanceOrCompleteCurrentLine();
     }
     #endregion
@@ -424,11 +425,13 @@ public class UIDialogue : MonoBehaviour
             case DialogueMode.Skip:
                 skipCoroutine = StartCoroutine(SkipDialogueRoutine());
                 autoBtn.SetState(false);
+                skipBtn.SetState(true);
                 break;
             case DialogueMode.Auto:
                 autoPlaying.gameObject.SetActive(true);
                 if (!typer.IsTyping) TryShowNextLine();
                 typer.OnEnd += TryShowNextLine;
+                autoBtn.SetState(true);
                 skipBtn.SetState(false);
                 break;
             default:
