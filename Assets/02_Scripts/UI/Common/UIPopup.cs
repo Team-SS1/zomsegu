@@ -16,6 +16,8 @@ public class UIPopup : MonoBehaviour
     {
         btnYes.onClick.AddListener(OnClickYes);
         btnNo.onClick.AddListener(OnClickNo);
+
+        InputManager.Instance.AddMaps(ActionMaps.UI);
     }
 
     private void Start()
@@ -27,10 +29,13 @@ public class UIPopup : MonoBehaviour
     {
         btnYes.onClick.RemoveListener(OnClickYes);
         btnNo.onClick.RemoveListener(OnClickNo);
+
+        InputManager.Instance.RemoveMaps(ActionMaps.UI);
     }
 
     public void OpenPopup(string text, UnityAction callback = null)
     {
+        gameObject.SetActive(true);
         this.text.text = text;
         this.callback = callback;
     }

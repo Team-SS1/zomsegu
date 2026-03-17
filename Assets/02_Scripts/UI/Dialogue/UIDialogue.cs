@@ -10,6 +10,10 @@ using UnityEngine.UI;
 public class UIDialogue : MonoBehaviour
 {
     #region 필드
+    [Header("Popui")]
+    [SerializeField] UIPopup popupPrefab;   // todo: ui manager로 빼기
+    private UIPopup popup;
+
     [Header("Buttons")]
     [SerializeField] ToggleButton skipBtn;
     [SerializeField] ToggleButton autoBtn;
@@ -105,6 +109,9 @@ public class UIDialogue : MonoBehaviour
         mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
         mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
         mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
+
+        popup = Instantiate(popupPrefab, transform);
+        popup.gameObject.SetActive(false);
     }
 
     private void OnDisable()
@@ -175,18 +182,18 @@ public class UIDialogue : MonoBehaviour
             return;
         }
 
-        ShowNextLine();
+        TryShowNextLine();
     }
 
-    private void ShowNextLine()
+    private bool TryShowNextLine()
     {
-        if (needChoice) return;
+        if (curDialogue == null || needChoice) return false;
 
         index++;
 
         if (curChoice != null)
         {
-            TryShowDialogue(curChoice.nextDialogueId);
+            if (!TryShowDialogue(curChoice.nextDialogueId)) return false;
             curChoice = null;
             lockIndex = index;
             choiceBtns.ForEach(btn => btn.gameObject.SetActive(false));
@@ -200,17 +207,19 @@ public class UIDialogue : MonoBehaviour
         {
             TryShowDialogue(curDialogue.nextDialogueId);
         }
+
+        return true;
     }
 
-    private void TryShowDialogue(int id)
+    private bool TryShowDialogue(int id)
     {
         if (id == -1)
         {
             gameObject.SetActive(false);
-            return;
+            return false;
         }
 
-        DialogueData.tableDic.TryGetValue(id, out curDialogue);
+        if (!DialogueData.tableDic.TryGetValue(id, out curDialogue)) return false;
 
         if (!dialogues.Contains(curDialogue))
         {
@@ -227,13 +236,15 @@ public class UIDialogue : MonoBehaviour
         {
             ShowLine(curDialogue);
         }
+
+        return true;
     }
 
     public void SetCurChoice(DialogueChoiceData data)
     {
         curChoice = data;
         SetNeedChoice(false);
-        ShowNextLine();
+        TryShowNextLine();
     }
 
     private void ShowChoice(DialogueData data)
@@ -243,12 +254,16 @@ public class UIDialogue : MonoBehaviour
         typer.PlayLine(data.text);
     }
 
-    private void CreateChoiceButton()
+    private bool CreateChoiceButton()
     {
         DialogueData data = curDialogue;
         for (int i = 0; i < data.choiceIds.Count; i++)
         {
-            DialogueChoiceData.tableDic.TryGetValue(data.choiceIds[i], out DialogueChoiceData choiceData);
+            if (!DialogueChoiceData.tableDic
+                .TryGetValue(data.choiceIds[i], out DialogueChoiceData choiceData))
+            {
+                return false;
+            }
 
             DialogueChoiceButton choiceBtn;
             if (choiceBtns.Count < i)
@@ -272,6 +287,8 @@ public class UIDialogue : MonoBehaviour
         curChoiceIndex = -1;
 
         typer.OnEnd -= CreateChoiceButton;
+
+        return true;
     }
 
     private void ShowPreviousLine()
@@ -302,7 +319,7 @@ public class UIDialogue : MonoBehaviour
         while (true)
         {
             yield return skipDelay;
-            ShowNextLine();
+            TryShowNextLine();
             typer.SkipOrComplete();
         }
     }
@@ -343,8 +360,17 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.performed)
         {
-            Logger.Log("대화 전체 스킵");
+            popup.OpenPopup("현재 대화를 \n전체스킵하시겠습니까?\n", AllSkip);
         }
+    }
+
+    private void AllSkip()
+    {
+        do
+        {
+            AdvanceOrCompleteCurrentLine();
+        }
+        while (TryShowNextLine());
     }
 
     private void OnNavigate(InputAction.CallbackContext context)
@@ -400,8 +426,8 @@ public class UIDialogue : MonoBehaviour
                 break;
             case DialogueMode.Auto:
                 autoPlaying.gameObject.SetActive(true);
-                if (!typer.IsTyping) ShowNextLine();
-                typer.OnEnd += ShowNextLine;
+                if (!typer.IsTyping) TryShowNextLine();
+                typer.OnEnd += TryShowNextLine;
                 skipBtn.SetState(false);
                 break;
             default:
@@ -420,7 +446,7 @@ public class UIDialogue : MonoBehaviour
         }
 
         autoPlaying.gameObject.SetActive(false);
-        typer.OnEnd -= ShowNextLine;
+        typer.OnEnd -= TryShowNextLine;
     }
 
     private void SetNeedChoice(bool active)

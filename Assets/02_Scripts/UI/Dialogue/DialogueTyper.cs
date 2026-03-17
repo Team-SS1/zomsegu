@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -17,7 +17,7 @@ public class DialogueTyper : MonoBehaviour
     private bool isTyping;
 
     [SerializeField] float endDelayMultiplier;
-    public event Action OnEnd;
+    public event Func<bool> OnEnd;
 
     public bool IsTyping => isTyping;
 
