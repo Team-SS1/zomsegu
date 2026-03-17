@@ -58,6 +58,7 @@ public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointer
 
     public void SubmitChoice()
     {
-        ui.SetCurChoice(data);
+        UIPopup popup = FindObjectOfType<UIPopup>(true);
+        popup?.OpenPopup($"{no + 1}. {data.text}를 선택합니다.", () => { ui.SetCurChoice(data); });
     }
 }

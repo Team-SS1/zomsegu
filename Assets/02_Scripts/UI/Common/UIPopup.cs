@@ -48,6 +48,7 @@ public class UIPopup : MonoBehaviour
         callback?.Invoke();
         gameObject.SetActive(false);
         btnYes.onClick.RemoveListener(OnClickYes);
+        callback = null;
     }
 
     private void OnClickNo()
