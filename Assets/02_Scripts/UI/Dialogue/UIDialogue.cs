@@ -404,6 +404,7 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.started)
         {
+            if (CurChoiceIndex < 0 || CurChoiceIndex >= choiceBtns.Count) return;
             choiceBtns[curChoiceIndex].SubmitChoice();
         }
     }
