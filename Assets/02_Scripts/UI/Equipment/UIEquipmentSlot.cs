@@ -225,7 +225,7 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         EquipmentSlot equipmentSlot = equipment.GetSlot(slotRef.equipSlot);
         if(equipmentSlot == null || equipmentSlot.isEmpty) return;
 
-        bool success = ItemTransferService.TryUnEquipToFirshEmptyInventory(slotRef);
+        bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(slotRef);
 
         if (!success)
         {

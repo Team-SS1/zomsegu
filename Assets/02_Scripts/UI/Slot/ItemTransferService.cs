@@ -303,7 +303,7 @@ public static class ItemTransferService
         }
         return true;
     }
-    public static bool TryUnEquipToFirshEmptyInventory(SlotRef from)
+    public static bool TryUnEquipToFirstEmptyInventory(SlotRef from)
     {
         if (from.slotType != SlotType.Equipment) return false;
 
@@ -380,7 +380,7 @@ public static class ItemTransferService
         if (!success) return false;
 
         TryAutoEquipIfSelectedQuickSlot(from.playerType, to.index);
-        return false;
+        return true;
     }
     private static bool TryQuickSlotToQuickSlot(SlotRef from, SlotRef to) // 퀵슬롯에서 퀵슬롯으로 이동
     {
@@ -445,7 +445,76 @@ public static class ItemTransferService
 
         return playerData.QuickSlot.ClearSlot(from.index);
     }
+    private static void TryAutoEquipIfSelectedQuickSlot(PlayerType playerType, int quickSlotIndex)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if (playerData == null) return;
 
+        QuickSlot quickSlot = playerData.QuickSlot;
+        Inventory inventory = playerData.Inventory; 
+        Equipment equipment = playerData.Equipment;
+
+        if(equipment == null || inventory == null || quickSlot == null) return;
+        if (quickSlot.SelectedIndex != quickSlotIndex) return;
+
+        QuickSlotSlot slot = quickSlot.GetSlot(quickSlotIndex);
+        if(slot == null || slot.isEmpty) return;
+
+        CommonItemData common = ItemDB.GetCommon(slot.itemId);
+        if(common == null) return;
+
+        ItemType itemType = (ItemType)common.ItemType;
+        if (itemType != ItemType.Weapon) return;
+
+        if (slot.IsStack) //퀵슬롯에 슽택형 아이템 등록시
+        {
+            EquipmentSlot weaponSlot = equipment.GetSlot(EquipSlotType.Weapon);
+            if (weaponSlot == null) return;
+
+            if (weaponSlot.HasRangedWeapon && weaponSlot.rangedWeaponItem == slot.itemId) return; // 기존 장착 아이템이랑 똑같으면 return;
+
+            if (weaponSlot.isEmpty)
+            {
+                equipment.EquipRangedItem(EquipSlotType.Weapon, slot.itemId);
+                return;
+            }
+
+            if (weaponSlot.HasRangedWeapon)
+            {
+                equipment.SwapRangedItem(EquipSlotType.Weapon, slot.itemId, out _, out _);
+                return;
+            }
+
+            if(weaponSlot.HasInstance && weaponSlot.equippedItem != null)
+            {
+                ItemStack oldInstance = weaponSlot.equippedItem;
+
+                if (!inventory.TryAddInstance(oldInstance.itemId, oldInstance)) return;
+
+                if(!equipment.UnEquip(EquipSlotType.Weapon, out _, out _)){
+                    inventory.TryRemoveInstance(oldInstance.guid, out _);
+                    return;
+                }
+
+                equipment.EquipRangedItem(EquipSlotType.Weapon, slot.itemId);
+            }
+
+            return;
+        }
+        if (slot.IsInstance) // 퀵슬롯에 인스턴스형 아이템 등록시
+        {
+            int invIndex = inventory.FindIndexByGuid(slot.guid);
+            if(invIndex < 0) return;
+
+            SlotRef from = SlotRef.Inv(playerType, invIndex);
+            SlotRef to = SlotRef.Equip(playerType, EquipSlotType.Weapon);
+
+            DragPayload payload = new DragPayload(from);
+            payload.SetTo(to);
+
+            TryTransferBetweenSlots(payload);
+        }
+    }
     //기타
     private static int FindEmptySlot(Inventory inventory) // 빈 슬롯 찾기
     {
@@ -458,7 +527,21 @@ public static class ItemTransferService
         }
         return -1;
     }
+    private static void AutoBindEquippedItemToFirstQuickSlot(PlayerType playerType, int itemId, ItemStack instance)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if (playerData == null) return;
 
+        QuickSlot quickSlot = playerData.QuickSlot;
+        if(quickSlot == null) return;
+
+        if (instance != null)
+            quickSlot.BindInstance(0, instance);
+        else
+            quickSlot.BindStack(0, itemId);
+
+        quickSlot.SetSelectedIndex(0);
+    }
     //플레이어 -> 플레이어 아이템 이동
     private static bool MoveBetweenInventories(Inventory fromInv, int fromIndex, Inventory toInv, int toIndex, int amount) 
     {
