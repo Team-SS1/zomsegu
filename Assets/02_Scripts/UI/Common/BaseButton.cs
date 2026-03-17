@@ -2,6 +2,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
@@ -58,6 +59,7 @@ public class BaseButton : MonoBehaviour
         // todo: 공통 로직 추가히기 (효과음 / 애니메이션)
         AudioManager.Instance.PlaySfx(audioName);
         OnClickInternal();
+        EventSystem.current?.SetSelectedGameObject(null);       // 버튼 캐싱 삭제
     }
 
     protected virtual void OnClickInternal()
