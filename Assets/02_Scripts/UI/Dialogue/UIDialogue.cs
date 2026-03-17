@@ -104,6 +104,8 @@ public class UIDialogue : MonoBehaviour
         mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
         mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
         mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
+        mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
+        mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
     }
 
     private void OnDisable()
@@ -221,12 +223,23 @@ public class UIDialogue : MonoBehaviour
         {
             lockIndex = index;
             needChoice = true;
+            InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Next);
+            InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Submit);
             ShowChoice(curDialogue);
         }
         else
         {
             ShowLine(curDialogue);
         }
+    }
+
+    public void SetCurChoice(DialogueChoiceData data)
+    {
+        curChoice = data;
+        needChoice = false;
+        InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Next);
+        InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Submit);
+        ShowNextLine();
     }
 
     private void ShowChoice(DialogueData data)
@@ -347,6 +360,7 @@ public class UIDialogue : MonoBehaviour
 
         if (context.started)
         {
+            bool isAuto = curMode == DialogueMode.Auto;
             AdvanceOrCompleteCurrentLine();
 
             float axis = context.ReadValue<float>();
@@ -361,6 +375,16 @@ public class UIDialogue : MonoBehaviour
             }
 
             CurChoiceIndex = (curChoiceIndex + dir) % count;
+
+            if (isAuto) ChangeMode(DialogueMode.Auto);
+        }
+    }
+
+    private void OnSubmit(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            choiceBtns[curChoiceIndex].SubmitChoice();
         }
     }
     #endregion
@@ -387,6 +411,8 @@ public class UIDialogue : MonoBehaviour
                 skipBtn.SetState(false);
                 break;
             default:
+                autoBtn.SetState(false);
+                skipBtn.SetState(false);
                 break;
         }
     }

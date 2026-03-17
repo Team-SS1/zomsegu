@@ -30,7 +30,7 @@ public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointer
 
     protected override void OnClickInternal()
     {
-        ConfirmChoice();
+        SubmitChoice();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -56,8 +56,8 @@ public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointer
         SetState(false);
     }
 
-    public void ConfirmChoice()
+    public void SubmitChoice()
     {
-
+        ui.SetCurChoice(data);
     }
 }
