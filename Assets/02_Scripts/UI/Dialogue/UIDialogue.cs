@@ -52,6 +52,7 @@ public class UIDialogue : MonoBehaviour
             if (value == -1)
             {
                 choiceBtns.ForEach(b => b.UnselectChoice());
+                curChoiceIndex = value;
                 return;
             }
 
@@ -196,6 +197,7 @@ public class UIDialogue : MonoBehaviour
         {
             if (!TryShowDialogue(curChoice.nextDialogueId)) return false;
             curChoice = null;
+            CurChoiceIndex = -1;
             lockIndex = index;
             choiceBtns.ForEach(btn => btn.gameObject.SetActive(false));
         }
