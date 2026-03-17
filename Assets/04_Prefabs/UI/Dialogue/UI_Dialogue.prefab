@@ -1327,6 +1327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1916e164712c64e89c028b69e934e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  popupPrefab: {fileID: 8478452991933603047, guid: 809cc58b6ac4aa042bd902589668e208, type: 3}
   skipBtn: {fileID: 8427062062597215827}
   autoBtn: {fileID: 8449884633377253012}
   backlogBtn: {fileID: 2531512765773606541}
