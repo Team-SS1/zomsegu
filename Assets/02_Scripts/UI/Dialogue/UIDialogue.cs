@@ -41,11 +41,17 @@ public class UIDialogue : MonoBehaviour
     private int index = 0;
     private int lockIndex = 0;
     private int curChoiceIndex = -1;
-    private int CurChoiceIndex
+    public int CurChoiceIndex
     {
         get { return curChoiceIndex; }
         set
         {
+            if (value == -1)
+            {
+                choiceBtns.ForEach(b => b.UnselectChoice());
+                return;
+            }
+
             if (curChoiceIndex != -1)
             {
                 choiceBtns[curChoiceIndex].UnselectChoice();
@@ -253,7 +259,7 @@ public class UIDialogue : MonoBehaviour
             rect.SetParent(choiceRoot);
             rect.anchoredPosition = new Vector2(0, -choiceBtnHeight * i);
 
-            choiceBtn.Init(choiceData, i + 1);
+            choiceBtn.Init(this, choiceData, i);
         }
 
         curChoiceIndex = -1;

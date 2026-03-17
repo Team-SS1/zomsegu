@@ -5,8 +5,10 @@ public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointer
 {
     [SerializeField] private float horizontalPadding = 16f;
 
+    private UIDialogue ui;
     private RectTransform rect;
     private DialogueChoiceData data;
+    private int no;
 
     protected override void AwakeInternal()
     {
@@ -14,10 +16,12 @@ public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointer
         rect = GetComponent<RectTransform>();
     }
 
-    public void Init(DialogueChoiceData data, int no)
+    public void Init(UIDialogue ui, DialogueChoiceData data, int no)
     {
+        this.ui = ui;
         this.data = data;
-        text.text = $"{no}. {data.text}";
+        this.no = no;
+        text.text = $"{no + 1}. {data.text}";
 
         // text 길이에 맞게 width 조정하기
         float width = text.preferredWidth + horizontalPadding;
@@ -31,12 +35,12 @@ public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointer
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        SelectChoice();
+        ui.CurChoiceIndex = no;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        UnselectChoice();
+        ui.CurChoiceIndex = -1;
     }
 
     // hover 또는 select 시 폰트 수정
