@@ -5,7 +5,6 @@ using InputEnum;
 using PlayerEnum;
 using EventEnum;
 using ItemEnum;
-using System.Collections.Specialized;
 
 public class Equipment
 {
