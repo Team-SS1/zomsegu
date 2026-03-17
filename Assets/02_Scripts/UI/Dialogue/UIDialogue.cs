@@ -12,8 +12,8 @@ public class UIDialogue : MonoBehaviour
 {
     #region 필드
     [Header("Buttons")]
-    [SerializeField] BaseButton skipBtn;
-    [SerializeField] BaseButton autoBtn;
+    [SerializeField] ToggleButton skipBtn;
+    [SerializeField] ToggleButton autoBtn;
     [SerializeField] BaseButton backlogBtn;
     [SerializeField] BaseButton optionBtn;
     [SerializeField] BaseButton dialogueWindowBtn;
@@ -372,11 +372,13 @@ public class UIDialogue : MonoBehaviour
         {
             case DialogueMode.Skip:
                 skipCoroutine = StartCoroutine(SkipDialogueRoutine());
+                autoBtn.SetState(false);
                 break;
             case DialogueMode.Auto:
                 autoPlaying.SetActive(true);
                 if (!typer.IsTyping) ShowNextLine();
                 typer.OnEnd += ShowNextLine;
+                skipBtn.SetState(false);
                 break;
             default:
                 break;
@@ -392,10 +394,6 @@ public class UIDialogue : MonoBehaviour
         }
 
         autoPlaying.SetActive(false);
-
-        skipBtn.ResetState();
-        autoBtn.ResetState();
-
         typer.OnEnd -= ShowNextLine;
     }
     #endregion
@@ -404,8 +402,8 @@ public class UIDialogue : MonoBehaviour
 #if UNITY_EDITOR
     private void Reset()
     {
-        skipBtn = transform.FindChild<BaseButton>("Btn_Skip");
-        autoBtn = transform.FindChild<BaseButton>("Btn_Auto");
+        skipBtn = transform.FindChild<ToggleButton>("Btn_Skip");
+        autoBtn = transform.FindChild<ToggleButton>("Btn_Auto");
         backlogBtn = transform.FindChild<BaseButton>("Btn_Backlog");
         optionBtn = transform.FindChild<BaseButton>("Btn_Option");
         dialogueWindowBtn = transform.FindChild<BaseButton>("Panel_Dialogue");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +18,7 @@ public class BaseButton : MonoBehaviour
 
     public Button.ButtonClickedEvent onClick => btn.onClick;
 
-    protected bool isPressed = false;
+    private Coroutine coroutine;
 
     // ===== Unity API ===== 
     protected virtual void Awake()
@@ -28,13 +29,20 @@ public class BaseButton : MonoBehaviour
     private void OnEnable()
     {
         btn.onClick.AddListener(OnClick);
-        ResetState();
+        SetState(false);
         EnableInternal();
     }
 
     private void OnDisable()
     {
         btn.onClick.RemoveListener(OnClick);
+
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
+
         DisableInternal();
     }
 
@@ -47,24 +55,30 @@ public class BaseButton : MonoBehaviour
     // ===== Button Click Event ===== 
     private void OnClick()
     {
-        isPressed = true;
         // todo: 공통 로직 추가히기 (효과음 / 애니메이션)
         AudioManager.Instance.PlaySfx(audioName);
         OnClickInternal();
-
-        if (text == null) return;
-        text.color = selectedColor;
     }
 
-    protected virtual void OnClickInternal() { }
+    protected virtual void OnClickInternal()
+    {
+        if (coroutine != null) StopCoroutine(coroutine);
+        coroutine = StartCoroutine(OnClickRoutine());
+    }
 
     // ===== State Control ===== 
-    public virtual void ResetState()
+    private IEnumerator OnClickRoutine()
     {
-        isPressed = false;
+        SetState(true);
+        yield return GameConstants.BtnDelayTime;
+        SetState(false);
+    }
 
+    public virtual void SetState(bool active)
+    {
         if (text == null) return;
-        text.color = defaultColor;
+
+        text.color = active ? selectedColor : defaultColor;
     }
 
     #region 에디터 전용

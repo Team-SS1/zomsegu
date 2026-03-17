@@ -894,7 +894,7 @@ GameObject:
   - component: {fileID: 7450505670559743052}
   - component: {fileID: 8303993765627453621}
   - component: {fileID: 1368502756872811854}
-  - component: {fileID: 2367953511028775999}
+  - component: {fileID: 8427062062597215827}
   m_Layer: 5
   m_Name: Btn_Skip
   m_TagString: Untagged
@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2367953511028775999
+--- !u!114 &8427062062597215827
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1013,7 +1013,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3619888491511110786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
+  m_Script: {fileID: 11500000, guid: ffcf51167bb9af241abdb265dbe93e6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 1368502756872811854}
@@ -1327,8 +1327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1916e164712c64e89c028b69e934e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skipBtn: {fileID: 2367953511028775999}
-  autoBtn: {fileID: 3373362028615953753}
+  skipBtn: {fileID: 8427062062597215827}
+  autoBtn: {fileID: 8449884633377253012}
   backlogBtn: {fileID: 2531512765773606541}
   optionBtn: {fileID: 468561651607704826}
   dialogueWindowBtn: {fileID: 8459416694161135913}
@@ -1788,7 +1788,7 @@ GameObject:
   - component: {fileID: 7276505784012097119}
   - component: {fileID: 8465421378410849266}
   - component: {fileID: 7553546739465886406}
-  - component: {fileID: 3373362028615953753}
+  - component: {fileID: 8449884633377253012}
   m_Layer: 5
   m_Name: Btn_Auto
   m_TagString: Untagged
@@ -1898,7 +1898,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3373362028615953753
+--- !u!114 &8449884633377253012
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1907,7 +1907,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6970216305730290068}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8af6dd5abd63e8944b17cba42fa256e0, type: 3}
+  m_Script: {fileID: 11500000, guid: ffcf51167bb9af241abdb265dbe93e6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   btn: {fileID: 7553546739465886406}

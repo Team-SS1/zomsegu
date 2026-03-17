@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DialogueChoiceButton : BaseButton, IPointerEnterHandler, IPointerExitHandler
+public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private float horizontalPadding = 16f;
 
@@ -43,13 +43,13 @@ public class DialogueChoiceButton : BaseButton, IPointerEnterHandler, IPointerEx
     public void SelectChoice()
     {
         text.fontStyle |= TMPro.FontStyles.Bold;
-        text.color = selectedColor;
+        SetState(true);
     }
 
     public void UnselectChoice()
     {
         text.fontStyle &= ~TMPro.FontStyles.Bold;
-        text.color = defaultColor;
+        SetState(false);
     }
 
     public void ConfirmChoice()
