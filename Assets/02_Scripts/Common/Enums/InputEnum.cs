@@ -44,10 +44,11 @@
         Next,
         Previous,
         Navigate,
-        Select,
         Skip,
         AllSkip,
-        Submit,
+
+        // === Common ===
+        Submit,     // UI & Dialogue
 
         // === System ===
         StopGame,
