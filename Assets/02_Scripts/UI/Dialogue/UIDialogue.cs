@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -25,7 +24,7 @@ public class UIDialogue : MonoBehaviour
     [SerializeField] float skipDelayTime = 0.3f;
 
     [Header("Extra")]
-    [SerializeField] GameObject autoPlaying;
+    [SerializeField] TMP_Text autoPlaying;
 
     [Header("Choice")]
     [SerializeField] DialogueChoiceButton choiceBtnPrefab;
@@ -156,7 +155,6 @@ public class UIDialogue : MonoBehaviour
     private void OnClickDialogueWindowBtn()
     {
         AdvanceOrCompleteCurrentLine();
-        EventSystem.current?.SetSelectedGameObject(null);   // 버튼 캐싱 삭제
     }
     #endregion
 
@@ -222,9 +220,7 @@ public class UIDialogue : MonoBehaviour
         if (curDialogue.HasChoice)          // 선택지 index 캐싱해서 선택지 전으로 못 돌아가게 하기
         {
             lockIndex = index;
-            needChoice = true;
-            InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Next);
-            InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Submit);
+            SetNeedChoice(true);
             ShowChoice(curDialogue);
         }
         else
@@ -236,9 +232,7 @@ public class UIDialogue : MonoBehaviour
     public void SetCurChoice(DialogueChoiceData data)
     {
         curChoice = data;
-        needChoice = false;
-        InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Next);
-        InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Submit);
+        SetNeedChoice(false);
         ShowNextLine();
     }
 
@@ -405,7 +399,7 @@ public class UIDialogue : MonoBehaviour
                 autoBtn.SetState(false);
                 break;
             case DialogueMode.Auto:
-                autoPlaying.SetActive(true);
+                autoPlaying.gameObject.SetActive(true);
                 if (!typer.IsTyping) ShowNextLine();
                 typer.OnEnd += ShowNextLine;
                 skipBtn.SetState(false);
@@ -425,8 +419,23 @@ public class UIDialogue : MonoBehaviour
             skipCoroutine = null;
         }
 
-        autoPlaying.SetActive(false);
+        autoPlaying.gameObject.SetActive(false);
         typer.OnEnd -= ShowNextLine;
+    }
+
+    private void SetNeedChoice(bool active)
+    {
+        needChoice = active;
+        autoPlaying.text = needChoice ? "자동진행 일시정지" : "자동진행 중...";
+
+        if (needChoice)
+        {
+            InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Submit);
+        }
+        else
+        {
+            InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Submit);
+        }
     }
     #endregion
 
@@ -444,7 +453,7 @@ public class UIDialogue : MonoBehaviour
         characterName = transform.FindChild<TMP_Text>("Text_Name");
         typer = transform.FindChild<DialogueTyper>("Text_Dialogue");
 
-        autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying").gameObject;
+        autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying");
 
         choiceBtnPrefab = AssetLoader.FindAndLoadByName("Btn_Choice").GetComponent<DialogueChoiceButton>();
         choiceRoot = transform.FindChild<RectTransform>("ChoiceGroup");

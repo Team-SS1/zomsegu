@@ -1336,7 +1336,7 @@ MonoBehaviour:
   characterName: {fileID: 7282039423806790239}
   typer: {fileID: 4174267858724849839}
   skipDelayTime: 0.3
-  autoPlaying: {fileID: 6839979405298839454}
+  autoPlaying: {fileID: 8472880066053654294}
   choiceBtnPrefab: {fileID: 8499851076070543193, guid: c0a9f10eff54d9842b7945e309f1f626, type: 3}
   choiceRoot: {fileID: 2843505739152388389}
 --- !u!114 &3628550799970573062
