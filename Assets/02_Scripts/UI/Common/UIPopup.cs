@@ -18,11 +18,13 @@ public class UIPopup : MonoBehaviour
         btnNo.onClick.AddListener(OnClickNo);
 
         InputManager.Instance.AddMaps(ActionMaps.UI);
+        InputManager.Instance.RemoveMaps(ActionMaps.Dialogue);
     }
 
     private void Start()
     {
         InputManager.Instance.BindInput(ActionMaps.UI, Actions.Close, OnClose);
+        InputManager.Instance.BindInput(ActionMaps.UI, Actions.Submit, OnSubmit);
     }
 
     private void OnDisable()
@@ -31,6 +33,7 @@ public class UIPopup : MonoBehaviour
         btnNo.onClick.RemoveListener(OnClickNo);
 
         InputManager.Instance.RemoveMaps(ActionMaps.UI);
+        InputManager.Instance.AddMaps(ActionMaps.Dialogue);
     }
 
     public void OpenPopup(string text, UnityAction callback = null)
@@ -50,6 +53,14 @@ public class UIPopup : MonoBehaviour
     private void OnClickNo()
     {
         gameObject.SetActive(false);
+    }
+
+    private void OnSubmit(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            OnClickYes();
+        }
     }
 
     private void OnClose(InputAction.CallbackContext context)
