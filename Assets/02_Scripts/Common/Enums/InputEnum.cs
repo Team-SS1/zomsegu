@@ -1,4 +1,4 @@
-namespace InputEnum
+﻿namespace InputEnum
 {
     // 입력 처리 시 레이어
     [System.Flags]
@@ -47,6 +47,7 @@ namespace InputEnum
         Select,
         Skip,
         AllSkip,
+        Submit,
 
         // === System ===
         StopGame,
