@@ -64,7 +64,14 @@ public class BaseButton : MonoBehaviour
 
     protected virtual void OnClickInternal()
     {
-        if (coroutine != null) StopCoroutine(coroutine);
+        // 비활성 상태 가드
+        if (!isActiveAndEnabled || !gameObject.activeInHierarchy) return;
+
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
         coroutine = StartCoroutine(OnClickRoutine());
     }
 
