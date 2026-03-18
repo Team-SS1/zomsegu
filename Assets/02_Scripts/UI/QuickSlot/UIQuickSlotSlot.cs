@@ -87,15 +87,46 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
     }
     private ItemStack FindInstance(PlayerData playerData, string guid)
     {
-        if (playerData == null || playerData.Inventory == null || string.IsNullOrEmpty(guid)) return null;
+        if (playerData == null || string.IsNullOrEmpty(guid)) return null;
 
-        int index = playerData.Inventory.FindIndexByGuid(guid);
-        if (index < 0) return null;
+        if(playerData.Inventory != null)
+        {
+            int index = playerData.Inventory.FindIndexByGuid(guid);
 
-        InventorySlot slot = playerData.Inventory.GetSlot(index);
-        if (slot == null || slot.IsStack) return null;
+            if (index >= 0)
+            {
+                InventorySlot slot = playerData.Inventory.GetSlot(index);
+                if (slot == null || slot.IsStack) return null;
 
-        return slot.instance;
+                return slot.instance;
+            }
+        }
+        
+        if(playerData.Equipment != null)
+        {
+            EquipSlotType[] equipSlotTypes =
+            {
+                EquipSlotType.Head,
+                EquipSlotType.Body,
+                EquipSlotType.Leg,
+                EquipSlotType.Shoes,
+                EquipSlotType.Bag,
+                EquipSlotType.Weapon,
+                EquipSlotType.Accessory1,
+                EquipSlotType.Accessory2
+            };
+
+            for(int i = 0; i < equipSlotTypes.Length; i++)
+            {
+                EquipmentSlot equipSlot = playerData.Equipment.GetSlot(equipSlotTypes[i]);
+                if(equipSlot != null && equipSlot.HasInstance && equipSlot.equippedItem != null)
+                {
+                    if (equipSlot.equippedItem.guid == guid)
+                        return equipSlot.equippedItem;
+                }
+            }
+        }
+        return null;
     }
     private void ClearSlot()
     {
@@ -148,7 +179,7 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
         if (eventData.button != PointerEventData.InputButton.Left) return;
 
         if (canvasGroup != null)
-            canvasGroup.blocksRaycasts = false;
+            canvasGroup.blocksRaycasts = true;
 
         SetIconAlpha(1f);
         DestroyDragIcon();
@@ -165,14 +196,14 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
         }
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (Time.unscaledDeltaTime - lastClickTime <= doubleClick)
+            if (Time.unscaledTime - lastClickTime <= doubleClick)
             {
                 ItemTransferService.TryClearQuickSlot(slotRef);
                 lastClickTime = -1f;
             }
             else
             {
-                lastClickTime = Time.unscaledDeltaTime;
+                lastClickTime = Time.unscaledTime;
             }
         }
     }

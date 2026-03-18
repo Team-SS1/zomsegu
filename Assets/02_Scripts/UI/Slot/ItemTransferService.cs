@@ -4,6 +4,7 @@ using UnityEngine;
 using ItemEnum;
 using PlayerEnum;
 using Unity.VisualScripting;
+using TMPro.EditorUtilities;
 public static class ItemTransferService
 {
     public static bool TryTransferBetweenSlots(DragPayload payload) // 슬롯 간 이동
@@ -367,6 +368,21 @@ public static class ItemTransferService
 
         if (!CanRegisterQuickSlot(inventorySlot)) return false;
 
+        int existingIndex = -1;
+
+        if (inventorySlot.IsStack) //퀵슬롯에 같은 아이템 있나 확인
+        {
+            existingIndex = quickSlot.FindSlotByItemId(inventorySlot.itemId);
+        }else if(inventorySlot.IsInstance && inventorySlot.instance != null)
+        {
+            existingIndex = quickSlot.FindSlotByGuid(inventorySlot.instance.guid);
+        }
+
+        if(existingIndex >= 0 && existingIndex != to.index)
+        {
+            quickSlot.ClearSlot(existingIndex);
+        }
+
         bool success = false;
 
         if (inventorySlot.IsStack)
@@ -574,5 +590,76 @@ public static class ItemTransferService
         }
 
         return false;
+    }
+    private static ItemStack FindInstancePlayer(PlayerData playerData, string guid)
+    {
+        if(playerData == null || string.IsNullOrEmpty(guid)) return null;
+
+        if(playerData.Inventory != null) //인벤에서 먼저 찾기
+        {
+            int invIndex = playerData.Inventory.FindIndexByGuid(guid);
+            if(invIndex >= 0)
+            {
+                InventorySlot invSlot = playerData.Inventory.GetSlot(invIndex);
+                if(invSlot != null && invSlot.IsInstance && invSlot.instance != null)
+                    return invSlot.instance;
+            }
+        }
+
+        if(playerData.Equipment != null)
+        {
+            EquipSlotType[] equipSlots =
+            {
+                EquipSlotType.Head,
+                EquipSlotType.Body,
+                EquipSlotType.Leg,
+                EquipSlotType.Shoes,
+                EquipSlotType.Bag,
+                EquipSlotType.Weapon,
+                EquipSlotType.Accessory1,
+                EquipSlotType.Accessory2
+            };
+
+            for(int i = 0; i< equipSlots.Length; i++)
+            {
+                EquipmentSlot equipSlot = playerData.Equipment.GetSlot(equipSlots[i]);
+                if(equipSlot != null && equipSlot.HasInstance && equipSlot.equippedItem != null)
+                {
+                    if (equipSlot.equippedItem.guid == guid)
+                        return equipSlot.equippedItem;
+                }
+            }
+        }
+        return null;
+    }
+    public static void ValidateQuickSlots(PlayerType playerType)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if (playerData == null) return;
+
+        QuickSlot quickSlot = playerData.QuickSlot;
+        if(quickSlot == null) return;
+
+        for(int i = 0; i < quickSlot.Capacity; i++)
+        {
+            QuickSlotSlot quickSlotSlot = quickSlot.GetSlot(i);
+            if(quickSlotSlot == null || quickSlotSlot.isEmpty) continue;
+
+            if (quickSlotSlot.IsInstance)
+            {
+                ItemStack instance = FindInstancePlayer(playerData, quickSlotSlot.guid);
+
+                if(instance == null)
+                {
+                    quickSlot.ClearSlot(i);
+                    continue;
+                }
+                if(instance.HasDurability && instance.durability <= 0)
+                {
+                    quickSlot.ClearSlot(i);
+                    continue; 
+                }
+            }
+        }
     }
 }
