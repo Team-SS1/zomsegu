@@ -16,8 +16,7 @@ public class DialogueTyper : MonoBehaviour
     private string fullText;
     private bool isTyping;
 
-    [SerializeField] float endDelayMultiplier;
-    public event Func<bool> OnEnd;
+    public event Func<IEnumerator> OnEnd;
 
     public bool IsTyping => isTyping;
 
@@ -91,11 +90,7 @@ public class DialogueTyper : MonoBehaviour
                 yield return waitForSeconds;
         }
 
-        if (OnEnd != null)
-        {
-            yield return new WaitForSecondsRealtime(target.textInfo.characterCount * endDelayMultiplier);
-            OnEnd.Invoke();
-        }
+        yield return OnEnd?.Invoke();
 
         isTyping = false;
         typingCo = null;

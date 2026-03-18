@@ -25,7 +25,9 @@ public class UIDialogue : MonoBehaviour
     [SerializeField] Image portrait;
     [SerializeField] TMP_Text characterName;
     [SerializeField] DialogueTyper typer;
+    [SerializeField] GameObject arrow;
     [SerializeField] float skipDelayTime = 0.3f;
+    [SerializeField] float endDelayMultiplier;
 
     [Header("Extra")]
     [SerializeField] TMP_Text autoPlaying;
@@ -92,6 +94,7 @@ public class UIDialogue : MonoBehaviour
     private void OnEnable()
     {
         Time.timeScale = 0f;
+        typer.OnEnd += OnEndTyping;
 
         InputManager mg = InputManager.Instance;
         if (mg == null) return;
@@ -120,6 +123,7 @@ public class UIDialogue : MonoBehaviour
         Time.timeScale = 1f;
         ChangeMode(DialogueMode.None);
         typer.Clear();
+        typer.OnEnd -= OnEndTyping;
         dialogues.Clear();
         curDialogue = null;
         for (int i = choiceBtns.Count - 1; i >= 0; i--)
@@ -181,6 +185,7 @@ public class UIDialogue : MonoBehaviour
         if (typer.IsTyping)
         {
             typer.SkipOrComplete();
+            arrow.SetActive(true);
             return;
         }
 
@@ -211,6 +216,7 @@ public class UIDialogue : MonoBehaviour
             TryShowDialogue(curDialogue.nextDialogueId);
         }
 
+        arrow.SetActive(false);
         return true;
     }
 
@@ -257,7 +263,7 @@ public class UIDialogue : MonoBehaviour
         typer.PlayLine(data.text);
     }
 
-    private bool CreateChoiceButton()
+    private WaitForSecondsRealtime CreateChoiceButton()
     {
         DialogueData data = curDialogue;
         for (int i = 0; i < data.choiceIds.Count; i++)
@@ -265,7 +271,7 @@ public class UIDialogue : MonoBehaviour
             if (!DialogueChoiceData.tableDic
                 .TryGetValue(data.choiceIds[i], out DialogueChoiceData choiceData))
             {
-                return false;
+                return null;
             }
 
             DialogueChoiceButton choiceBtn;
@@ -291,7 +297,7 @@ public class UIDialogue : MonoBehaviour
 
         typer.OnEnd -= CreateChoiceButton;
 
-        return true;
+        return null;
     }
 
     private void ShowPreviousLine()
@@ -432,7 +438,6 @@ public class UIDialogue : MonoBehaviour
             case DialogueMode.Auto:
                 autoPlaying.gameObject.SetActive(true);
                 if (!typer.IsTyping) TryShowNextLine();
-                typer.OnEnd += TryShowNextLine;
                 autoBtn.SetState(true);
                 skipBtn.SetState(false);
                 break;
@@ -452,7 +457,6 @@ public class UIDialogue : MonoBehaviour
         }
 
         autoPlaying.gameObject.SetActive(false);
-        typer.OnEnd -= TryShowNextLine;
     }
 
     private void SetNeedChoice(bool active)
@@ -471,6 +475,20 @@ public class UIDialogue : MonoBehaviour
     }
     #endregion
 
+    private IEnumerator OnEndTyping()
+    {
+        if (!needChoice)
+        {
+            arrow.SetActive(true);
+        }
+
+        if (curMode == DialogueMode.Auto)
+        {
+            yield return new WaitForSecondsRealtime(curDialogue.text.Length * endDelayMultiplier);
+            TryShowNextLine();
+        }
+    }
+
     #region 유니티 전용
 #if UNITY_EDITOR
     private void Reset()
@@ -484,6 +502,7 @@ public class UIDialogue : MonoBehaviour
         portrait = transform.FindChild<Image>("Portrait");
         characterName = transform.FindChild<TMP_Text>("Text_Name");
         typer = transform.FindChild<DialogueTyper>("Text_Dialogue");
+        arrow = transform.FindChild<Image>("Arrow").gameObject;
 
         autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying");
 
