@@ -1,134 +1,60 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using PlayerEnum;
-using ItemEnum;
-using TMPro;
-using System.Runtime.CompilerServices;
+using EventEnum;
 
-public class UIQuickSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler, IDropHandler
+
+public class UIQuickSlot : MonoBehaviour
 {
-    [Header("UI")]
-    [SerializeField] private Image icon;
-    [SerializeField] private TextMeshProUGUI text;
-    [SerializeField] private Image selectedOutline; //선택시 빨간 테두리
+    [SerializeField] private UIActiveCharacterContext activeCharacterContext;
+    [SerializeField] private UIQuickSlotSlot[] slotUIs;
 
-    [Header("Drag")]
-    [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private Vector2 dragIconOffset = new Vector2(30f, -30f);
-
-    [Header("Click")]
-    [SerializeField] private float doubleClick = 0.25f;
-
-    private float lastClickTime = -1f;
-
-    private GameObject dragIcon;
-    private RectTransform dragIconRect;
-    private Canvas rootCanvas;
-
-    public SlotRef slotRef {  get; private set; }
-
-    private void Awake()
+    private void OnEnable()
     {
-        rootCanvas = GetComponentInParent<Canvas>();
+        EventManager.Subscribe<PlayerType>(EventKey.QuickSlotChanged, OnQuickSlotChanged);
+        EventManager.Subscribe<PlayerType>(EventKey.ActiveCharacterChanged, OnActiveCharacterChanged);
 
-        if(canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
+        Refresh(activeCharacterContext.CurrentActivePlayer);
     }
-    public void SetSlot(QuickSlotSlot slot, int index, PlayerType playerType, bool isSelected)
+    private void OnDisable()
     {
-        slotRef = SlotRef.Quick(playerType, index);
+        EventManager.UnSubscribe<PlayerType>(EventKey.QuickSlotChanged, OnQuickSlotChanged);
+        EventManager.UnSubscribe<PlayerType>(EventKey.ActiveCharacterChanged, OnActiveCharacterChanged);
+    }
+    private void OnQuickSlotChanged(PlayerType playerType)
+    {
+        if (playerType != activeCharacterContext.CurrentActivePlayer) return;
 
-        if (selectedOutline != null)
-            selectedOutline.enabled = isSelected;
-
-        if(slot == null || slot.isEmpty)
+        Refresh(playerType);
+    }
+    private void OnActiveCharacterChanged(PlayerType playerType)
+    {
+        Refresh(playerType);
+    }
+    private void Refresh(PlayerType playerType)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if(playerData == null || playerData.QuickSlot == null)
         {
-            ClearSlot();
+            ClearAll();
             return;
         }
 
-        CommonItemData common = ItemDB.GetCommon(slot.itemId);
-        if(common != null && !string.IsNullOrEmpty(common.Icon))
-        {
-            Sprite iconSprite = Resources.Load<Sprite>(common.Icon);
-            icon.sprite = iconSprite;
-            icon.enabled = iconSprite != null;
-        }
-        else
-        {
-            icon.sprite = null;
-            icon.enabled = false;
-        }
+        QuickSlot quickSlot = playerData.QuickSlot;
 
-        if (slot.IsStack)
+        for(int i = 0; i< slotUIs.Length; i++)
         {
-            PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
-            int amount = playerData != null && playerData.Inventory != null ?
-                playerData.Inventory.GetStackAmount(slot.itemId) : 0;
-
-            text.text = amount > 0 ? amount.ToString() : "0";
-        }else if (slot.IsInstance)
-        {
-            PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
-            ItemStack instance = FindInstance(playerData, slot.guid);
-
-            if (instance != null && instance.HasDurability)
-                text.text = $"{instance.durability}/{instance.maxDurability}";
-            else
-                text.text = "";
-        }
-        else
-        {
-            text.text = "";
+            QuickSlotSlot slot = quickSlot.GetSlot(i);
+            bool isSelected = quickSlot.SelectedIndex == i;
+            slotUIs[i].SetSlot(slot, i, playerType, isSelected);
         }
     }
-    private ItemStack FindInstance(PlayerData playerData, string guid)
+    private void ClearAll()
     {
-        if (playerData == null || playerData.Inventory == null || string.IsNullOrEmpty(guid)) return null;
-
-        int index = playerData.Inventory.FindIndexByGuid(guid);
-        if(index < 0) return null;
-
-        InventorySlot slot = playerData.Inventory.GetSlot(index);
-        if (slot == null || slot.IsStack) return null;
-
-        return slot.instance;
-    }
-    private void ClearSlot()
-    {
-        if(icon != null)
+        for(int i = 0; i < slotUIs.Length; i++)
         {
-            icon.sprite = null;
-            icon.enabled = false;
+            slotUIs[i].SetSlot(null, i, PlayerType.Player_SHIN, false);
         }
-        if (text != null)
-            text.text = "";
-    }
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnDrop(PointerEventData eventData)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        throw new System.NotImplementedException();
     }
 }
