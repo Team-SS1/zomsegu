@@ -79,6 +79,7 @@ public class UIManager : GlobalSingleton<UIManager>
 
     private T CreatePopup<T>(bool active) where T : UIPopup
     {
+        // todo: 나중에 disable 처리해서 관리
         T prefab = GetResource<T>(active);
         T ui = Instantiate(prefab, popupRoot);
 
@@ -148,17 +149,23 @@ public class UIManager : GlobalSingleton<UIManager>
         return ui;
     }
 
-    public void CloseTopPopup()
+    public void ClosePopup(UIPopup ui)
     {
-        if (popupStack.Count == 0) return;
-
-        popupStack[^1].gameObject.SetActive(false);
-        popupStack.RemoveAt(popupStack.Count - 1);
+        popupStack.Remove(ui);
+        Destroy(ui.gameObject);        // todo: 나중에 disable/enable 처리
 
         if (popupStack.Count == 0)
         {
             popupRoot.gameObject.SetActive(false);
         }
+    }
+
+    public void CloseTopPopup()
+    {
+        if (popupStack.Count == 0) return;
+
+        UIPopup ui = popupStack[^1];
+        ClosePopup(ui);
     }
 
     public void CloseAllPopups()
@@ -177,6 +184,9 @@ public class UIManager : GlobalSingleton<UIManager>
         int idx = popupStack.IndexOf(ui);
         popupStack.RemoveAt(idx);
         popupStack.Add(ui);
+
+        ui.TryGetComponent<RectTransform>(out var rect);
+        rect.SetSiblingIndex(rect.parent.childCount - 1);
     }
     #endregion
 

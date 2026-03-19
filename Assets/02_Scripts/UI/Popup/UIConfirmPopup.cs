@@ -48,14 +48,14 @@ public class UIConfirmPopup : UIPopup
     private void OnClickYes()
     {
         onConfirm?.Invoke();
-        gameObject.SetActive(false);
         btnYes.onClick.RemoveListener(OnClickYes);
         onConfirm = null;
+        Close();
     }
 
     private void OnClickNo()
     {
-        gameObject.SetActive(false);
+        Close();
     }
 
     private void OnSubmit(InputAction.CallbackContext context)
@@ -70,7 +70,7 @@ public class UIConfirmPopup : UIPopup
     {
         if (context.started)
         {
-            gameObject.SetActive(false);
+            Close();
         }
     }
 

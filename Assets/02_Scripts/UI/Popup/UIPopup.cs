@@ -24,4 +24,9 @@ public abstract class UIPopup : BaseUI
     {
         OnUIClick?.Invoke(this);
     }
+
+    protected void Close()
+    {
+        UIManager.Instance.ClosePopup(this);
+    }
 }
