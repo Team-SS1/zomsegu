@@ -4,6 +4,7 @@ using UnityEngine;
 using ItemEnum;
 using PlayerEnum;
 using Unity.VisualScripting;
+using TMPro.EditorUtilities;
 public static class ItemTransferService
 {
     public static bool TryTransferBetweenSlots(DragPayload payload) // 슬롯 간 이동
@@ -60,7 +61,13 @@ public static class ItemTransferService
         int emptySlotIndex = FindEmptySlot(toInv);
         if (emptySlotIndex < 0) return false;
 
-        return MoveBetweenInventories(fromInv, from.index, toInv, emptySlotIndex, amount);
+        bool success = MoveBetweenInventories(fromInv, from.index, toInv, emptySlotIndex, amount);
+        if (success)
+        {
+            ValidateQuickSlots(from.playerType);
+            ValidateQuickSlots(targetPlayer);
+        }
+        return success;
     }
     public static bool TryDropOutside(SlotRef from) // 슬롯에서 외부로 드롭
     {
@@ -108,12 +115,18 @@ public static class ItemTransferService
         {
             if (equipSlot.isEmpty)
             {
-                return equipment.EquipRangedItem(to.equipSlot, itemId);
+                bool  success = equipment.EquipRangedItem(to.equipSlot, itemId);
+                if (success)
+                    AutoBindEquippedItemToFirstQuickSlot(from.playerType, itemId, null);
+                return success;
             }
 
             if (equipSlot.HasRangedWeapon)
             {
-                return equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
+                bool success = equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
+                if (success)
+                    AutoBindEquippedItemToFirstQuickSlot(from.playerType, itemId, null);
+                return success;
             } else if (equipSlot.HasInstance && equipSlot.equippedItem != null)
             {
                 ItemStack oldInstance = equipSlot.equippedItem;
@@ -125,7 +138,10 @@ public static class ItemTransferService
                     inventory.TryRemoveInstance(oldInstance.guid, out _);
                     return false;
                 }
-                return equipment.EquipRangedItem(to.equipSlot, itemId);
+                bool success = equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
+                if (success)
+                    AutoBindEquippedItemToFirstQuickSlot(from.playerType, itemId, null);
+                return success;
             }
             return false;
         }
@@ -143,6 +159,7 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
+            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
             return true;
         }
 
@@ -159,6 +176,7 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
+            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
             return true;
         }
         if (equipSlot.HasInstance && equipSlot.equippedItem != null) // 기존 장착 아이템이 인스턴스형이면 스왑
@@ -175,6 +193,7 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removedItem.itemId, removedItem);
                 return false;
             }
+            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removedItem.itemId, removedItem);
             return true;
         }
         return false;
@@ -367,6 +386,21 @@ public static class ItemTransferService
 
         if (!CanRegisterQuickSlot(inventorySlot)) return false;
 
+        int existingIndex = -1;
+
+        if (inventorySlot.IsStack) //퀵슬롯에 같은 아이템 있나 확인
+        {
+            existingIndex = quickSlot.FindSlotByItemId(inventorySlot.itemId);
+        }else if(inventorySlot.IsInstance && inventorySlot.instance != null)
+        {
+            existingIndex = quickSlot.FindSlotByGuid(inventorySlot.instance.guid);
+        }
+
+        if(existingIndex >= 0 && existingIndex != to.index)
+        {
+            quickSlot.ClearSlot(existingIndex);
+        }
+
         bool success = false;
 
         if (inventorySlot.IsStack)
@@ -429,6 +463,8 @@ public static class ItemTransferService
 
             bool removed = inventory.TryRemoveInstance(guid, out ItemStack removedItem);
             if (!removed) return false;
+
+            ValidateQuickSlots(from.playerType);
 
             Debug.Log($"인스턴스 아이템 {itemId} 버리기");
             return true;
@@ -529,11 +565,31 @@ public static class ItemTransferService
     }
     private static void AutoBindEquippedItemToFirstQuickSlot(PlayerType playerType, int itemId, ItemStack instance)
     {
+        if (itemId == 0) return;
+
+        CommonItemData common = ItemDB.GetCommon(itemId);
+        if (common == null) return;
+
+        ItemType itemType = (ItemType)common.ItemType;
+
+        if (itemType != ItemType.Weapon) return;
+
         PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
         if (playerData == null) return;
 
         QuickSlot quickSlot = playerData.QuickSlot;
         if(quickSlot == null) return;
+
+        int existingIndex = -1;
+
+        if (instance != null)
+            existingIndex = quickSlot.FindSlotByGuid(instance.guid);
+        else
+            existingIndex = quickSlot.FindSlotByItemId(itemId);
+
+        if (existingIndex >= 0 && existingIndex != 0) //다른 퀵슬롯 칸에 이미 있는 경우 그 슬롯 등록 해제
+            quickSlot.ClearSlot(existingIndex);
+
 
         if (instance != null)
             quickSlot.BindInstance(0, instance);
@@ -570,9 +626,82 @@ public static class ItemTransferService
 
             if(!toInv.TryAddInstance(instance.itemId, instance)) return false;
 
-            return fromInv.TryRemoveInstance(guid, out _);
+            bool removed = fromInv.TryRemoveInstance(guid, out _);
+            if(!removed) return false;
+            return true;
         }
 
         return false;
+    }
+    private static ItemStack FindInstancePlayer(PlayerData playerData, string guid)
+    {
+        if(playerData == null || string.IsNullOrEmpty(guid)) return null;
+
+        if(playerData.Inventory != null) //인벤에서 먼저 찾기
+        {
+            int invIndex = playerData.Inventory.FindIndexByGuid(guid);
+            if(invIndex >= 0)
+            {
+                InventorySlot invSlot = playerData.Inventory.GetSlot(invIndex);
+                if(invSlot != null && invSlot.IsInstance && invSlot.instance != null)
+                    return invSlot.instance;
+            }
+        }
+
+        if(playerData.Equipment != null)
+        {
+            EquipSlotType[] equipSlots =
+            {
+                EquipSlotType.Head,
+                EquipSlotType.Body,
+                EquipSlotType.Leg,
+                EquipSlotType.Shoes,
+                EquipSlotType.Bag,
+                EquipSlotType.Weapon,
+                EquipSlotType.Accessory1,
+                EquipSlotType.Accessory2
+            };
+
+            for(int i = 0; i< equipSlots.Length; i++)
+            {
+                EquipmentSlot equipSlot = playerData.Equipment.GetSlot(equipSlots[i]);
+                if(equipSlot != null && equipSlot.HasInstance && equipSlot.equippedItem != null)
+                {
+                    if (equipSlot.equippedItem.guid == guid)
+                        return equipSlot.equippedItem;
+                }
+            }
+        }
+        return null;
+    }
+    public static void ValidateQuickSlots(PlayerType playerType)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if (playerData == null) return;
+
+        QuickSlot quickSlot = playerData.QuickSlot;
+        if(quickSlot == null) return;
+
+        for(int i = 0; i < quickSlot.Capacity; i++)
+        {
+            QuickSlotSlot quickSlotSlot = quickSlot.GetSlot(i);
+            if(quickSlotSlot == null || quickSlotSlot.isEmpty) continue;
+
+            if (quickSlotSlot.IsInstance)
+            {
+                ItemStack instance = FindInstancePlayer(playerData, quickSlotSlot.guid);
+
+                if(instance == null)
+                {
+                    quickSlot.ClearSlot(i);
+                    continue;
+                }
+                if(instance.HasDurability && instance.durability <= 0)
+                {
+                    quickSlot.ClearSlot(i);
+                    continue; 
+                }
+            }
+        }
     }
 }
