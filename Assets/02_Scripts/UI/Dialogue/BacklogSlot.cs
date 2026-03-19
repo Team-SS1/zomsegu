@@ -15,6 +15,11 @@ public class BacklogSlot : MonoBehaviour
         dialogueText.text = text;
     }
 
+    public void SetDimmed()
+    {
+        dialogueText.color = Color.gray;
+    }
+
 #if UNITY_EDITOR
     private void Reset()
     {

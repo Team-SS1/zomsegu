@@ -80,6 +80,11 @@ public class UIDialogueBacklog : MonoBehaviour
 
         slot.Init(backlog.portrait, backlog.speaker, text);
         backlogs.Add(slot);
+
+        if (backlogs.Count > 1)
+        {
+            backlogs[^2].SetDimmed();
+        }
     }
 
     public void ResetLogs()
