@@ -10,14 +10,16 @@ using UnityEngine.UI;
 public class UIDialogue : MonoBehaviour
 {
     #region 필드
-    [Header("Popui")]
+    [Header("외부 UI")]
     [SerializeField] UIPopup popupPrefab;   // todo: ui manager로 빼기
+    [SerializeField] UIDialogueBacklog backlogPrefab;
     private UIPopup popup;
+    private UIDialogueBacklog backlog;
 
     [Header("Buttons")]
     [SerializeField] ToggleButton skipBtn;
     [SerializeField] ToggleButton autoBtn;
-    [SerializeField] BaseButton backlogBtn;
+    [SerializeField] ToggleButton backlogBtn;
     [SerializeField] BaseButton optionBtn;
     [SerializeField] BaseButton dialogueWindowBtn;
 
@@ -75,6 +77,8 @@ public class UIDialogue : MonoBehaviour
     // skip
     private Coroutine skipCoroutine;
     private WaitForSecondsRealtime skipDelay;
+
+    private DialogueBacklog curBacklog;
     #endregion
 
     #region Unity API
@@ -116,6 +120,8 @@ public class UIDialogue : MonoBehaviour
 
         popup = Instantiate(popupPrefab, transform);
         popup.gameObject.SetActive(false);
+        backlog = Instantiate(backlogPrefab, transform);
+        backlog.gameObject.SetActive(false);
     }
 
     private void OnDisable()
@@ -134,6 +140,8 @@ public class UIDialogue : MonoBehaviour
 
         index = 0;
         lockIndex = 0;
+
+        backlog.ResetLogs();
 
         InputManager mg = InputManager.Instance;
         if (mg == null) return;
@@ -156,7 +164,9 @@ public class UIDialogue : MonoBehaviour
 
     private void OnClickBacklogBtn()
     {
-        // todo: 백로그 ui 띄우기
+        backlogBtn.SetState(true);
+
+        backlog.gameObject.SetActive(true);
     }
 
     private void OnClickOptionBtn()
@@ -325,12 +335,13 @@ public class UIDialogue : MonoBehaviour
         speaker.text = data.speaker;
         typer.PlayLine(data.text);
 
-        backlog.AddBackLog(new DialogueBacklog
+        curBacklog = new DialogueBacklog
         {
             isPlayer = data.isPlayer,
             speaker = data.speaker,
-
-        });
+            dialogueText = data.text
+        };
+        backlog.AddBackLog(curBacklog);
     }
 
     private IEnumerator SkipDialogueRoutine()
@@ -505,7 +516,7 @@ public class UIDialogue : MonoBehaviour
     {
         skipBtn = transform.FindChild<ToggleButton>("Btn_Skip");
         autoBtn = transform.FindChild<ToggleButton>("Btn_Auto");
-        backlogBtn = transform.FindChild<BaseButton>("Btn_Backlog");
+        backlogBtn = transform.FindChild<ToggleButton>("Btn_Backlog");
         optionBtn = transform.FindChild<BaseButton>("Btn_Option");
         dialogueWindowBtn = transform.FindChild<BaseButton>("Panel_Dialogue");
 
