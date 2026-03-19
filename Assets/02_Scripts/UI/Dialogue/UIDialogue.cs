@@ -23,7 +23,7 @@ public class UIDialogue : MonoBehaviour
 
     [Header("Dialogue")]
     [SerializeField] Image portrait;
-    [SerializeField] TMP_Text characterName;
+    [SerializeField] TMP_Text speaker;
     [SerializeField] DialogueTyper typer;
     [SerializeField] GameObject arrow;
     [SerializeField] float skipDelayTime = 0.3f;
@@ -261,7 +261,7 @@ public class UIDialogue : MonoBehaviour
 
     private void ShowChoice(DialogueData data)
     {
-        characterName.text = data.characterName;
+        speaker.text = data.speaker;
         typer.OnEnd += CreateChoiceButton;
         typer.PlayLine(data.text);
     }
@@ -322,8 +322,15 @@ public class UIDialogue : MonoBehaviour
 
     private void ShowLine(DialogueData data)
     {
-        characterName.text = data.characterName;
+        speaker.text = data.speaker;
         typer.PlayLine(data.text);
+
+        backlog.AddBackLog(new DialogueBacklog
+        {
+            isPlayer = data.isPlayer,
+            speaker = data.speaker,
+
+        });
     }
 
     private IEnumerator SkipDialogueRoutine()
@@ -503,7 +510,7 @@ public class UIDialogue : MonoBehaviour
         dialogueWindowBtn = transform.FindChild<BaseButton>("Panel_Dialogue");
 
         portrait = transform.FindChild<Image>("Portrait");
-        characterName = transform.FindChild<TMP_Text>("Text_Name");
+        speaker = transform.FindChild<TMP_Text>("Text_Speaker");
         typer = transform.FindChild<DialogueTyper>("Text_Dialogue");
         arrow = transform.FindChild<Image>("Arrow").gameObject;
 
