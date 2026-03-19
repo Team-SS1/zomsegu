@@ -170,8 +170,12 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
     {
         if (DragContext.payload == null) return;
 
-        DragContext.payload.SetTo(slotRef);
-        ItemTransferService.TryTransferBetweenSlots(DragContext.payload);
+        if(DragContext.payload.from.slotType == SlotType.QuickSlot ||
+            DragContext.payload.from.slotType == SlotType.Inventory)
+        {
+            DragContext.payload.SetTo(slotRef);
+            ItemTransferService.TryTransferBetweenSlots(DragContext.payload);
+        }       
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -180,6 +184,17 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
 
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = true;
+
+        if (DragContext.payload != null && DragContext.payload.from.slotType == SlotType.QuickSlot)
+        {
+            bool droppedToQuickSlot =
+                DragContext.payload.hasTo &&
+                DragContext.payload.to.slotType == SlotType.QuickSlot;
+
+            if (!droppedToQuickSlot)
+                ItemTransferService.TryClearQuickSlot(DragContext.payload.from);
+        }
+
 
         SetIconAlpha(1f);
         DestroyDragIcon();
