@@ -35,6 +35,7 @@ public class UIManager : GlobalSingleton<UIManager>
     {
         uiRoot = Instantiate(mainCanvasPrefab).GetComponent<RectTransform>();
         popupRoot = Instantiate(popupCanvasPrefab).GetComponent<RectTransform>();
+        popupRoot.gameObject.SetActive(false);
 
         GameObject newGo = new("EventSystem");
         newGo.AddComponent<EventSystem>();
@@ -49,6 +50,7 @@ public class UIManager : GlobalSingleton<UIManager>
 
         panelMap.Clear();
         popupStack.Clear();
+        popupRoot.gameObject.SetActive(false);
     }
     #endregion
 
@@ -140,13 +142,23 @@ public class UIManager : GlobalSingleton<UIManager>
     {
         T ui = CreatePopup<T>(true);
         ui.OnUIClick += ClickPopup;
+
+        popupRoot.gameObject.SetActive(true);
+
         return ui;
     }
 
     public void CloseTopPopup()
     {
+        if (popupStack.Count == 0) return;
+
         popupStack[^1].gameObject.SetActive(false);
         popupStack.RemoveAt(popupStack.Count - 1);
+
+        if (popupStack.Count == 0)
+        {
+            popupRoot.gameObject.SetActive(false);
+        }
     }
 
     public void CloseAllPopups()
@@ -156,6 +168,8 @@ public class UIManager : GlobalSingleton<UIManager>
             popupStack[i].gameObject.SetActive(false);
             popupStack.RemoveAt(i);
         }
+
+        popupRoot.gameObject.SetActive(false);
     }
 
     private void ClickPopup(UIPopup ui)
