@@ -10,6 +10,7 @@ public abstract class UIPopup : BaseUI
     protected override void AwakeInternal()
     {
         base.AwakeInternal();
+        btn = GetComponent<Button>();
         btn.onClick.AddListener(OnClick);
     }
 
