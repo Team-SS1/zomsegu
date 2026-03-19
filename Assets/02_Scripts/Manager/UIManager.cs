@@ -6,7 +6,12 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : GlobalSingleton<UIManager>
 {
-    [SerializeField] private Canvas canvasPrefab;
+    [Header("Database")]
+    [SerializeField] private GoDatabase uiDatabase;
+
+    [Header("Canvas Prefab")]
+    [SerializeField] private GameObject mainCanvasPrefab;
+    [SerializeField] private GameObject popupCanvasPrefab;
 
     private readonly Dictionary<Type, BaseUI> uiCache = new();  // 리소스 캐시
 
@@ -21,11 +26,15 @@ public class UIManager : GlobalSingleton<UIManager>
     {
         base.Awake();
 
-        uiRoot = Instantiate(canvasPrefab).GetComponent<RectTransform>();
-        popupRoot = Instantiate(canvasPrefab).GetComponent<RectTransform>();
+        Init();
+    }
+    #endregion
 
-        uiRoot.name = "UI_Root";
-        popupRoot.name = "UI_Popup_Root";
+    #region 초기화
+    private void Init()
+    {
+        uiRoot = Instantiate(mainCanvasPrefab).GetComponent<RectTransform>();
+        popupRoot = Instantiate(popupCanvasPrefab).GetComponent<RectTransform>();
 
         GameObject newGo = new("EventSystem");
         newGo.AddComponent<EventSystem>();
@@ -68,8 +77,8 @@ public class UIManager : GlobalSingleton<UIManager>
 
     private T CreatePopup<T>(bool active) where T : UIPopup
     {
-        T ui = GetResource<T>(active);
-        ui.transform.SetParent(popupRoot);
+        T prefab = GetResource<T>(active);
+        T ui = Instantiate(prefab, popupRoot);
 
         if (active)
         {
@@ -88,7 +97,11 @@ public class UIManager : GlobalSingleton<UIManager>
             return ui as T;
         }
 
-        var prefab = Resources.Load<T>($"UI/{type.Name}");
+        T prefab = null;
+        foreach (GameObject go in uiDatabase.GetDatabase())
+        {
+            if (go.TryGetComponent(out prefab)) break;
+        }
 
         if (prefab == null)
         {
@@ -171,5 +184,16 @@ public class UIManager : GlobalSingleton<UIManager>
     /// ui 정리하고 싶을 경우 (ex. 씬 전환)
     /// </summary>
     public void ClearCache() => uiCache.Clear();
+    #endregion
+
+    #region 에디터 전용
+#if UNITY_EDITOR
+    private void Reset()
+    {
+        uiDatabase = AssetLoader.FindAndLoadByName<GoDatabase>("UIDatabase");
+        mainCanvasPrefab = AssetLoader.FindAndLoadByName("MainCanvas");
+        popupCanvasPrefab = AssetLoader.FindAndLoadByName("PopupCanvas");
+    }
+#endif
     #endregion
 }
