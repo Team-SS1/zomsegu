@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6473501552648849955}
   - component: {fileID: 1831869762581083758}
   m_Layer: 5
-  m_Name: UI_Popup
+  m_Name: UI_ConfirmPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
