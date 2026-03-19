@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2736335861939227566}
   - component: {fileID: 973050477067822826}
   m_Layer: 5
-  m_Name: UI_BacklogSlot
+  m_Name: UI_BacklogSlot_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portrait: {fileID: 5658709493786341648}
-  characterName: {fileID: 8761390459955944244}
+  speaker: {fileID: 8761390459955944244}
   dialogueText: {fileID: 7099007525420065997}
 --- !u!1 &194453310370685254
 GameObject:
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 2431458873661211286}
   - component: {fileID: 8761390459955944244}
   m_Layer: 5
-  m_Name: Text_Name
+  m_Name: Text_Speaker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -337,8 +337,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 70.014404, y: 0}
-  m_SizeDelta: {x: -219.2443, y: -74.8927}
+  m_AnchoredPosition: {x: 70.014404, y: 13.999}
+  m_SizeDelta: {x: -219.2443, y: -104.85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8631365004031409843
 CanvasRenderer:
@@ -403,7 +403,7 @@ MonoBehaviour:
   m_fontSizeMax: 28
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
