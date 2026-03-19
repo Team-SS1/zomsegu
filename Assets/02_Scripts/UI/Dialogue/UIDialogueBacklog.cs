@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public struct DialogueBacklog
 {
@@ -15,10 +16,29 @@ public class UIDialogueBacklog : MonoBehaviour
     [SerializeField] private RectTransform root;
     [SerializeField] private BacklogSlot backlogLeftPrefab;
     [SerializeField] private BacklogSlot backlogRightPrefab;
-    [SerializeField] private float padding = 30f;
-    [SerializeField] private float spacing = 30f;
+    [SerializeField] private Button closeBtn;
 
+    private UIDialogue uiDialogue;
     private List<BacklogSlot> backlogs = new();
+
+    public void Init(UIDialogue uiDialogue)
+    {
+        this.uiDialogue = uiDialogue;
+    }
+
+    private void Start()
+    {
+        closeBtn.onClick.AddListener(() =>
+        {
+            gameObject.SetActive(false);
+            uiDialogue.ChangeMode(DialogueEnum.DialogueMode.None);
+        });
+    }
+
+    private void OnDestroy()
+    {
+        closeBtn.onClick.RemoveAllListeners();
+    }
 
     public void AddBackLog(in DialogueBacklog backlog)
     {
@@ -53,6 +73,7 @@ public class UIDialogueBacklog : MonoBehaviour
         root = transform.FindChild<RectTransform>("Content");
         backlogLeftPrefab = AssetLoader.FindAndLoadByName("UI_BacklogSlot_Left").GetComponent<BacklogSlot>();
         backlogRightPrefab = AssetLoader.FindAndLoadByName("UI_BacklogSlot_Right").GetComponent<BacklogSlot>();
+        closeBtn = transform.FindChild<Button>("Btn_Close");
     }
 #endif
     #endregion

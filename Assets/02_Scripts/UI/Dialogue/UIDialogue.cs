@@ -120,6 +120,7 @@ public class UIDialogue : MonoBehaviour
         popup = Instantiate(popupPrefab, transform);
         popup.gameObject.SetActive(false);
         backlog.gameObject.SetActive(false);
+        backlog.Init(this);
     }
 
     private void OnDisable()
@@ -162,9 +163,7 @@ public class UIDialogue : MonoBehaviour
 
     private void OnClickBacklogBtn()
     {
-        backlogBtn.SetState(true);
-
-        backlog.gameObject.SetActive(true);
+        ChangeMode(DialogueMode.Backlog);
     }
 
     private void OnClickOptionBtn()
@@ -415,6 +414,7 @@ public class UIDialogue : MonoBehaviour
 
     private void OnNavigate(InputAction.CallbackContext context)
     {
+        if (curDialogue == null) return;
         int count = curDialogue.choiceIds.Count;
         if (count <= 0) return;
 
@@ -451,7 +451,7 @@ public class UIDialogue : MonoBehaviour
     #endregion
 
     #region 모드 설정
-    private void ChangeMode(DialogueMode mode)
+    public void ChangeMode(DialogueMode mode)
     {
         if (curMode == mode) return;
 
@@ -463,20 +463,21 @@ public class UIDialogue : MonoBehaviour
         {
             case DialogueMode.Skip:
                 skipCoroutine = StartCoroutine(SkipDialogueRoutine());
-                autoBtn.SetState(false);
-                skipBtn.SetState(true);
                 break;
             case DialogueMode.Auto:
                 autoPlaying.gameObject.SetActive(true);
                 if (!typer.IsTyping) TryShowNextLine();
-                autoBtn.SetState(true);
-                skipBtn.SetState(false);
+                break;
+            case DialogueMode.Backlog:
+                backlog.gameObject.SetActive(true);
                 break;
             default:
-                autoBtn.SetState(false);
-                skipBtn.SetState(false);
                 break;
         }
+
+        autoBtn.SetState(curMode == DialogueMode.Auto);
+        skipBtn.SetState(curMode == DialogueMode.Skip);
+        backlogBtn.SetState(curMode == DialogueMode.Backlog);
     }
 
     private void ClearModeState()
