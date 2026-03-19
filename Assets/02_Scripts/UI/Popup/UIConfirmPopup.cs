@@ -4,13 +4,20 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class UIPopup : MonoBehaviour
+public class UIConfirmPopup : UIPopup
 {
     [SerializeField] private TMP_Text text;
     [SerializeField] private BaseButton btnYes;
     [SerializeField] private BaseButton btnNo;
 
     private UnityAction callback;
+
+    #region Unity API
+    private void Start()
+    {
+        InputManager.Instance.BindInput(ActionMaps.UI, Actions.Close, OnClose);
+        InputManager.Instance.BindInput(ActionMaps.UI, Actions.Submit, OnSubmit);
+    }
 
     private void OnEnable()
     {
@@ -21,12 +28,6 @@ public class UIPopup : MonoBehaviour
         InputManager.Instance.RemoveMaps(ActionMaps.Dialogue);
     }
 
-    private void Start()
-    {
-        InputManager.Instance.BindInput(ActionMaps.UI, Actions.Close, OnClose);
-        InputManager.Instance.BindInput(ActionMaps.UI, Actions.Submit, OnSubmit);
-    }
-
     private void OnDisable()
     {
         btnYes.onClick.RemoveListener(OnClickYes);
@@ -35,6 +36,7 @@ public class UIPopup : MonoBehaviour
         InputManager.Instance.RemoveMaps(ActionMaps.UI);
         InputManager.Instance.AddMaps(ActionMaps.Dialogue);
     }
+    #endregion
 
     public void OpenPopup(string text, UnityAction callback = null)
     {
