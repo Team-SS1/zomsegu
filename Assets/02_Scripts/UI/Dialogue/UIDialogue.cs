@@ -185,7 +185,10 @@ public class UIDialogue : MonoBehaviour
         if (typer.IsTyping)
         {
             typer.SkipOrComplete();
-            arrow.SetActive(true);
+            if (!needChoice)
+            {
+                arrow.SetActive(true);
+            }
             return;
         }
 
