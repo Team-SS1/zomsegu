@@ -12,7 +12,7 @@ public struct DialogueBacklog
     public bool isPlayer;
 }
 
-public class UIDialogueBacklog : MonoBehaviour
+public class UIDialogueBacklog : BaseUI
 {
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private RectTransform root;
@@ -25,13 +25,10 @@ public class UIDialogueBacklog : MonoBehaviour
 
     private Coroutine scrollRoutine;
 
-    public void Init(UIDialogue uiDialogue)
-    {
-        this.uiDialogue = uiDialogue;
-    }
-
     private void Start()
     {
+        uiDialogue = UIManager.Instance.GetOrCreateUI<UIDialogue>(true);
+
         closeBtn.onClick.AddListener(() =>
         {
             gameObject.SetActive(false);
@@ -65,7 +62,12 @@ public class UIDialogueBacklog : MonoBehaviour
         scrollRect.verticalNormalizedPosition = 0f;
     }
 
-    public void AddBackLog(in DialogueBacklog backlog)
+    public void AddBacklogs(List<DialogueBacklog> backlogs)
+    {
+        backlogs.ForEach((log) => AddBackLog(log));
+    }
+
+    private void AddBackLog(in DialogueBacklog backlog)
     {
         BacklogSlot slot = Instantiate((backlog.isPlayer ? backlogLeftPrefab : backlogRightPrefab), root);
 

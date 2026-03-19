@@ -7,14 +7,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class UIDialogue : MonoBehaviour
+public class UIDialogue : BaseUI
 {
     #region 필드
-    [Header("외부 UI")]
-    [SerializeField] UIPopup popupPrefab;   // todo: ui manager로 빼기
-    [SerializeField] UIDialogueBacklog backlog;
-    private UIPopup popup;
-
     [Header("Buttons")]
     [SerializeField] ToggleButton skipBtn;
     [SerializeField] ToggleButton autoBtn;
@@ -77,6 +72,7 @@ public class UIDialogue : MonoBehaviour
     private Coroutine skipCoroutine;
     private WaitForSecondsRealtime skipDelay;
 
+    private List<DialogueBacklog> backlogs = new();
     private DialogueBacklog curBacklog;
     #endregion
 
@@ -116,11 +112,6 @@ public class UIDialogue : MonoBehaviour
         mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
         mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
         mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
-
-        popup = Instantiate(popupPrefab, transform);
-        popup.gameObject.SetActive(false);
-        backlog.gameObject.SetActive(false);
-        backlog.Init(this);
     }
 
     private void OnDisable()
@@ -140,7 +131,7 @@ public class UIDialogue : MonoBehaviour
         index = 0;
         lockIndex = 0;
 
-        backlog.ResetLogs();
+        backlogs.Clear();
 
         InputManager mg = InputManager.Instance;
         if (mg == null) return;
@@ -261,7 +252,7 @@ public class UIDialogue : MonoBehaviour
                 speaker = curDialogue.speaker,
                 dialogueText = curDialogue.text
             };
-            backlog.AddBackLog(curBacklog);
+            backlogs.Add(curBacklog);
         }
 
         return true;
@@ -273,7 +264,7 @@ public class UIDialogue : MonoBehaviour
         SetNeedChoice(false);
         curBacklog.choiceTexts[curChoiceIndex]
             = $"<color=#FF0000><b>{curBacklog.choiceTexts[curChoiceIndex]}</b></color>";
-        backlog.AddBackLog(curBacklog);
+        backlogs.Add(curBacklog);
         TryShowNextLine();
     }
 
@@ -399,7 +390,7 @@ public class UIDialogue : MonoBehaviour
     {
         if (context.performed)
         {
-            popup.OpenPopup("현재 대화를 \n전체스킵하시겠습니까?\n", AllSkip);
+            UIManager.Instance.OpenPopup<UIConfirmPopup>().Open("현재 대화를 \n전체스킵하시겠습니까?\n", AllSkip);
         }
     }
 
@@ -469,7 +460,9 @@ public class UIDialogue : MonoBehaviour
                 if (!typer.IsTyping) TryShowNextLine();
                 break;
             case DialogueMode.Backlog:
-                backlog.gameObject.SetActive(true);
+                var ui = UIManager.Instance.GetOrCreateUI<UIDialogueBacklog>(true);
+                ui.AddBacklogs(backlogs);
+                backlogs.Clear();
                 typer.SkipOrComplete();
                 if (!needChoice)
                 {
