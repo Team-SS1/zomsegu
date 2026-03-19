@@ -29,11 +29,12 @@ public class UIDialogueBacklog : MonoBehaviour
         {
             foreach (string choiceText in backlog.choiceTexts)
             {
-                text += choiceText;
+                text += $"\n{choiceText}";
             }
         }
 
         slot.Init(backlog.portrait, backlog.speaker, text);
+        backlogs.Add(slot);
     }
 
     public void ResetLogs()

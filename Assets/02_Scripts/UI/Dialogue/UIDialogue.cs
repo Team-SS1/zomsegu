@@ -255,6 +255,14 @@ public class UIDialogue : MonoBehaviour
         else
         {
             ShowLine(curDialogue);
+
+            curBacklog = new DialogueBacklog
+            {
+                isPlayer = curDialogue.isPlayer,
+                speaker = curDialogue.speaker,
+                dialogueText = curDialogue.text
+            };
+            backlog.AddBackLog(curBacklog);
         }
 
         return true;
@@ -265,7 +273,8 @@ public class UIDialogue : MonoBehaviour
         curChoice = data;
         SetNeedChoice(false);
         curBacklog.choiceTexts[curChoiceIndex]
-            = $"< color =#FF0000><b>{curBacklog.choiceTexts[curChoiceIndex]}</b></color>";
+            = $"<color=#FF0000><b>{curBacklog.choiceTexts[curChoiceIndex]}</b></color>";
+        backlog.AddBackLog(curBacklog);
         TryShowNextLine();
     }
 
@@ -343,14 +352,6 @@ public class UIDialogue : MonoBehaviour
     {
         speaker.text = data.speaker;
         typer.PlayLine(data.text);
-
-        curBacklog = new DialogueBacklog
-        {
-            isPlayer = data.isPlayer,
-            speaker = data.speaker,
-            dialogueText = data.text
-        };
-        backlog.AddBackLog(curBacklog);
     }
 
     private IEnumerator SkipDialogueRoutine()
