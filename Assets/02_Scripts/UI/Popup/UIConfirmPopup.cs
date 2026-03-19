@@ -6,11 +6,11 @@ using UnityEngine.InputSystem;
 
 public class UIConfirmPopup : UIPopup
 {
-    [SerializeField] private TMP_Text text;
+    [SerializeField] private TMP_Text message;
     [SerializeField] private BaseButton btnYes;
     [SerializeField] private BaseButton btnNo;
 
-    private UnityAction callback;
+    private UnityAction onConfirm;
 
     #region Unity API
     private void Start()
@@ -38,19 +38,19 @@ public class UIConfirmPopup : UIPopup
     }
     #endregion
 
-    public void OpenPopup(string text, UnityAction callback = null)
+    public void Open(string text, UnityAction callback = null)
     {
         gameObject.SetActive(true);
-        this.text.text = text;
-        this.callback = callback;
+        this.message.text = text;
+        this.onConfirm = callback;
     }
 
     private void OnClickYes()
     {
-        callback?.Invoke();
+        onConfirm?.Invoke();
         gameObject.SetActive(false);
         btnYes.onClick.RemoveListener(OnClickYes);
-        callback = null;
+        onConfirm = null;
     }
 
     private void OnClickNo()
@@ -78,7 +78,7 @@ public class UIConfirmPopup : UIPopup
 #if UNITY_EDITOR
     private void Reset()
     {
-        text = transform.FindChild<TMP_Text>("Text");
+        message = transform.FindChild<TMP_Text>("Text");
         btnYes = transform.FindChild<BaseButton>("Btn_Yes");
         btnNo = transform.FindChild<BaseButton>("Btn_No");
     }

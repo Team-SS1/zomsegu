@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 [UnityEngine.RequireComponent(typeof(Button))]
-public class UIPopup : BaseUI
+public abstract class UIPopup : BaseUI
 {
     private Button btn;
     public event Action<UIPopup> OnUIClick;
