@@ -264,6 +264,8 @@ public class UIDialogue : MonoBehaviour
     {
         curChoice = data;
         SetNeedChoice(false);
+        curBacklog.choiceTexts[curChoiceIndex]
+            = $"< color =#FF0000><b>{curBacklog.choiceTexts[curChoiceIndex]}</b></color>";
         TryShowNextLine();
     }
 
@@ -272,6 +274,14 @@ public class UIDialogue : MonoBehaviour
         speaker.text = data.speaker;
         typer.OnEnd += CreateChoiceButton;
         typer.PlayLine(data.text);
+
+        curBacklog = new DialogueBacklog
+        {
+            isPlayer = data.isPlayer,
+            speaker = data.speaker,
+            dialogueText = data.text,
+            choiceTexts = new string[data.choiceIds.Count]
+        };
     }
 
     private WaitForSecondsRealtime CreateChoiceButton()
@@ -302,6 +312,7 @@ public class UIDialogue : MonoBehaviour
             rect.anchoredPosition = new Vector2(0, -choiceBtnHeight * i);
 
             choiceBtn.Init(this, choiceData, i);
+            curBacklog.choiceTexts[i] = $"{i + 1}. {choiceData.text}";
         }
 
         curChoiceIndex = -1;

@@ -6,6 +6,7 @@ public struct DialogueBacklog
     public Sprite portrait;
     public string speaker;
     public string dialogueText;
+    public string[] choiceTexts;
     public bool isPlayer;
 }
 
@@ -21,8 +22,18 @@ public class UIDialogueBacklog : MonoBehaviour
 
     public void AddBackLog(in DialogueBacklog backlog)
     {
-        BacklogSlot slot = Instantiate((backlog.isPlayer ? backlogLeftPrefab : backlogRightPrefab), transform);
-        slot.Init(backlog.portrait, backlog.speaker, backlog.dialogueText);
+        BacklogSlot slot = Instantiate((backlog.isPlayer ? backlogLeftPrefab : backlogRightPrefab), root);
+
+        string text = backlog.dialogueText;
+        if (backlog.choiceTexts != null)
+        {
+            foreach (string choiceText in backlog.choiceTexts)
+            {
+                text += choiceText;
+            }
+        }
+
+        slot.Init(backlog.portrait, backlog.speaker, text);
     }
 
     public void ResetLogs()
