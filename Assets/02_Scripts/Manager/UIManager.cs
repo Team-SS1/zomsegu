@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class UIManager : GlobalSingleton<UIManager>
@@ -25,6 +26,10 @@ public class UIManager : GlobalSingleton<UIManager>
 
         uiRoot.name = "UI_Root";
         popupRoot.name = "UI_Popup_Root";
+
+        GameObject newGo = new("EventSystem");
+        newGo.AddComponent<EventSystem>();
+        newGo.AddComponent<StandaloneInputModule>();
     }
     #endregion
 
