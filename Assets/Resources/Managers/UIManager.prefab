@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bf7f5d77fdbf084aa1b313d6da887f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasPrefab: {fileID: 0}
+  uiDatabase: {fileID: 11400000, guid: 6bd8b0cb2c64e43468a009b93d42fafb, type: 2}
+  mainCanvasPrefab: {fileID: 4749774702613463862, guid: 16cd56caa750fb04d960f15d23465d6c, type: 3}
+  popupCanvasPrefab: {fileID: 7768593651615941699, guid: dad8a7776aaa4644ea4274af7af548d8, type: 3}
