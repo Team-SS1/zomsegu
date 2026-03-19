@@ -470,6 +470,11 @@ public class UIDialogue : MonoBehaviour
                 break;
             case DialogueMode.Backlog:
                 backlog.gameObject.SetActive(true);
+                typer.SkipOrComplete();
+                if (!needChoice)
+                {
+                    arrow.SetActive(true);
+                }
                 break;
             default:
                 break;
