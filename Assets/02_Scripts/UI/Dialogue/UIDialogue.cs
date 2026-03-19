@@ -12,9 +12,8 @@ public class UIDialogue : MonoBehaviour
     #region 필드
     [Header("외부 UI")]
     [SerializeField] UIPopup popupPrefab;   // todo: ui manager로 빼기
-    [SerializeField] UIDialogueBacklog backlogPrefab;
+    [SerializeField] UIDialogueBacklog backlog;
     private UIPopup popup;
-    private UIDialogueBacklog backlog;
 
     [Header("Buttons")]
     [SerializeField] ToggleButton skipBtn;
@@ -120,7 +119,6 @@ public class UIDialogue : MonoBehaviour
 
         popup = Instantiate(popupPrefab, transform);
         popup.gameObject.SetActive(false);
-        backlog = Instantiate(backlogPrefab, transform);
         backlog.gameObject.SetActive(false);
     }
 
