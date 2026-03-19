@@ -8,6 +8,13 @@ public class BacklogSlot : MonoBehaviour
     [SerializeField] private TMP_Text speaker;
     [SerializeField] private TMP_Text dialogueText;
 
+    public void Init(Sprite portrait, string speaker, string text)
+    {
+        this.portrait.sprite = portrait;
+        this.speaker.text = speaker;
+        dialogueText.text = text;
+    }
+
 #if UNITY_EDITOR
     private void Reset()
     {
