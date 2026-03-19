@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b85a2d56cfce6a4787cd754d90fce95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scrollRect: {fileID: 2707930874367453869}
   root: {fileID: 6457103980888510569}
   backlogLeftPrefab: {fileID: 973050477067822826, guid: 0fa0b7d56cfe08a479216eea07591756, type: 3}
   backlogRightPrefab: {fileID: 973050477067822826, guid: dde792816f5e20149ac378b5c9f2174e, type: 3}

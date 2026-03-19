@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ public struct DialogueBacklog
 
 public class UIDialogueBacklog : MonoBehaviour
 {
+    [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private RectTransform root;
     [SerializeField] private BacklogSlot backlogLeftPrefab;
     [SerializeField] private BacklogSlot backlogRightPrefab;
@@ -20,6 +22,8 @@ public class UIDialogueBacklog : MonoBehaviour
 
     private UIDialogue uiDialogue;
     private List<BacklogSlot> backlogs = new();
+
+    private Coroutine scrollRoutine;
 
     public void Init(UIDialogue uiDialogue)
     {
@@ -38,6 +42,27 @@ public class UIDialogueBacklog : MonoBehaviour
     private void OnDestroy()
     {
         closeBtn.onClick.RemoveAllListeners();
+    }
+
+    private void OnEnable()
+    {
+        scrollRoutine = StartCoroutine(CoOpenAndScrollBottom());
+    }
+
+    private void OnDisable()
+    {
+        if (scrollRoutine != null)
+        {
+            StopCoroutine(scrollRoutine);
+            scrollRoutine = null;
+        }
+    }
+
+    private IEnumerator CoOpenAndScrollBottom()
+    {
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        scrollRect.verticalNormalizedPosition = 0f;
     }
 
     public void AddBackLog(in DialogueBacklog backlog)
@@ -70,6 +95,7 @@ public class UIDialogueBacklog : MonoBehaviour
 #if UNITY_EDITOR
     private void Reset()
     {
+        scrollRect = transform.FindChild<ScrollRect>("BacklogScrollList");
         root = transform.FindChild<RectTransform>("Content");
         backlogLeftPrefab = AssetLoader.FindAndLoadByName("UI_BacklogSlot_Left").GetComponent<BacklogSlot>();
         backlogRightPrefab = AssetLoader.FindAndLoadByName("UI_BacklogSlot_Right").GetComponent<BacklogSlot>();
