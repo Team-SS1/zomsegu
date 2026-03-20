@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIDialogue : BaseUI
@@ -93,15 +92,6 @@ public class UIDialogue : BaseUI
     {
         Time.timeScale = 0f;
         typer.OnEnd += OnEndTyping;
-    }
-
-    private void Start()
-    {
-        InputManager mg = InputManager.Instance;
-
-        mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
-        mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
     }
 
     private void OnDisable()
@@ -329,41 +319,35 @@ public class UIDialogue : BaseUI
         while (TryShowNextLine());
     }
 
-    private void OnNavigate(InputAction.CallbackContext context)
+    public bool CanSelectChoice()
     {
-        if (curDialogue == null || curDialogue.choiceIds == null) return;
-        int count = curDialogue.choiceIds.Count;
-        if (count <= 0) return;
+        if (curDialogue == null ||
+            curDialogue.choiceIds == null ||
+            curDialogue.choiceIds.Count <= 0)
+            return false;
 
-        if (context.started)
-        {
-            bool isAuto = curMode == DialogueMode.Auto;
-            AdvanceOrCompleteCurrentLine();
-
-            float axis = context.ReadValue<float>();
-            if (Mathf.Approximately(axis, 0f)) return;
-
-            int dir = axis > 0f ? count - 1 : 1;
-
-            if (CurChoiceIndex == -1)   // 처음 선택
-            {
-                CurChoiceIndex = dir > 0f ? 0 : count - 1;
-                return;
-            }
-
-            CurChoiceIndex = (curChoiceIndex + dir) % count;
-
-            if (isAuto) ChangeMode(DialogueMode.Auto);
-        }
+        return true;
     }
 
-    private void OnSubmit(InputAction.CallbackContext context)
+    public void SelectChoice(float axis)
     {
-        if (context.started)
+        int count = curDialogue.choiceIds.Count;
+
+        int dir = axis > 0f ? count - 1 : 1;
+
+        if (CurChoiceIndex == -1)   // 처음 선택
         {
-            if (CurChoiceIndex < 0 || CurChoiceIndex >= choiceBtns.Count) return;
-            choiceBtns[curChoiceIndex].SubmitChoice();
+            CurChoiceIndex = dir > 0f ? 0 : count - 1;
+            return;
         }
+
+        CurChoiceIndex = (curChoiceIndex + dir) % count;
+    }
+
+    public void SubmitCurChoice()
+    {
+        if (CurChoiceIndex < 0 || CurChoiceIndex >= choiceBtns.Count) return;
+        choiceBtns[curChoiceIndex].SubmitChoice();
     }
     #endregion
 
@@ -423,10 +407,12 @@ public class UIDialogue : BaseUI
 
         if (needChoice)
         {
+            InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Navigate);
             InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Submit);
         }
         else
         {
+            InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Navigate);
             InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Submit);
         }
     }

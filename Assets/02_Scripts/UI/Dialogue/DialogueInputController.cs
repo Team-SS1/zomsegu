@@ -17,12 +17,18 @@ public class DialogueInputController : MonoBehaviour
     private void Start()
     {
         InputManager mg = InputManager.Instance;
+
         mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
         mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
+        mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
         mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
         mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
+        mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
         mg.BindInput(ActionMaps.Dialogue, Actions.Auto, OnAuto);
         mg.BindInput(ActionMaps.Dialogue, Actions.Backlog, OnBacklog);
+
+        mg.LockInput(ActionMaps.Dialogue, Actions.Navigate);
+        mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
     }
 
     private void OnEnable()
@@ -80,6 +86,32 @@ public class DialogueInputController : MonoBehaviour
             UIManager.Instance
                 .OpenPopup<UIConfirmPopup>()
                 .Open("현재 대화를 \n전체스킵하시겠습니까?\n", dialogue.AllSkip);
+        }
+    }
+
+    private void OnNavigate(InputAction.CallbackContext context)
+    {
+        if (!dialogue.CanSelectChoice()) return;
+
+        if (context.started)
+        {
+            bool isAuto = dialogue.CurMode == DialogueMode.Auto;
+            dialogue.AdvanceOrCompleteCurrentLine();
+
+            float axis = context.ReadValue<float>();
+            if (Mathf.Approximately(axis, 0f)) return;
+
+            dialogue.SelectChoice(axis);
+
+            if (isAuto) dialogue.ChangeMode(DialogueMode.Auto);
+        }
+    }
+
+    private void OnSubmit(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            dialogue.SubmitCurChoice();
         }
     }
 
