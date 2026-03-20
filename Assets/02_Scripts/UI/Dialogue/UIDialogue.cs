@@ -11,10 +11,6 @@ public class UIDialogue : BaseUI
 {
     #region 필드
     [Header("Buttons")]
-    [SerializeField] ToggleButton skipBtn;
-    [SerializeField] ToggleButton autoBtn;
-    [SerializeField] ToggleButton backlogBtn;
-    [SerializeField] BaseButton optionBtn;
     [SerializeField] BaseButton dialogueWindowBtn;
 
     [Header("Dialogue")]
@@ -24,9 +20,6 @@ public class UIDialogue : BaseUI
     [SerializeField] GameObject arrow;
     [SerializeField] float skipDelayTime = 0.3f;
     [SerializeField] float endDelayMultiplier;
-
-    [Header("Extra")]
-    [SerializeField] TMP_Text autoPlaying;
 
     [Header("Choice")]
     [SerializeField] DialogueChoiceButton choiceBtnPrefab;
@@ -64,9 +57,11 @@ public class UIDialogue : BaseUI
     }
 
     private bool needChoice = false;
+    public bool NeedChoice => needChoice;
 
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
+    public DialogueMode CurMode => curMode;
 
     // skip
     private Coroutine skipCoroutine;
@@ -74,15 +69,18 @@ public class UIDialogue : BaseUI
 
     private List<DialogueBacklog> backlogs = new();
     private DialogueBacklog curBacklog;
+
+    public event Action OnChangeMode;
+
+    private UIDialogueTopButtonController btnController;
     #endregion
 
     #region Unity API
     private void Awake()
     {
-        skipBtn.onClick.AddListener(OnClickSkipBtn);
-        autoBtn.onClick.AddListener(OnClickAutoBtn);
-        backlogBtn.onClick.AddListener(OnClickBacklogBtn);
-        optionBtn.onClick.AddListener(OnClickOptionBtn);
+        btnController = GetComponentInChildren<UIDialogueTopButtonController>(true);
+        btnController.Init(this);
+
         dialogueWindowBtn.onClick.AddListener(OnClickDialogueWindowBtn);
 
         skipDelay = new WaitForSecondsRealtime(skipDelayTime);
@@ -142,26 +140,6 @@ public class UIDialogue : BaseUI
     #endregion
 
     #region 버튼 이벤트
-    private void OnClickSkipBtn()
-    {
-        ChangeMode(curMode != DialogueMode.Skip ? DialogueMode.Skip : DialogueMode.None);
-    }
-
-    private void OnClickAutoBtn()
-    {
-        ChangeMode(curMode != DialogueMode.Auto ? DialogueMode.Auto : DialogueMode.None);
-    }
-
-    private void OnClickBacklogBtn()
-    {
-        ChangeMode(DialogueMode.Backlog);
-    }
-
-    private void OnClickOptionBtn()
-    {
-        // todo: 옵션 ui 띄우기
-    }
-
     private void OnClickDialogueWindowBtn()
     {
         ChangeMode(DialogueMode.None);
@@ -456,7 +434,6 @@ public class UIDialogue : BaseUI
                 skipCoroutine = StartCoroutine(SkipDialogueRoutine());
                 break;
             case DialogueMode.Auto:
-                autoPlaying.gameObject.SetActive(true);
                 if (!typer.IsTyping) TryShowNextLine();
                 break;
             case DialogueMode.Backlog:
@@ -473,9 +450,12 @@ public class UIDialogue : BaseUI
                 break;
         }
 
-        autoBtn.SetState(curMode == DialogueMode.Auto);
-        skipBtn.SetState(curMode == DialogueMode.Skip);
-        backlogBtn.SetState(curMode == DialogueMode.Backlog);
+        OnChangeMode?.Invoke();
+    }
+
+    public void ToggleMode(DialogueMode mode)
+    {
+        ChangeMode(curMode == mode ? DialogueMode.None : mode);
     }
 
     private void ClearModeState()
@@ -485,14 +465,11 @@ public class UIDialogue : BaseUI
             StopCoroutine(skipCoroutine);
             skipCoroutine = null;
         }
-
-        autoPlaying.gameObject.SetActive(false);
     }
 
     private void SetNeedChoice(bool active)
     {
         needChoice = active;
-        autoPlaying.text = needChoice ? "자동진행 일시정지" : "자동진행 중...";
 
         if (needChoice)
         {
@@ -523,18 +500,12 @@ public class UIDialogue : BaseUI
 #if UNITY_EDITOR
     private void Reset()
     {
-        skipBtn = transform.FindChild<ToggleButton>("Btn_Skip");
-        autoBtn = transform.FindChild<ToggleButton>("Btn_Auto");
-        backlogBtn = transform.FindChild<ToggleButton>("Btn_Backlog");
-        optionBtn = transform.FindChild<BaseButton>("Btn_Option");
         dialogueWindowBtn = transform.FindChild<BaseButton>("Panel_Dialogue");
 
         portrait = transform.FindChild<Image>("Portrait");
         speaker = transform.FindChild<TMP_Text>("Text_Speaker");
         typer = transform.FindChild<DialogueTyper>("Text_Dialogue");
         arrow = transform.FindChild<Image>("Arrow").gameObject;
-
-        autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying");
 
         choiceBtnPrefab = AssetLoader.FindAndLoadByName("Btn_Choice").GetComponent<DialogueChoiceButton>();
         choiceRoot = transform.FindChild<RectTransform>("ChoiceGroup");
