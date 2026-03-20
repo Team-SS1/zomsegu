@@ -82,4 +82,20 @@ public class DialogueInputController : MonoBehaviour
                 .Open("현재 대화를 \n전체스킵하시겠습니까?\n", uiRoot.AllSkip);
         }
     }
+
+    private void OnAuto(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            uiRoot.ToggleMode(DialogueMode.Auto);
+        }
+    }
+
+    private void OnBacklog(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            uiRoot.ToggleMode(DialogueMode.Backlog);
+        }
+    }
 }

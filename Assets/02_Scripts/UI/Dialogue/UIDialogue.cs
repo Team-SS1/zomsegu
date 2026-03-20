@@ -413,6 +413,8 @@ public class UIDialogue : BaseUI
             StopCoroutine(skipCoroutine);
             skipCoroutine = null;
         }
+
+        UIManager.Instance.HideUI<UIDialogueBacklog>();
     }
 
     private void SetNeedChoice(bool active)
