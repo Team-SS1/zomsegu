@@ -20,7 +20,7 @@ public static class ItemTransferService
             return TryInventoryToInventory(from, to);
 
         if (from.slotType == SlotType.Inventory && to.slotType == SlotType.Equipment) // 인벤 -> 장비 이동
-            return TryInventoryToEquipment(from, to);
+            return TryInventoryToEquipment(from, to, true);
 
         if (from.slotType == SlotType.Equipment && to.slotType == SlotType.Inventory) // 장비 -> 인벤 이동
             return TryEquipmentToInventory(from, to);
@@ -92,7 +92,7 @@ public static class ItemTransferService
 
         return data.Inventory.Move(from.index, to.index);
     }
-    private static bool TryInventoryToEquipment(SlotRef from, SlotRef to) // 인벤에서 장비로 이동
+    private static bool TryInventoryToEquipment(SlotRef from, SlotRef to, bool autoBindToFirstQuickSlot) // 인벤에서 장비로 이동
     {
         PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
         if (data == null) return false;
@@ -159,7 +159,8 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
-            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
+            if(autoBindToFirstQuickSlot)
+                AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
             return true;
         }
 
@@ -176,7 +177,8 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
-            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
+            if(autoBindToFirstQuickSlot)
+                AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
             return true;
         }
         if (equipSlot.HasInstance && equipSlot.equippedItem != null) // 기존 장착 아이템이 인스턴스형이면 스왑
@@ -193,7 +195,8 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removedItem.itemId, removedItem);
                 return false;
             }
-            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removedItem.itemId, removedItem);
+            if(autoBindToFirstQuickSlot)
+                AutoBindEquippedItemToFirstQuickSlot(from.playerType, removedItem.itemId, removedItem);
             return true;
         }
         return false;
@@ -545,10 +548,7 @@ public static class ItemTransferService
             SlotRef from = SlotRef.Inv(playerType, invIndex);
             SlotRef to = SlotRef.Equip(playerType, EquipSlotType.Weapon);
 
-            DragPayload payload = new DragPayload(from);
-            payload.SetTo(to);
-
-            TryTransferBetweenSlots(payload);
+            TryInventoryToEquipment(from, to, false);
         }
     }
     //기타
@@ -703,5 +703,19 @@ public static class ItemTransferService
                 }
             }
         }
+    }
+    public static bool TrySelectQuickSlot(PlayerType playerType, int quickSlotIndex)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if (playerData == null || playerData.QuickSlot == null) return false;
+
+        QuickSlot quickSlot = playerData.QuickSlot;
+        if (quickSlotIndex < 0 || quickSlotIndex >= quickSlot.Capacity) return false;
+
+        quickSlot.SetSelectedIndex(quickSlotIndex);
+
+        TryAutoEquipIfSelectedQuickSlot(playerType, quickSlotIndex);
+
+        return true;
     }
 }
