@@ -249,7 +249,7 @@ public class UIDialogue : BaseUI
             }
 
             DialogueChoiceButton choiceBtn;
-            if (choiceBtns.Count < i)
+            if (i < choiceBtns.Count)
             {
                 choiceBtn = choiceBtns[i];
             }
