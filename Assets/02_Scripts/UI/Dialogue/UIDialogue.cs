@@ -405,7 +405,7 @@ public class UIDialogue : BaseUI
 
     private void OnNavigate(InputAction.CallbackContext context)
     {
-        if (curDialogue == null) return;
+        if (curDialogue == null || curDialogue.choiceIds == null) return;
         int count = curDialogue.choiceIds.Count;
         if (count <= 0) return;
 
