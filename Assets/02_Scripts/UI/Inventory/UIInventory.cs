@@ -110,7 +110,7 @@ public class UIInventory : MonoBehaviour
 
         if(currentFilter == InventoryFilterType.All)
         {
-            for(int i = 0; i<inventory.Capacity; i++)
+            for(int i = 0; i<inventory.Capacity&&indices.Count < slotUIs.Length; i++)
             {
                 indices.Add(i);
             }
@@ -128,6 +128,12 @@ public class UIInventory : MonoBehaviour
         }
         indices = indices.OrderBy(i => inventory.GetSlot(i).itemId).ThenBy(i => i).ToList();
 
+        for (int i = 0; i < inventory.Capacity&&indices.Count < slotUIs.Length; i++)
+        {
+            InventorySlot slot = inventory.GetSlot(i);
+            if (slot != null && slot.isEmpty)
+                indices.Add(i);
+        }
         return indices;
     }
     private bool IsMatchFilter(InventorySlot slot) //정렬필터에 맞는 아이템인지 구분
