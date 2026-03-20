@@ -5,12 +5,12 @@ using UnityEngine.InputSystem;
 
 public class DialogueInputController : MonoBehaviour
 {
-    private UIDialogue uiRoot;
+    private UIDialogue dialogue;
     private DialogueTyper typer;
 
     private void Awake()
     {
-        TryGetComponent(out uiRoot);
+        TryGetComponent(out dialogue);
         typer = GetComponentInChildren<DialogueTyper>(true);
     }
 
@@ -47,7 +47,7 @@ public class DialogueInputController : MonoBehaviour
     {
         if (context.started)
         {
-            uiRoot.AdvanceOrCompleteCurrentLine();
+            dialogue.AdvanceOrCompleteCurrentLine();
         }
     }
 
@@ -55,9 +55,9 @@ public class DialogueInputController : MonoBehaviour
     {
         if (context.started)
         {
-            uiRoot.ChangeMode(DialogueMode.None);
+            dialogue.ChangeMode(DialogueMode.None);
             if (typer.IsTyping) typer.SkipOrComplete();
-            uiRoot.ShowPreviousLine();
+            dialogue.ShowPreviousLine();
         }
     }
 
@@ -65,11 +65,11 @@ public class DialogueInputController : MonoBehaviour
     {
         if (context.started)
         {
-            uiRoot.ChangeMode(DialogueMode.Skip);
+            dialogue.ChangeMode(DialogueMode.Skip);
         }
         else if (context.canceled)
         {
-            uiRoot.ChangeMode(DialogueMode.None);
+            dialogue.ChangeMode(DialogueMode.None);
         }
     }
 
@@ -79,7 +79,7 @@ public class DialogueInputController : MonoBehaviour
         {
             UIManager.Instance
                 .OpenPopup<UIConfirmPopup>()
-                .Open("현재 대화를 \n전체스킵하시겠습니까?\n", uiRoot.AllSkip);
+                .Open("현재 대화를 \n전체스킵하시겠습니까?\n", dialogue.AllSkip);
         }
     }
 
@@ -87,7 +87,7 @@ public class DialogueInputController : MonoBehaviour
     {
         if (context.started)
         {
-            uiRoot.ToggleMode(DialogueMode.Auto);
+            dialogue.ToggleMode(DialogueMode.Auto);
         }
     }
 
@@ -95,7 +95,7 @@ public class DialogueInputController : MonoBehaviour
     {
         if (context.started)
         {
-            uiRoot.ToggleMode(DialogueMode.Backlog);
+            dialogue.ToggleMode(DialogueMode.Backlog);
         }
     }
 }

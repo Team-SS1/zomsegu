@@ -10,12 +10,12 @@ public class UIDialogueTopButtonController : MonoBehaviour
     [Header("Extra")]
     [SerializeField] TMP_Text autoPlaying;
 
-    private UIDialogue uiRoot;
-    private DialogueMode CurMode => uiRoot.CurMode;
+    private UIDialogue dialogue;
+    private DialogueMode CurMode => dialogue.CurMode;
 
     public void Init(UIDialogue ui)
     {
-        uiRoot = ui;
+        dialogue = ui;
         ui.OnChangeMode += CheckMode;
 
         topButtons[0].onClick.AddListener(OnClickSkipBtn);
@@ -26,17 +26,17 @@ public class UIDialogueTopButtonController : MonoBehaviour
 
     private void OnClickSkipBtn()
     {
-        uiRoot.ToggleMode(DialogueMode.Skip);
+        dialogue.ToggleMode(DialogueMode.Skip);
     }
 
     private void OnClickAutoBtn()
     {
-        uiRoot.ToggleMode(DialogueMode.Auto);
+        dialogue.ToggleMode(DialogueMode.Auto);
     }
 
     private void OnClickBacklogBtn()
     {
-        uiRoot.ChangeMode(DialogueMode.Backlog);
+        dialogue.ChangeMode(DialogueMode.Backlog);
     }
 
     private void OnClickOptionBtn()
@@ -51,7 +51,7 @@ public class UIDialogueTopButtonController : MonoBehaviour
         topButtons[2].SetState(CurMode == DialogueMode.Backlog);
 
         autoPlaying.gameObject.SetActive(CurMode == DialogueMode.Auto);
-        autoPlaying.text = uiRoot.NeedChoice ? "자동진행 일시정지" : "자동진행 중...";
+        autoPlaying.text = dialogue.NeedChoice ? "자동진행 일시정지" : "자동진행 중...";
     }
 
     #region 유니티 전용
