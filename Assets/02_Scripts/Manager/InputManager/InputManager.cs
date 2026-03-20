@@ -165,12 +165,12 @@ public class InputManager : GlobalSingleton<InputManager>
     /// <summary>
     /// ActionMaps의 Actions에 매핑되는 함수 리스트 연결하기
     /// </summary>
-    public void BindInputs(ActionMaps actionMaps, (Actions, Action<InputAction.CallbackContext>)[] actions)
+    public void BindInputs(ActionMaps actionMaps, (Actions, Action<InputAction.CallbackContext>)[] bindings)
     {
         if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
-        foreach (var item in actions)
+        foreach (var (actions, action) in bindings)
         {
-            handler.BindInput(item.Item1, item.Item2);
+            handler.BindInput(actions, action);
         }
     }
 
