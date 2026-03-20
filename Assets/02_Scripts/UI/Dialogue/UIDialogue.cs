@@ -1,5 +1,6 @@
 ﻿using DialogueEnum;
 using InputEnum;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -92,21 +93,12 @@ public class UIDialogue : BaseUI
     {
         Time.timeScale = 0f;
         typer.OnEnd += OnEndTyping;
-
-        InputManager mg = InputManager.Instance;
-        if (mg == null) return;
-        mg.RemoveMaps(ActionMaps.Gameplay);
-        mg.RemoveMaps(ActionMaps.UI);
-        mg.AddMaps(ActionMaps.Dialogue);
     }
 
     private void Start()
     {
         InputManager mg = InputManager.Instance;
-        mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
-        mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
+
         mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
         mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
         mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
@@ -130,12 +122,6 @@ public class UIDialogue : BaseUI
         lockIndex = 0;
 
         backlogs.Clear();
-
-        InputManager mg = InputManager.Instance;
-        if (mg == null) return;
-        mg.AddMaps(ActionMaps.Gameplay);
-        mg.AddMaps(ActionMaps.UI);
-        mg.RemoveMaps(ActionMaps.Dialogue);
     }
     #endregion
 
@@ -154,7 +140,7 @@ public class UIDialogue : BaseUI
         TryShowDialogue(id);
     }
 
-    private void AdvanceOrCompleteCurrentLine()
+    public void AdvanceOrCompleteCurrentLine()
     {
         ChangeMode(DialogueMode.None);
 
@@ -299,7 +285,7 @@ public class UIDialogue : BaseUI
         return null;
     }
 
-    private void ShowPreviousLine()
+    public void ShowPreviousLine()
     {
         index--;
         if (index < lockIndex)
@@ -334,45 +320,7 @@ public class UIDialogue : BaseUI
     #endregion
 
     #region Input 이벤트
-    private void OnNext(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            AdvanceOrCompleteCurrentLine();
-        }
-    }
-
-    private void OnPrev(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            ChangeMode(DialogueMode.None);
-            if (typer.IsTyping) typer.SkipOrComplete();
-            ShowPreviousLine();
-        }
-    }
-
-    private void OnSkip(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            ChangeMode(DialogueMode.Skip);
-        }
-        else if (context.canceled)
-        {
-            ChangeMode(DialogueMode.None);
-        }
-    }
-
-    private void OnAllSkip(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            UIManager.Instance.OpenPopup<UIConfirmPopup>().Open("현재 대화를 \n전체스킵하시겠습니까?\n", AllSkip);
-        }
-    }
-
-    private void AllSkip()
+    public void AllSkip()
     {
         do
         {
