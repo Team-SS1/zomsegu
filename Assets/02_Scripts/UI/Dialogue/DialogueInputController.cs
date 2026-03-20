@@ -1,5 +1,6 @@
 ﻿using DialogueEnum;
 using InputEnum;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,24 +10,22 @@ public class DialogueInputController : MonoBehaviour
     private UIDialogue dialogue;
     private DialogueTyper typer;
 
+    private (Actions action, Action<InputAction.CallbackContext>)[] bindings;
+
+    #region Unity API
     private void Awake()
     {
         dialogue = GetComponent<UIDialogue>();
         typer = GetComponentInChildren<DialogueTyper>(true);
+
+        InitDialogueBindings();
     }
 
     private void Start()
     {
         InputManager mg = InputManager.Instance;
 
-        mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
-        mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Auto, OnAuto);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Backlog, OnBacklog);
+        mg.BindInputs(ActionMaps.Dialogue, bindings);
 
         mg.LockInput(ActionMaps.Dialogue, Actions.Navigate);
         mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
@@ -49,6 +48,24 @@ public class DialogueInputController : MonoBehaviour
         mg.AddMaps(ActionMaps.UI);
         mg.RemoveMaps(ActionMaps.Dialogue);
     }
+    #endregion
+
+    #region 초기화
+    private void InitDialogueBindings()
+    {
+        bindings = new (Actions action, Action<InputAction.CallbackContext>)[]
+        {
+            (Actions.Next, OnNext),
+            (Actions.Previous, OnPrev),
+            (Actions.Navigate, OnNavigate),
+            (Actions.Skip, OnSkip),
+            (Actions.AllSkip, OnAllSkip),
+            (Actions.Submit, OnSubmit),
+            (Actions.Auto, OnAuto),
+            (Actions.Backlog, OnBacklog),
+        };
+    }
+    #endregion
 
     private void OnNext(InputAction.CallbackContext context)
     {
