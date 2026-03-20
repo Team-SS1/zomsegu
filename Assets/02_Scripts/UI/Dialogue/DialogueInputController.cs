@@ -3,6 +3,7 @@ using InputEnum;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(UIDialogue))]
 public class DialogueInputController : MonoBehaviour
 {
     private UIDialogue dialogue;
@@ -10,7 +11,7 @@ public class DialogueInputController : MonoBehaviour
 
     private void Awake()
     {
-        TryGetComponent(out dialogue);
+        dialogue = GetComponent<UIDialogue>();
         typer = GetComponentInChildren<DialogueTyper>(true);
     }
 

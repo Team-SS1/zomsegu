@@ -24,6 +24,12 @@ public class UIDialogueTopButtonsController : MonoBehaviour
         topButtons[3].onClick.AddListener(OnClickOptionBtn);
     }
 
+    private void OnDestroy()
+    {
+        if (dialogue == null) return;
+        dialogue.OnChangeMode -= RefreshModeState;
+    }
+
     private void OnClickSkipBtn()
     {
         dialogue.ToggleMode(DialogueMode.Skip);

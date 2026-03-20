@@ -88,6 +88,11 @@ public class UIDialogue : BaseUI
         choiceBtnHeight = choiceBtnPrefab.GetComponent<RectTransform>().rect.height;
     }
 
+    private void OnDestroy()
+    {
+        OnChangeMode = null;
+    }
+
     private void OnEnable()
     {
         Time.timeScale = 0f;
