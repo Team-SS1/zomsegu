@@ -1,11 +1,6 @@
-﻿public class ToggleButton : BaseButton
+﻿public class UIDialogueTopButton : BaseButton
 {
     protected bool isOn;
-
-    protected override void OnClickInternal()
-    {
-        SetState(!isOn);
-    }
 
     public override void SetState(bool active)
     {
