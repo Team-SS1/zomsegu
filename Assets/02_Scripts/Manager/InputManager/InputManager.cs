@@ -162,6 +162,18 @@ public class InputManager : GlobalSingleton<InputManager>
         handler.BindInput(actions, action);
     }
 
+    /// <summary>
+    /// ActionMaps의 Actions에 매핑되는 함수 리스트 연결하기
+    /// </summary>
+    public void BindInputs(ActionMaps actionMaps, (Actions, Action<InputAction.CallbackContext>)[] actions)
+    {
+        if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
+        foreach (var item in actions)
+        {
+            handler.BindInput(item.Item1, item.Item2);
+        }
+    }
+
     public void LockInput(ActionMaps actionMaps, Actions actions)
     {
         if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
