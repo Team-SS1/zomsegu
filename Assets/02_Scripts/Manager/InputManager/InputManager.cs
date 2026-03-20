@@ -154,7 +154,7 @@ public class InputManager : GlobalSingleton<InputManager>
 
     #region 인풋 설정
     /// <summary>
-    /// ActionMaps의 Actions에 함수 바인딩하기
+    /// ActionMaps의 Actions에 함수 연결하기
     /// </summary>
     public void BindInput(ActionMaps actionMaps, Actions actions, Action<InputAction.CallbackContext> action)
     {
@@ -174,12 +174,18 @@ public class InputManager : GlobalSingleton<InputManager>
         }
     }
 
+    /// <summary>
+    /// 특정 Input 막기
+    /// </summary>
     public void LockInput(ActionMaps actionMaps, Actions actions)
     {
         if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
         handler.LockInput(actions);
     }
 
+    /// <summary>
+    /// 특정 Input 풀기
+    /// </summary>
     public void UnlockInput(ActionMaps actionMaps, Actions actions)
     {
         if (!TryGetInputHandler(actionMaps, out InputHandler handler)) return;
