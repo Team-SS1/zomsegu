@@ -32,6 +32,12 @@ public class DialogueTyper : MonoBehaviour
         typingCo = StartCoroutine(TypeRoutine());
     }
 
+    public void PlayLine()
+    {
+        if (typingCo != null) StopCoroutine(typingCo);
+        typingCo = StartCoroutine(TypeRoutine());
+    }
+
     // 타이핑 중이면 즉시 완성, 아니면 무시(또는 다음 대사로 넘기는 로직을 밖에서)
     public void SkipOrComplete()
     {

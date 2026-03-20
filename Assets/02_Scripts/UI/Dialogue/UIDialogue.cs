@@ -59,6 +59,10 @@ public class UIDialogue : BaseUI
     private bool needChoice = false;
     public bool IsChoiceRequired => needChoice;
 
+    private List<IEnumerator> choiceBtnsCos = new();
+    private Coroutine choiceBtnsRoutine;
+    private Coroutine choiceBtnRoutine;
+
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
     public DialogueMode CurMode => curMode;
@@ -96,7 +100,7 @@ public class UIDialogue : BaseUI
     private void OnEnable()
     {
         Time.timeScale = 0f;
-        typer.OnEnd += OnEndTyping;
+        typer.OnEnd += OnAutoEndTyping;
     }
 
     private void OnDisable()
@@ -104,7 +108,7 @@ public class UIDialogue : BaseUI
         Time.timeScale = 1f;
         ChangeMode(DialogueMode.None);
         typer.Clear();
-        typer.OnEnd -= OnEndTyping;
+        typer.OnEnd -= OnAutoEndTyping;
         dialogues.Clear();
         curDialogue = null;
         for (int i = choiceBtns.Count - 1; i >= 0; i--)
@@ -117,8 +121,21 @@ public class UIDialogue : BaseUI
         lockIndex = 0;
 
         backlogs.Clear();
+
+        choiceBtnsCos.Clear();
+        StopActiveCoroutine(choiceBtnRoutine);
+        StopActiveCoroutine(choiceBtnsRoutine);
     }
     #endregion
+
+    private void StopActiveCoroutine(Coroutine coroutine)
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
+    }
 
     #region 버튼 이벤트
     private void OnClickDialogueWindowBtn()
@@ -142,14 +159,27 @@ public class UIDialogue : BaseUI
         if (typer.IsTyping)
         {
             typer.SkipOrComplete();
+
             if (!needChoice)
             {
                 arrow.SetActive(true);
             }
-            return;
+        }
+        else
+        {
+            TryShowNextLine();
         }
 
-        TryShowNextLine();
+        StopActiveCoroutine(choiceBtnRoutine);
+        StopActiveCoroutine(choiceBtnsRoutine);
+
+        if (needChoice)
+        {
+            foreach (DialogueChoiceButton btn in choiceBtns)
+            {
+                btn.CompleteTyping();
+            }
+        }
     }
 
     private bool TryShowNextLine()
@@ -270,14 +300,32 @@ public class UIDialogue : BaseUI
             rect.anchoredPosition = new Vector2(0, -choiceBtnHeight * i);
 
             choiceBtn.Init(this, choiceData, i);
+            choiceBtnsCos.Add(choiceBtn.CoPlayLine());
             curBacklog.choiceTexts[i] = $"{i + 1}. {choiceData.text}";
         }
 
         curChoiceIndex = -1;
-
+        choiceBtnsRoutine = StartCoroutine(CoChoiceBtns());
         typer.OnEnd -= CreateChoiceButton;
 
         return null;
+    }
+
+    private IEnumerator CoChoiceBtns()
+    {
+        foreach (IEnumerator choice in choiceBtnsCos)
+        {
+            if (choiceBtnRoutine != null)
+            {
+                StopActiveCoroutine(choiceBtnRoutine);
+                choiceBtnRoutine = null;
+            }
+            choiceBtnRoutine = StartCoroutine(choice);
+            yield return choiceBtnRoutine;
+        }
+        choiceBtnsCos.Clear();
+
+        StopActiveCoroutine(choiceBtnsRoutine);
     }
 
     public void ShowPreviousLine()
@@ -399,7 +447,7 @@ public class UIDialogue : BaseUI
     {
         if (skipCoroutine != null)
         {
-            StopCoroutine(skipCoroutine);
+            StopActiveCoroutine(skipCoroutine);
             skipCoroutine = null;
         }
 
@@ -423,7 +471,7 @@ public class UIDialogue : BaseUI
     }
     #endregion
 
-    private IEnumerator OnEndTyping()
+    private IEnumerator OnAutoEndTyping()
     {
         if (!needChoice)
         {
