@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using UnityEditor.ShaderGraph.Internal;
 
-public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler , IPointerClickHandler
 {
     [Header("UI")]
     [SerializeField] private Image icon;
@@ -17,6 +17,10 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [Header("Drag")]
     [SerializeField] private Vector2 dragIconOffset = new Vector2(30f, -30f);
 
+    [Header("Click")]
+    [SerializeField] private float doubleClick = 0.25f;
+
+    private float lastClickTime = -1f;
 
     private GameObject dragIcon;
     private RectTransform dragIconRect;
@@ -176,4 +180,18 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         SetIconAlpha(1f);
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(eventData.button != PointerEventData.InputButton.Left) return;
+
+        if(Time.unscaledTime - lastClickTime <= doubleClick)
+        {
+            ItemTransferService.TryUseOrEquipFromInventory(slotRef);
+            lastClickTime = -1f;
+        }
+        else
+        {
+            lastClickTime = Time.unscaledTime;
+        }
+    }
 }

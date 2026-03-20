@@ -718,4 +718,117 @@ public static class ItemTransferService
 
         return true;
     }
+    public static bool TryUseOrEquipFromInventory(SlotRef from)
+    {
+        if(from.slotType != SlotType.Inventory) return false;
+
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if(playerData == null) return false;
+
+        Inventory inventory = playerData.Inventory;
+        Equipment equipment = playerData.Equipment;
+
+        if(inventory == null) return false;
+
+        InventorySlot inventorySlot = inventory.GetSlot(from.index);
+        if(inventorySlot == null || inventorySlot.isEmpty) return false;
+
+        CommonItemData common = ItemDB.GetCommon(inventorySlot.itemId);
+        if(common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+
+        switch (itemType)
+        {
+            case ItemType.Weapon:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Weapon);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+                
+            case ItemType.Head:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Head);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Body:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Body);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Leg:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Leg);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Shoes:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Shoes);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Bag:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Bag);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Accessory:
+                {
+                    if (equipment == null) return false;
+
+                    EquipmentSlot acc1 = equipment.GetSlot(EquipSlotType.Accessory1);
+                    EquipmentSlot acc2 = equipment.GetSlot(EquipSlotType.Accessory2);
+
+                    EquipSlotType targetSlot;
+
+                    if(acc1 ==  null || acc2 == null) return false;
+
+                    if (acc1.isEmpty)
+                        targetSlot = EquipSlotType.Accessory1;
+                    else if (acc2.isEmpty)
+                        targetSlot = EquipSlotType.Accessory2;
+                    else
+                        targetSlot = EquipSlotType.Accessory1;
+
+                    SlotRef to = SlotRef.Equip(from.playerType, targetSlot);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Consumable:
+                return TryUseConsumableFromInventory(from);
+
+            default:
+                return false;
+        }
+    }
+    private static bool TryUseConsumableFromInventory(SlotRef from)
+    {
+        if(from.slotType != SlotType.Inventory) return false;
+
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if(playerData == null || playerData.Inventory == null) return false;
+
+        Inventory inventory = playerData.Inventory;
+        InventorySlot inventorySlot = inventory.GetSlot(from.index);
+        if(inventorySlot == null || inventorySlot.isEmpty) return false;
+        if(!inventorySlot.IsStack) return false;
+
+        CommonItemData common = ItemDB.GetCommon(inventorySlot.itemId);
+        if(common == null) return false;
+
+        Debug.Log("아이템 사용");
+        return inventory.TryRemoveStack(from.index, 1);
+    }
 }
