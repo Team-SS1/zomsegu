@@ -57,7 +57,7 @@ public class UIDialogue : BaseUI
     }
 
     private bool needChoice = false;
-    public bool NeedChoice => needChoice;
+    public bool IsChoiceRequired => needChoice;
 
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
@@ -72,14 +72,14 @@ public class UIDialogue : BaseUI
 
     public event Action OnChangeMode;
 
-    private UIDialogueTopButtonController btnController;
+    private UIDialogueTopButtonsController btnsController;
     #endregion
 
     #region Unity API
     private void Awake()
     {
-        btnController = GetComponentInChildren<UIDialogueTopButtonController>(true);
-        btnController.Init(this);
+        btnsController = GetComponentInChildren<UIDialogueTopButtonsController>(true);
+        btnsController.Init(this);
 
         dialogueWindowBtn.onClick.AddListener(OnClickDialogueWindowBtn);
 

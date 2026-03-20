@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-public class UIDialogueTopButtonController : MonoBehaviour
+public class UIDialogueTopButtonsController : MonoBehaviour
 {
     [Header("Buttons")]
     [SerializeField] UIDialogueTopButton[] topButtons;
@@ -16,7 +16,7 @@ public class UIDialogueTopButtonController : MonoBehaviour
     public void Init(UIDialogue ui)
     {
         dialogue = ui;
-        ui.OnChangeMode += CheckMode;
+        ui.OnChangeMode += RefreshModeState;
 
         topButtons[0].onClick.AddListener(OnClickSkipBtn);
         topButtons[1].onClick.AddListener(OnClickAutoBtn);
@@ -44,14 +44,14 @@ public class UIDialogueTopButtonController : MonoBehaviour
         // todo: 옵션 ui 띄우기
     }
 
-    private void CheckMode()
+    private void RefreshModeState()
     {
         topButtons[0].SetState(CurMode == DialogueMode.Skip);
         topButtons[1].SetState(CurMode == DialogueMode.Auto);
         topButtons[2].SetState(CurMode == DialogueMode.Backlog);
 
         autoPlaying.gameObject.SetActive(CurMode == DialogueMode.Auto);
-        autoPlaying.text = dialogue.NeedChoice ? "자동진행 일시정지" : "자동진행 중...";
+        autoPlaying.text = dialogue.IsChoiceRequired ? "자동진행 일시정지" : "자동진행 중...";
     }
 
     #region 유니티 전용
