@@ -24,7 +24,6 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.AddListener(OnClickYes);
         btnNo.onClick.AddListener(OnClickNo);
 
-        InputManager.Instance.AddMaps(ActionMaps.UI);
         InputManager.Instance.RemoveMaps(ActionMaps.Dialogue);
     }
 
@@ -33,7 +32,6 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.RemoveListener(OnClickYes);
         btnNo.onClick.RemoveListener(OnClickNo);
 
-        InputManager.Instance.RemoveMaps(ActionMaps.UI);
         InputManager.Instance.AddMaps(ActionMaps.Dialogue);
     }
     #endregion
