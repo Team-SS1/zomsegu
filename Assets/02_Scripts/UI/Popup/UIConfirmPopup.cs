@@ -28,6 +28,7 @@ public class UIConfirmPopup : UIPopup
         btnNo.onClick.AddListener(OnClickNo);
 
         InputManager.Instance.RemoveMaps(ActionMaps.Dialogue);
+        InputManager.Instance.AddMaps(ActionMaps.UI);
     }
 
     private void OnDisable()
@@ -36,6 +37,7 @@ public class UIConfirmPopup : UIPopup
         btnNo.onClick.RemoveListener(OnClickNo);
 
         InputManager.Instance.AddMaps(ActionMaps.Dialogue);
+        InputManager.Instance.RemoveMaps(ActionMaps.UI);
     }
     #endregion
 
