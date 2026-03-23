@@ -7,7 +7,7 @@ namespace MonsterEnum
         Bite
     }
 
-    public enum ZombieType
+    public enum ZombieType // 좀비의 유형을 정의
     {
         ElderFemale,
         ElderMale,
@@ -21,7 +21,7 @@ namespace MonsterEnum
         Firefighter
     }
 
-    public enum ZombieStateType
+    public enum ZombieStateType // 좀비의 상태를 정의
     {
         Idle,
         Investigate,
@@ -29,7 +29,7 @@ namespace MonsterEnum
         Dead
     }
 
-    public enum ArmorType
+    public enum ArmorType // 공격이 명중한 부위를 정의
     {
         Head,
         Body,
