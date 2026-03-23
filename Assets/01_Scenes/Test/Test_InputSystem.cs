@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,6 +20,12 @@ public class Test_InputSystem : MonoBehaviour
     }
 
     #region Example - Bind Input
+    /// <summary>
+    /// Input에 함수 묶기
+    /// Input에 묶어야 할 함수는 형태 'Action<InputAction.CallbackContext>'
+    /// ActionMaps: InputAsset의 Action Maps에 대응되는 enum
+    /// Actions: InputAsset의 Actions에 대응되는 enum
+    /// </summary>
     private void Example_BindInput()
     {
         mg.BindInput(InputEnum.ActionMaps.Gameplay, InputEnum.Actions.Move, OnMove);
@@ -44,11 +50,11 @@ public class Test_InputSystem : MonoBehaviour
     [SerializeField] GameObject dialoguePanel;
 
     public void Example_Open_Dialogue_Block_Gameplay()
-    {
-        mg.SetMaps(InputEnum.ActionMaps.Gameplay);
+    {                                                   // 활성화된 Maps
+        mg.SetMaps(InputEnum.ActionMaps.Gameplay);      // Gameplay
 
-        mg.AddMaps(InputEnum.ActionMaps.Dialogue);
-        mg.RemoveMaps(InputEnum.ActionMaps.Gameplay);
+        mg.AddMaps(InputEnum.ActionMaps.Dialogue);      // Gameplay | Dialogue
+        mg.RemoveMaps(InputEnum.ActionMaps.Gameplay);   // Dialogue
 
         dialoguePanel.SetActive(true);
     }
@@ -67,6 +73,7 @@ public class Test_InputSystem : MonoBehaviour
 
     #region Example - Lock / Unlock Single Input
     private bool isLock = false;
+
     public void Example_Toggle_Input_Move()
     {
         if (isLock)

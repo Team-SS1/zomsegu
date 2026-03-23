@@ -91,10 +91,16 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if(canvasGroup != null)
         {
             canvasGroup.blocksRaycasts = false;
-            canvasGroup.alpha = 0.4f;
         }
+        SetIconAlpha(0.4f);
 
         CreateDragIcon(eventData.position);
+    }
+    private void SetIconAlpha(float alpha)
+    {
+        Color color = icon.color;
+        color.a = alpha;
+        icon.color = color;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -166,8 +172,8 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if(canvasGroup != null)
         {
             canvasGroup.blocksRaycasts = true;
-            canvasGroup.alpha = 1f;
         }
+        SetIconAlpha(1f);
     }
 
 }

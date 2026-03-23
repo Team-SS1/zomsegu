@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -16,8 +16,7 @@ public class DialogueTyper : MonoBehaviour
     private string fullText;
     private bool isTyping;
 
-    [SerializeField] float endDelayMultiplier;
-    public event Action OnEnd;
+    public event Func<IEnumerator> OnEnd;
 
     public bool IsTyping => isTyping;
 
@@ -30,6 +29,12 @@ public class DialogueTyper : MonoBehaviour
         target.text = fullText;
         target.maxVisibleCharacters = 0;
 
+        typingCo = StartCoroutine(TypeRoutine());
+    }
+
+    public void PlayLine()
+    {
+        if (typingCo != null) StopCoroutine(typingCo);
         typingCo = StartCoroutine(TypeRoutine());
     }
 
@@ -65,6 +70,8 @@ public class DialogueTyper : MonoBehaviour
         // textInfo.characterCount(표시 가능한 실제 글자 수)를 사용.
         target.ForceMeshUpdate();
         target.maxVisibleCharacters = target.textInfo.characterCount;
+
+        OnEnd?.Invoke();
     }
 
     private IEnumerator TypeRoutine()
@@ -89,11 +96,7 @@ public class DialogueTyper : MonoBehaviour
                 yield return waitForSeconds;
         }
 
-        if (OnEnd != null)
-        {
-            yield return new WaitForSecondsRealtime(target.textInfo.characterCount * endDelayMultiplier);
-            OnEnd.Invoke();
-        }
+        yield return OnEnd?.Invoke();
 
         isTyping = false;
         typingCo = null;

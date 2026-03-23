@@ -1,4 +1,4 @@
-namespace AudioEnum
+﻿namespace AudioEnum
 {
     public enum AudioCategory
     {
@@ -108,6 +108,9 @@ namespace AudioEnum
         // 연출용
         Car_Shaking,
         Zombie_Scream,
+
+        // UI
+        UI_Button_Click = 300,
 
         // === Test ===
         Test_Bgm,

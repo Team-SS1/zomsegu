@@ -12,6 +12,7 @@ public class PlayerData
 
     public Inventory Inventory { get; private set; }
     public Equipment Equipment { get; private set; }
+    public QuickSlot QuickSlot { get; private set; }
 
     public PlayerData(PlayerType type, int id, PlayerStat stat)
     {
@@ -21,5 +22,6 @@ public class PlayerData
 
         Inventory = new Inventory(type);
         Equipment = new Equipment(type);
+        QuickSlot = new QuickSlot(type);
     }
 }

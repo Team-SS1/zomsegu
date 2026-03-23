@@ -1,18 +1,15 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Test_DialogueSystem : MonoBehaviour
 {
-    // todo: 나중에 ui manager 만들어서 관리
-    [SerializeField] UIDialogue ui;
-
     private void Start()
     {
-        AudioManager.Instance.PlayBgm(AudioEnum.AudioName.Test_Bgm, fadeDuration: 1f);
+        //AudioManager.Instance.PlayBgm(AudioEnum.AudioName.Test_Bgm, fadeDuration: 1f);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Logger.Log("trigger enter");
+        var ui = UIManager.Instance.GetOrCreateUI<UIDialogue>(true);
         ui.StartDialogue(1);
     }
 }

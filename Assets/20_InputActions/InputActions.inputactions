@@ -442,6 +442,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Submit",
+                    "type": "Button",
+                    "id": "b63468bd-fc3a-46c8-8372-92fd938ef496",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -510,6 +519,17 @@
                     "action": "Map",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ae70d313-07ab-4a3b-a251-1db0d0df981b",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -545,15 +565,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Select",
-                    "type": "Button",
-                    "id": "69ce9b02-5d68-4a14-956d-da3b95fbb00e",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Skip",
                     "type": "Button",
                     "id": "0e5458e0-0fe1-43c2-abc1-33d730aa2532",
@@ -566,6 +577,33 @@
                     "name": "AllSkip",
                     "type": "Button",
                     "id": "50fe1b39-993d-4141-9a0e-9c203cf7c5bf",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Submit",
+                    "type": "Button",
+                    "id": "38fabfff-325e-4145-8566-3301637abb4f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Auto",
+                    "type": "Button",
+                    "id": "984a3b55-8369-40b3-9b62-58475a199292",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Backlog",
+                    "type": "Button",
+                    "id": "2aaa8a96-8e7b-47f7-bbb5-20d9bc4d8453",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -592,28 +630,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Next",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "09377f3e-fec7-4ef8-93c4-9791e7100a74",
-                    "path": "<Keyboard>/enter",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4f9b6d64-f21f-4818-ae14-52002cecf913",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -702,6 +718,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "AllSkip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6bdb1ca8-c0c7-43b3-8f61-39929f72e3af",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4f9b6d64-f21f-4818-ae14-52002cecf913",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ab582fca-a119-4f60-84b3-61f361071854",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Auto",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "639ba6c1-cdf1-423d-a458-d8008f52580a",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Backlog",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

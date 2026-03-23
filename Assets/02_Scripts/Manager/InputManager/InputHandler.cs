@@ -1,4 +1,4 @@
-using InputEnum;
+﻿using InputEnum;
 using System;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
@@ -105,12 +105,12 @@ public class InputHandler
     #region InputActionMap 제어
     public void Enable()
     {
-        if (!map.enabled) map.Enable();
+        map.Enable();
     }
 
     public void Disable()
     {
-        if (map.enabled) map.Disable();
+        map.Disable();
     }
     #endregion
 

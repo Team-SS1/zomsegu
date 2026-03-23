@@ -203,6 +203,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 7515511996770057800}
+  debuffData: {fileID: 11400000, guid: 939c8be8ba9b1994bbece16f3f0d5062, type: 2}
 --- !u!50 &5941956926351192279
 Rigidbody2D:
   serializedVersion: 4

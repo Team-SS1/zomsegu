@@ -3,10 +3,12 @@ using EventEnum;
 using ItemEnum;
 using PlayerEnum;
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 public class PlayerCondition : MonoBehaviour
 {
     [SerializeField] private Player player;
+    [SerializeField] private AbnormalDebuffData debuffData;
 
     // 상태이상의 실제 값 저장소
     private Dictionary<AbnormalType, Abnormal> abnormalDict = new();
@@ -231,6 +233,13 @@ public class PlayerCondition : MonoBehaviour
                 break;
         }
     }
+    private void ApplyDebuffSet(Abnormal abnormal, DebuffSet debuffSet)
+    {
+        abnormal.SetDebuff(AbnormalDebuffType.Attack, debuffSet.attack);
+        abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, debuffSet.attackSpeed);
+        abnormal.SetDebuff(AbnormalDebuffType.MoveSpeed, debuffSet.moveSpeed);
+        abnormal.SetDebuff(AbnormalDebuffType.Stamina, debuffSet.stamina);
+    }
 
     /// <summary>
     /// Hunger 수치에 따라 공격력, 공격속도, 스태미나 디버프를 계산
@@ -240,20 +249,15 @@ public class PlayerCondition : MonoBehaviour
     {
         float hunger = abnormal.CurValue;
 
-        abnormal.SetDebuff(AbnormalDebuffType.Attack, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.Stamina, 0f);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (hunger >= 1 && hunger <= 3)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.Attack, 0.1f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.1f);
+            ApplyDebuffSet(abnormal, debuffData.Hungry);
         }
         else if (hunger == 0)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.Attack, 0.2f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.2f);
-            abnormal.SetDebuff(AbnormalDebuffType.Stamina, 30f);
+            ApplyDebuffSet(abnormal, debuffData.Starving);
         }
     }
 
@@ -265,20 +269,15 @@ public class PlayerCondition : MonoBehaviour
     {
         float thirst = abnormal.CurValue;
 
-        abnormal.SetDebuff(AbnormalDebuffType.MoveSpeed, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.Stamina, 0f);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (thirst >= 1 && thirst <= 3)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.MoveSpeed, 0.1f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.1f);
+            ApplyDebuffSet(abnormal, debuffData.Thirsty);
         }
         else if (thirst == 0)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.MoveSpeed, 0.3f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.3f);
-            abnormal.SetDebuff(AbnormalDebuffType.Stamina, 30f);
+            ApplyDebuffSet(abnormal, debuffData.Dehydrated);
         }
     }
 
@@ -290,26 +289,19 @@ public class PlayerCondition : MonoBehaviour
     {
         float shock = abnormal.CurValue;
 
-        abnormal.SetDebuff(AbnormalDebuffType.Attack, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.Stamina, 0f);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (shock >= 2 && shock <= 3)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.Attack, 0.1f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.1f);
+            ApplyDebuffSet(abnormal, debuffData.Shock);
         }
         else if (shock >= 4 && shock <= 5)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.Attack, 0.2f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.2f);
-            abnormal.SetDebuff(AbnormalDebuffType.Stamina, 20f);
+            ApplyDebuffSet(abnormal, debuffData.HeavyShock);
         }
         else if (shock >= 6)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.Attack, 0.3f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.3f);
-            abnormal.SetDebuff(AbnormalDebuffType.Stamina, 30f);
+            ApplyDebuffSet(abnormal, debuffData.SevereShock);
         }
     }
 
@@ -321,12 +313,11 @@ public class PlayerCondition : MonoBehaviour
     {
         float tired = abnormal.CurValue;
 
-        abnormal.SetDebuff(AbnormalDebuffType.Stamina, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.MoveSpeed, 0f);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (tired <= 0)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.Stamina, 20f);
+            ApplyDebuffSet(abnormal, debuffData.Tired);
         }
     }
 
@@ -338,15 +329,11 @@ public class PlayerCondition : MonoBehaviour
     {
         float injury = abnormal.CurValue;
 
-        abnormal.SetDebuff(AbnormalDebuffType.Attack, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0f);
-        abnormal.SetDebuff(AbnormalDebuffType.MoveSpeed, 0f);
+        ApplyDebuffSet(abnormal, debuffData.Common);
 
         if (injury > 0)
         {
-            abnormal.SetDebuff(AbnormalDebuffType.Attack, 0.2f);
-            abnormal.SetDebuff(AbnormalDebuffType.AttackSpeed, 0.2f);
-            abnormal.SetDebuff(AbnormalDebuffType.MoveSpeed, 0.2f);
+            ApplyDebuffSet(abnormal, debuffData.Injured);
         }
     }
 }
