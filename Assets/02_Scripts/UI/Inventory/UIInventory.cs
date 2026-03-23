@@ -147,13 +147,18 @@ public class UIInventory : MonoBehaviour
         }
             return indices;
     }
-    private bool IsMatchFilter(InventorySlot slot) //정렬필터에 맞는 아이템인지 구분
+    public void AdjustFilterBeforeUnEquip(int itemId) //필터 적용시 아이템 장착 해제시 전체 같은 타입 필터 아니면 전체 분류로 가기
     {
-        if(slot == null || slot.isEmpty) return false;
+        if (currentFilter == InventoryFilterType.All) return;
+        if (IsMatchFilter(itemId)) return;
 
+        currentFilter = InventoryFilterType.All;
+    }
+    private bool IsMatchFilter(int itemId) //정렬필터에 맞는 아이템인지 구분
+    {
         if (currentFilter == InventoryFilterType.All) return true;
 
-        CommonItemData itemData = ItemDB.GetCommon(slot.itemId);
+        CommonItemData itemData = ItemDB.GetCommon(itemId);
         if(itemData == null) return false;
 
         ItemType itemType = (ItemType)itemData.ItemType;
@@ -180,6 +185,11 @@ public class UIInventory : MonoBehaviour
                 return itemType == ItemType.Misc;
         }
         return false;
+    }
+    private bool IsMatchFilter(InventorySlot slot)
+    {
+        if(slot == null || slot.isEmpty) return false;
+        return IsMatchFilter(slot.itemId);
     }
     private void UpdateButtonColors()
     {

@@ -135,6 +135,12 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         SlotRef from = DragContext.payload.from;
 
+        if(from.slotType == SlotType.Equipment && uiInventory != null)
+        {
+            int equippedItemId = ItemTransferService.GetEquippedItemId(from);
+            if (equippedItemId != 0)
+                uiInventory.AdjustFilterBeforeUnEquip(equippedItemId);
+        }
         if(uiInventory != null &&
             uiInventory.IsFiltered &&
             from.slotType == SlotType.Equipment)

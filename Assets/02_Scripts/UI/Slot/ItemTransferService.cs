@@ -831,4 +831,16 @@ public static class ItemTransferService
         Debug.Log("아이템 사용");
         return inventory.TryRemoveStack(from.index, 1);
     }
+    public static int GetEquippedItemId(SlotRef from)
+    {
+        if (from.slotType != SlotType.Equipment) return 0;
+
+        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if (data == null || data.Equipment == null) return 0;
+
+        EquipmentSlot equipmentSlot = data.Equipment.GetSlot(from.equipSlot);
+        if (equipmentSlot == null || equipmentSlot.isEmpty) return 0;
+
+        return equipmentSlot.GetItemId();
+    }
 }
