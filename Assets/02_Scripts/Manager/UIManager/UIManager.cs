@@ -78,29 +78,31 @@ public class UIManager : GlobalSingleton<UIManager>
             return ui as T;
         }
 
-        T prefab = GetResource<T>(active);
+        T prefab = GetResource<T>();
         ui = Instantiate(prefab, panelRoot);
+        ui.gameObject.SetActive(active);
 
         panelMap[type] = ui;
 
         return ui as T;
     }
 
-    private T CreatePopup<T>(bool active) where T : UIPopup
+    private T GetOrCreatePopup<T>() where T : UIPopup
     {
-        // todo: 나중에 disable 처리해서 관리
-        T prefab = GetResource<T>(active);
+        foreach (UIPopup popup in popupStack)
+        {
+            if (popup is T) return popup as T;
+        }
+
+        T prefab = GetResource<T>();
         T ui = Instantiate(prefab, popupRoot);
 
-        if (active)
-        {
-            popupStack.Add(ui);
-        }
+        popupStack.Add(ui);
 
         return ui;
     }
 
-    private T GetResource<T>(bool active) where T : BaseUI
+    private T GetResource<T>() where T : BaseUI
     {
         var type = typeof(T);
 
@@ -150,20 +152,22 @@ public class UIManager : GlobalSingleton<UIManager>
     #region 열기 / 닫기 - 팝업 ui
     public T OpenPopup<T>() where T : UIPopup
     {
-        T ui = CreatePopup<T>(true);
+        T ui = GetOrCreatePopup<T>();
+
+        ui.OnUIClick -= ClickPopup;
         ui.OnUIClick += ClickPopup;
 
         popupRoot.gameObject.SetActive(true);
+        ui.gameObject.SetActive(true);
 
         return ui;
     }
 
     public void ClosePopup(UIPopup ui)
     {
-        popupStack.Remove(ui);
-        Destroy(ui.gameObject);        // todo: 나중에 disable/enable 처리
+        ui.Close();
 
-        if (popupStack.Count == 0)
+        if (GetActivePopupCount() == 0)
         {
             popupRoot.gameObject.SetActive(false);
         }
@@ -171,11 +175,12 @@ public class UIManager : GlobalSingleton<UIManager>
 
     public void CloseTopPopup()
     {
-        if (popupStack.Count == 0) return;
+        if (GetActivePopupCount() == 0) return;
 
         UIPopup ui = popupStack[^1];
         ClosePopup(ui);
     }
+
 
     public void CloseAllPopups()
     {
@@ -217,6 +222,13 @@ public class UIManager : GlobalSingleton<UIManager>
     /// ui 정리하고 싶을 경우 (ex. 씬 전환)
     /// </summary>
     public void ClearCache() => uiCache.Clear();
+
+    private int GetActivePopupCount()
+    {
+        int activeCount = 0;
+        popupStack.ForEach(ui => activeCount += ui.gameObject.activeSelf ? 1 : 0);
+        return activeCount;
+    }
     #endregion
 
     #region 에디터 전용

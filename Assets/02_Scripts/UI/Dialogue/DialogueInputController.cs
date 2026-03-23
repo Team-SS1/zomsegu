@@ -103,7 +103,7 @@ public class DialogueInputController : MonoBehaviour
         {
             UIManager.Instance
                 .OpenPopup<UIConfirmPopup>()
-                .Open("현재 대화를 \n전체스킵하시겠습니까?\n", dialogue.AllSkip);
+                .Register("현재 대화를 \n전체스킵하시겠습니까?\n", dialogue.AllSkip);
         }
     }
 
