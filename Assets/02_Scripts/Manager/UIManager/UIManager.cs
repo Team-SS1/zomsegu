@@ -10,12 +10,12 @@ public class UIManager : GlobalSingleton<UIManager>
     [SerializeField] private GoDatabase uiDatabase;
 
     [Header("Canvas Prefab")]
-    [SerializeField] private GameObject mainCanvasPrefab;
+    [SerializeField] private GameObject panelCanvasPrefab;
     [SerializeField] private GameObject popupCanvasPrefab;
 
     private readonly Dictionary<Type, BaseUI> uiCache = new();  // 리소스 캐시
 
-    private RectTransform uiRoot;
+    private RectTransform panelRoot;
     private RectTransform popupRoot;
 
     private readonly Dictionary<Type, BaseUI> panelMap = new(); // 기본 ui
@@ -33,7 +33,7 @@ public class UIManager : GlobalSingleton<UIManager>
     #region 초기화
     private void Init()
     {
-        uiRoot = Instantiate(mainCanvasPrefab).GetComponent<RectTransform>();
+        panelRoot = Instantiate(panelCanvasPrefab).GetComponent<RectTransform>();
         popupRoot = Instantiate(popupCanvasPrefab).GetComponent<RectTransform>();
         popupRoot.gameObject.SetActive(false);
 
@@ -59,7 +59,7 @@ public class UIManager : GlobalSingleton<UIManager>
     /// ui 프리팹 가져오기
     /// gameobject 활성화 상태를 지정하고 싶을 경우 active 사용
     /// </summary>
-    public T GetOrCreateUI<T>(bool active = false) where T : BaseUI
+    public T GetPanel<T>(bool active = false) where T : BaseUI
     {
         var type = typeof(T);
 
@@ -70,7 +70,7 @@ public class UIManager : GlobalSingleton<UIManager>
         }
 
         T prefab = GetResource<T>(active);
-        ui = Instantiate(prefab, uiRoot);
+        ui = Instantiate(prefab, panelRoot);
 
         panelMap[type] = ui;
 
@@ -117,19 +117,19 @@ public class UIManager : GlobalSingleton<UIManager>
     }
     #endregion
 
-    #region 열기 / 닫기 - ui
-    public void ShowUI<T>() where T : BaseUI
+    #region 열기 / 닫기 - panel
+    public void OpenPanel<T>() where T : BaseUI
     {
-        T ui = GetOrCreateUI<T>(true);
+        T ui = GetPanel<T>(true);
     }
 
-    public void HideUI<T>() where T : BaseUI
+    public void ClosePanel<T>() where T : BaseUI
     {
         if (!panelMap.TryGetValue(typeof(T), out BaseUI ui)) return;
         ui.gameObject.SetActive(false);
     }
 
-    public void HideAllUI()
+    public void CloseAllPanels()
     {
         foreach (BaseUI ui in panelMap.Values)
         {
@@ -215,7 +215,7 @@ public class UIManager : GlobalSingleton<UIManager>
     private void Reset()
     {
         uiDatabase = AssetLoader.FindAndLoadByName<GoDatabase>("UIDatabase");
-        mainCanvasPrefab = AssetLoader.FindAndLoadByName("MainCanvas");
+        panelCanvasPrefab = AssetLoader.FindAndLoadByName("MainCanvas");
         popupCanvasPrefab = AssetLoader.FindAndLoadByName("PopupCanvas");
     }
 #endif
