@@ -21,12 +21,21 @@ public class UIManager : GlobalSingleton<UIManager>
     private readonly Dictionary<Type, BaseUI> panelMap = new(); // 기본 ui
     private readonly List<UIPopup> popupStack = new();          // 팝업 ui
 
+    private UIInputCoordinator coordinator;
+
     #region Unity API
     protected override void Awake()
     {
         base.Awake();
 
         Init();
+    }
+
+    private void Start()
+    {
+        InputManager input = InputManager.Instance;
+        if (input == null) return;
+        coordinator = new(this, input);
     }
     #endregion
 
