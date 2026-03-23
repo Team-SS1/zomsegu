@@ -422,7 +422,7 @@ public class UIDialogue : BaseUI
                 if (!typer.IsTyping) TryShowNextLine();
                 break;
             case DialogueMode.Backlog:
-                var ui = UIManager.Instance.GetOrCreateUI<UIDialogueBacklog>(true);
+                var ui = UIManager.Instance.GetPanel<UIDialogueBacklog>(true);
                 ui.AddBacklogs(backlogs);
                 backlogs.Clear();
                 typer.SkipOrComplete();
@@ -451,7 +451,7 @@ public class UIDialogue : BaseUI
             skipCoroutine = null;
         }
 
-        UIManager.Instance.HideUI<UIDialogueBacklog>();
+        UIManager.Instance.ClosePanel<UIDialogueBacklog>();
     }
 
     private void SetNeedChoice(bool active)
