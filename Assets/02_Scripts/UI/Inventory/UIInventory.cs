@@ -33,6 +33,7 @@ public class UIInventory : MonoBehaviour
         new Color(164f / 255f, 164f / 255f, 164f / 255f);
 
     private InventoryFilterType currentFilter = InventoryFilterType.All;
+    public bool IsFiltered => currentFilter != InventoryFilterType.All;
 
     private void Awake()
     {
@@ -128,13 +129,23 @@ public class UIInventory : MonoBehaviour
         }
         indices = indices.OrderBy(i => inventory.GetSlot(i).itemId).ThenBy(i => i).ToList();
 
-        for (int i = 0; i < inventory.Capacity&&indices.Count < slotUIs.Length; i++)
+        int lastOccupidIndex = -1; //전체 기준 마지막 아이템 위치
+        for (int i = inventory.Capacity -1; i>=0; i--)
         {
             InventorySlot slot = inventory.GetSlot(i);
-            if (slot != null && slot.isEmpty)
+            if(slot != null && !slot.isEmpty)
+            {
+                lastOccupidIndex = i;
+                break;
+            }
+        }
+        for (int i = lastOccupidIndex + 1; i < inventory.Capacity && indices.Count < slotUIs.Length; i++) //마지막 아이템 뒤쪽 빈 슬롯부터 추가
+        {
+            InventorySlot slot = inventory.GetSlot(i);
+            if(slot != null && slot.isEmpty)
                 indices.Add(i);
         }
-        return indices;
+            return indices;
     }
     private bool IsMatchFilter(InventorySlot slot) //정렬필터에 맞는 아이템인지 구분
     {

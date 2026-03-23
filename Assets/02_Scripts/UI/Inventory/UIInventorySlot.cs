@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using PlayerEnum;
 using TMPro;
 using UnityEngine.EventSystems;
-using UnityEditor.ShaderGraph.Internal;
+using ItemEnum;
 
 public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler , IPointerClickHandler
 {
@@ -26,11 +26,14 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private RectTransform dragIconRect;
     private Canvas rootCanvas;
 
+    private UIInventory uiInventory;
+
     public SlotRef slotRef { get; private set; }
 
     private void Awake()
     {
         rootCanvas = GetComponentInParent<Canvas>();
+        uiInventory = GetComponentInParent<UIInventory>();
 
         if(canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
@@ -129,6 +132,16 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnDrop(PointerEventData eventData)
     {
         if(DragContext.payload == null) return;
+
+        SlotRef from = DragContext.payload.from;
+
+        if(uiInventory != null &&
+            uiInventory.IsFiltered &&
+            from.slotType == SlotType.Equipment)
+        {
+            ItemTransferService.TryUnEquipToFirstEmptyInventory(from);
+            return;
+        }
 
         DragContext.payload.SetTo(slotRef);
 
