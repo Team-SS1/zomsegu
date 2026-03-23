@@ -33,6 +33,7 @@ public class UIInventory : MonoBehaviour
         new Color(164f / 255f, 164f / 255f, 164f / 255f);
 
     private InventoryFilterType currentFilter = InventoryFilterType.All;
+    public bool IsFiltered => currentFilter != InventoryFilterType.All;
 
     private void Awake()
     {
@@ -110,7 +111,7 @@ public class UIInventory : MonoBehaviour
 
         if(currentFilter == InventoryFilterType.All)
         {
-            for(int i = 0; i<inventory.Capacity; i++)
+            for(int i = 0; i<inventory.Capacity&&indices.Count < slotUIs.Length; i++)
             {
                 indices.Add(i);
             }
@@ -128,15 +129,36 @@ public class UIInventory : MonoBehaviour
         }
         indices = indices.OrderBy(i => inventory.GetSlot(i).itemId).ThenBy(i => i).ToList();
 
-        return indices;
+        int lastOccupidIndex = -1; //전체 기준 마지막 아이템 위치
+        for (int i = inventory.Capacity -1; i>=0; i--)
+        {
+            InventorySlot slot = inventory.GetSlot(i);
+            if(slot != null && !slot.isEmpty)
+            {
+                lastOccupidIndex = i;
+                break;
+            }
+        }
+        for (int i = lastOccupidIndex + 1; i < inventory.Capacity && indices.Count < slotUIs.Length; i++) //마지막 아이템 뒤쪽 빈 슬롯부터 추가
+        {
+            InventorySlot slot = inventory.GetSlot(i);
+            if(slot != null && slot.isEmpty)
+                indices.Add(i);
+        }
+            return indices;
     }
-    private bool IsMatchFilter(InventorySlot slot) //정렬필터에 맞는 아이템인지 구분
+    public void AdjustFilterBeforeUnEquip(int itemId) //필터 적용시 아이템 장착 해제시 전체 같은 타입 필터 아니면 전체 분류로 가기
     {
-        if(slot == null || slot.isEmpty) return false;
+        if (currentFilter == InventoryFilterType.All) return;
+        if (IsMatchFilter(itemId)) return;
 
+        currentFilter = InventoryFilterType.All;
+    }
+    private bool IsMatchFilter(int itemId) //정렬필터에 맞는 아이템인지 구분
+    {
         if (currentFilter == InventoryFilterType.All) return true;
 
-        CommonItemData itemData = ItemDB.GetCommon(slot.itemId);
+        CommonItemData itemData = ItemDB.GetCommon(itemId);
         if(itemData == null) return false;
 
         ItemType itemType = (ItemType)itemData.ItemType;
@@ -163,6 +185,11 @@ public class UIInventory : MonoBehaviour
                 return itemType == ItemType.Misc;
         }
         return false;
+    }
+    private bool IsMatchFilter(InventorySlot slot)
+    {
+        if(slot == null || slot.isEmpty) return false;
+        return IsMatchFilter(slot.itemId);
     }
     private void UpdateButtonColors()
     {
