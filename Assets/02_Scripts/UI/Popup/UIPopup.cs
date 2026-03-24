@@ -25,8 +25,8 @@ public abstract class UIPopup : BaseUI
         OnUIClick?.Invoke(this);
     }
 
-    protected void Close()
+    public virtual void Close()
     {
-        UIManager.Instance.ClosePopup(this);
+        gameObject.SetActive(false);
     }
 }

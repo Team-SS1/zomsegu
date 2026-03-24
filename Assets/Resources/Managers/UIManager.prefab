@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiDatabase: {fileID: 11400000, guid: 6bd8b0cb2c64e43468a009b93d42fafb, type: 2}
-  mainCanvasPrefab: {fileID: 4749774702613463862, guid: 16cd56caa750fb04d960f15d23465d6c, type: 3}
+  panelCanvasPrefab: {fileID: 4749774702613463862, guid: 16cd56caa750fb04d960f15d23465d6c, type: 3}
   popupCanvasPrefab: {fileID: 7768593651615941699, guid: dad8a7776aaa4644ea4274af7af548d8, type: 3}

@@ -1,20 +1,16 @@
 ﻿using DialogueEnum;
 using InputEnum;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIDialogue : BaseUI
 {
     #region 필드
     [Header("Buttons")]
-    [SerializeField] ToggleButton skipBtn;
-    [SerializeField] ToggleButton autoBtn;
-    [SerializeField] ToggleButton backlogBtn;
-    [SerializeField] BaseButton optionBtn;
     [SerializeField] BaseButton dialogueWindowBtn;
 
     [Header("Dialogue")]
@@ -24,9 +20,6 @@ public class UIDialogue : BaseUI
     [SerializeField] GameObject arrow;
     [SerializeField] float skipDelayTime = 0.3f;
     [SerializeField] float endDelayMultiplier;
-
-    [Header("Extra")]
-    [SerializeField] TMP_Text autoPlaying;
 
     [Header("Choice")]
     [SerializeField] DialogueChoiceButton choiceBtnPrefab;
@@ -64,9 +57,15 @@ public class UIDialogue : BaseUI
     }
 
     private bool needChoice = false;
+    public bool IsChoiceRequired => needChoice;
+
+    private List<IEnumerator> choiceBtnsCos = new();
+    private Coroutine choiceBtnsRoutine;
+    private Coroutine choiceBtnRoutine;
 
     // dialogue mode
     private DialogueMode curMode = DialogueMode.None;
+    public DialogueMode CurMode => curMode;
 
     // skip
     private Coroutine skipCoroutine;
@@ -74,15 +73,18 @@ public class UIDialogue : BaseUI
 
     private List<DialogueBacklog> backlogs = new();
     private DialogueBacklog curBacklog;
+
+    public event Action OnChangeMode;
+
+    private UIDialogueTopButtonsController btnsController;
     #endregion
 
     #region Unity API
     private void Awake()
     {
-        skipBtn.onClick.AddListener(OnClickSkipBtn);
-        autoBtn.onClick.AddListener(OnClickAutoBtn);
-        backlogBtn.onClick.AddListener(OnClickBacklogBtn);
-        optionBtn.onClick.AddListener(OnClickOptionBtn);
+        btnsController = GetComponentInChildren<UIDialogueTopButtonsController>(true);
+        btnsController.Init(this);
+
         dialogueWindowBtn.onClick.AddListener(OnClickDialogueWindowBtn);
 
         skipDelay = new WaitForSecondsRealtime(skipDelayTime);
@@ -90,28 +92,15 @@ public class UIDialogue : BaseUI
         choiceBtnHeight = choiceBtnPrefab.GetComponent<RectTransform>().rect.height;
     }
 
+    private void OnDestroy()
+    {
+        OnChangeMode = null;
+    }
+
     private void OnEnable()
     {
         Time.timeScale = 0f;
-        typer.OnEnd += OnEndTyping;
-
-        InputManager mg = InputManager.Instance;
-        if (mg == null) return;
-        mg.RemoveMaps(ActionMaps.Gameplay);
-        mg.RemoveMaps(ActionMaps.UI);
-        mg.AddMaps(ActionMaps.Dialogue);
-    }
-
-    private void Start()
-    {
-        InputManager mg = InputManager.Instance;
-        mg.BindInput(ActionMaps.Dialogue, Actions.Next, OnNext);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Previous, OnPrev);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Skip, OnSkip);
-        mg.BindInput(ActionMaps.Dialogue, Actions.AllSkip, OnAllSkip);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Navigate, OnNavigate);
-        mg.BindInput(ActionMaps.Dialogue, Actions.Submit, OnSubmit);
-        mg.LockInput(ActionMaps.Dialogue, Actions.Submit);
+        typer.OnEnd += OnAutoEndTyping;
     }
 
     private void OnDisable()
@@ -119,7 +108,7 @@ public class UIDialogue : BaseUI
         Time.timeScale = 1f;
         ChangeMode(DialogueMode.None);
         typer.Clear();
-        typer.OnEnd -= OnEndTyping;
+        typer.OnEnd -= OnAutoEndTyping;
         dialogues.Clear();
         curDialogue = null;
         for (int i = choiceBtns.Count - 1; i >= 0; i--)
@@ -133,35 +122,22 @@ public class UIDialogue : BaseUI
 
         backlogs.Clear();
 
-        InputManager mg = InputManager.Instance;
-        if (mg == null) return;
-        mg.AddMaps(ActionMaps.Gameplay);
-        mg.AddMaps(ActionMaps.UI);
-        mg.RemoveMaps(ActionMaps.Dialogue);
+        choiceBtnsCos.Clear();
+        StopActiveCoroutine(choiceBtnRoutine);
+        StopActiveCoroutine(choiceBtnsRoutine);
     }
     #endregion
 
+    private void StopActiveCoroutine(Coroutine coroutine)
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
+    }
+
     #region 버튼 이벤트
-    private void OnClickSkipBtn()
-    {
-        ChangeMode(curMode != DialogueMode.Skip ? DialogueMode.Skip : DialogueMode.None);
-    }
-
-    private void OnClickAutoBtn()
-    {
-        ChangeMode(curMode != DialogueMode.Auto ? DialogueMode.Auto : DialogueMode.None);
-    }
-
-    private void OnClickBacklogBtn()
-    {
-        ChangeMode(DialogueMode.Backlog);
-    }
-
-    private void OnClickOptionBtn()
-    {
-        // todo: 옵션 ui 띄우기
-    }
-
     private void OnClickDialogueWindowBtn()
     {
         ChangeMode(DialogueMode.None);
@@ -176,21 +152,34 @@ public class UIDialogue : BaseUI
         TryShowDialogue(id);
     }
 
-    private void AdvanceOrCompleteCurrentLine()
+    public void AdvanceOrCompleteCurrentLine()
     {
         ChangeMode(DialogueMode.None);
 
         if (typer.IsTyping)
         {
             typer.SkipOrComplete();
+
             if (!needChoice)
             {
                 arrow.SetActive(true);
             }
-            return;
+        }
+        else
+        {
+            TryShowNextLine();
         }
 
-        TryShowNextLine();
+        StopActiveCoroutine(choiceBtnRoutine);
+        StopActiveCoroutine(choiceBtnsRoutine);
+
+        if (needChoice)
+        {
+            foreach (DialogueChoiceButton btn in choiceBtns)
+            {
+                btn.CompleteTyping();
+            }
+        }
     }
 
     private bool TryShowNextLine()
@@ -295,7 +284,7 @@ public class UIDialogue : BaseUI
             }
 
             DialogueChoiceButton choiceBtn;
-            if (choiceBtns.Count < i)
+            if (i < choiceBtns.Count)
             {
                 choiceBtn = choiceBtns[i];
             }
@@ -311,17 +300,35 @@ public class UIDialogue : BaseUI
             rect.anchoredPosition = new Vector2(0, -choiceBtnHeight * i);
 
             choiceBtn.Init(this, choiceData, i);
+            choiceBtnsCos.Add(choiceBtn.CoPlayLine());
             curBacklog.choiceTexts[i] = $"{i + 1}. {choiceData.text}";
         }
 
         curChoiceIndex = -1;
-
+        choiceBtnsRoutine = StartCoroutine(CoChoiceBtns());
         typer.OnEnd -= CreateChoiceButton;
 
         return null;
     }
 
-    private void ShowPreviousLine()
+    private IEnumerator CoChoiceBtns()
+    {
+        foreach (IEnumerator choice in choiceBtnsCos)
+        {
+            if (choiceBtnRoutine != null)
+            {
+                StopActiveCoroutine(choiceBtnRoutine);
+                choiceBtnRoutine = null;
+            }
+            choiceBtnRoutine = StartCoroutine(choice);
+            yield return choiceBtnRoutine;
+        }
+        choiceBtnsCos.Clear();
+
+        StopActiveCoroutine(choiceBtnsRoutine);
+    }
+
+    public void ShowPreviousLine()
     {
         index--;
         if (index < lockIndex)
@@ -356,45 +363,7 @@ public class UIDialogue : BaseUI
     #endregion
 
     #region Input 이벤트
-    private void OnNext(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            AdvanceOrCompleteCurrentLine();
-        }
-    }
-
-    private void OnPrev(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            ChangeMode(DialogueMode.None);
-            if (typer.IsTyping) typer.SkipOrComplete();
-            ShowPreviousLine();
-        }
-    }
-
-    private void OnSkip(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            ChangeMode(DialogueMode.Skip);
-        }
-        else if (context.canceled)
-        {
-            ChangeMode(DialogueMode.None);
-        }
-    }
-
-    private void OnAllSkip(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            UIManager.Instance.OpenPopup<UIConfirmPopup>().Open("현재 대화를 \n전체스킵하시겠습니까?\n", AllSkip);
-        }
-    }
-
-    private void AllSkip()
+    public void AllSkip()
     {
         do
         {
@@ -403,41 +372,35 @@ public class UIDialogue : BaseUI
         while (TryShowNextLine());
     }
 
-    private void OnNavigate(InputAction.CallbackContext context)
+    public bool CanSelectChoice()
     {
-        if (curDialogue == null) return;
-        int count = curDialogue.choiceIds.Count;
-        if (count <= 0) return;
+        if (curDialogue == null ||
+            curDialogue.choiceIds == null ||
+            curDialogue.choiceIds.Count <= 0)
+            return false;
 
-        if (context.started)
-        {
-            bool isAuto = curMode == DialogueMode.Auto;
-            AdvanceOrCompleteCurrentLine();
-
-            float axis = context.ReadValue<float>();
-            if (Mathf.Approximately(axis, 0f)) return;
-
-            int dir = axis > 0f ? count - 1 : 1;
-
-            if (CurChoiceIndex == -1)   // 처음 선택
-            {
-                CurChoiceIndex = dir > 0f ? 0 : count - 1;
-                return;
-            }
-
-            CurChoiceIndex = (curChoiceIndex + dir) % count;
-
-            if (isAuto) ChangeMode(DialogueMode.Auto);
-        }
+        return true;
     }
 
-    private void OnSubmit(InputAction.CallbackContext context)
+    public void SelectChoice(float axis)
     {
-        if (context.started)
+        int count = curDialogue.choiceIds.Count;
+
+        int dir = axis > 0f ? count - 1 : 1;
+
+        if (CurChoiceIndex == -1)   // 처음 선택
         {
-            if (CurChoiceIndex < 0 || CurChoiceIndex >= choiceBtns.Count) return;
-            choiceBtns[curChoiceIndex].SubmitChoice();
+            CurChoiceIndex = dir > 0f ? 0 : count - 1;
+            return;
         }
+
+        CurChoiceIndex = (curChoiceIndex + dir) % count;
+    }
+
+    public void SubmitCurChoice()
+    {
+        if (CurChoiceIndex < 0 || CurChoiceIndex >= choiceBtns.Count) return;
+        choiceBtns[curChoiceIndex].SubmitChoice();
     }
     #endregion
 
@@ -456,11 +419,10 @@ public class UIDialogue : BaseUI
                 skipCoroutine = StartCoroutine(SkipDialogueRoutine());
                 break;
             case DialogueMode.Auto:
-                autoPlaying.gameObject.SetActive(true);
                 if (!typer.IsTyping) TryShowNextLine();
                 break;
             case DialogueMode.Backlog:
-                var ui = UIManager.Instance.GetOrCreateUI<UIDialogueBacklog>(true);
+                var ui = UIManager.Instance.GetPanel<UIDialogueBacklog>(true);
                 ui.AddBacklogs(backlogs);
                 backlogs.Clear();
                 typer.SkipOrComplete();
@@ -473,39 +435,43 @@ public class UIDialogue : BaseUI
                 break;
         }
 
-        autoBtn.SetState(curMode == DialogueMode.Auto);
-        skipBtn.SetState(curMode == DialogueMode.Skip);
-        backlogBtn.SetState(curMode == DialogueMode.Backlog);
+        OnChangeMode?.Invoke();
+    }
+
+    public void ToggleMode(DialogueMode mode)
+    {
+        ChangeMode(curMode == mode ? DialogueMode.None : mode);
     }
 
     private void ClearModeState()
     {
         if (skipCoroutine != null)
         {
-            StopCoroutine(skipCoroutine);
+            StopActiveCoroutine(skipCoroutine);
             skipCoroutine = null;
         }
 
-        autoPlaying.gameObject.SetActive(false);
+        UIManager.Instance.ClosePanel<UIDialogueBacklog>();
     }
 
     private void SetNeedChoice(bool active)
     {
         needChoice = active;
-        autoPlaying.text = needChoice ? "자동진행 일시정지" : "자동진행 중...";
 
         if (needChoice)
         {
+            InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Navigate);
             InputManager.Instance.UnlockInput(ActionMaps.Dialogue, Actions.Submit);
         }
         else
         {
+            InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Navigate);
             InputManager.Instance.LockInput(ActionMaps.Dialogue, Actions.Submit);
         }
     }
     #endregion
 
-    private IEnumerator OnEndTyping()
+    private IEnumerator OnAutoEndTyping()
     {
         if (!needChoice)
         {
@@ -523,18 +489,12 @@ public class UIDialogue : BaseUI
 #if UNITY_EDITOR
     private void Reset()
     {
-        skipBtn = transform.FindChild<ToggleButton>("Btn_Skip");
-        autoBtn = transform.FindChild<ToggleButton>("Btn_Auto");
-        backlogBtn = transform.FindChild<ToggleButton>("Btn_Backlog");
-        optionBtn = transform.FindChild<BaseButton>("Btn_Option");
         dialogueWindowBtn = transform.FindChild<BaseButton>("Panel_Dialogue");
 
         portrait = transform.FindChild<Image>("Portrait");
         speaker = transform.FindChild<TMP_Text>("Text_Speaker");
         typer = transform.FindChild<DialogueTyper>("Text_Dialogue");
         arrow = transform.FindChild<Image>("Arrow").gameObject;
-
-        autoPlaying = transform.FindChild<TMP_Text>("Text_AutoPlaying");
 
         choiceBtnPrefab = AssetLoader.FindAndLoadByName("Btn_Choice").GetComponent<DialogueChoiceButton>();
         choiceRoot = transform.FindChild<RectTransform>("ChoiceGroup");

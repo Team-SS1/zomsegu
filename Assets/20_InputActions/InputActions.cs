@@ -676,6 +676,24 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Auto"",
+                    ""type"": ""Button"",
+                    ""id"": ""984a3b55-8369-40b3-9b62-58475a199292"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Backlog"",
+                    ""type"": ""Button"",
+                    ""id"": ""2aaa8a96-8e7b-47f7-bbb5-20d9bc4d8453"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -810,6 +828,28 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Submit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ab582fca-a119-4f60-84b3-61f361071854"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Auto"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""639ba6c1-cdf1-423d-a458-d8008f52580a"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Backlog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -885,6 +925,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Dialogue_Skip = m_Dialogue.FindAction("Skip", throwIfNotFound: true);
         m_Dialogue_AllSkip = m_Dialogue.FindAction("AllSkip", throwIfNotFound: true);
         m_Dialogue_Submit = m_Dialogue.FindAction("Submit", throwIfNotFound: true);
+        m_Dialogue_Auto = m_Dialogue.FindAction("Auto", throwIfNotFound: true);
+        m_Dialogue_Backlog = m_Dialogue.FindAction("Backlog", throwIfNotFound: true);
         // System
         m_System = asset.FindActionMap("System", throwIfNotFound: true);
         m_System_StopGame = m_System.FindAction("StopGame", throwIfNotFound: true);
@@ -1403,6 +1445,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Dialogue_Skip;
     private readonly InputAction m_Dialogue_AllSkip;
     private readonly InputAction m_Dialogue_Submit;
+    private readonly InputAction m_Dialogue_Auto;
+    private readonly InputAction m_Dialogue_Backlog;
     /// <summary>
     /// Provides access to input actions defined in input action map "Dialogue".
     /// </summary>
@@ -1438,6 +1482,14 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Dialogue/Submit".
         /// </summary>
         public InputAction @Submit => m_Wrapper.m_Dialogue_Submit;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialogue/Auto".
+        /// </summary>
+        public InputAction @Auto => m_Wrapper.m_Dialogue_Auto;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialogue/Backlog".
+        /// </summary>
+        public InputAction @Backlog => m_Wrapper.m_Dialogue_Backlog;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1482,6 +1534,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Submit.started += instance.OnSubmit;
             @Submit.performed += instance.OnSubmit;
             @Submit.canceled += instance.OnSubmit;
+            @Auto.started += instance.OnAuto;
+            @Auto.performed += instance.OnAuto;
+            @Auto.canceled += instance.OnAuto;
+            @Backlog.started += instance.OnBacklog;
+            @Backlog.performed += instance.OnBacklog;
+            @Backlog.canceled += instance.OnBacklog;
         }
 
         /// <summary>
@@ -1511,6 +1569,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Submit.started -= instance.OnSubmit;
             @Submit.performed -= instance.OnSubmit;
             @Submit.canceled -= instance.OnSubmit;
+            @Auto.started -= instance.OnAuto;
+            @Auto.performed -= instance.OnAuto;
+            @Auto.canceled -= instance.OnAuto;
+            @Backlog.started -= instance.OnBacklog;
+            @Backlog.performed -= instance.OnBacklog;
+            @Backlog.canceled -= instance.OnBacklog;
         }
 
         /// <summary>
@@ -1951,6 +2015,20 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSubmit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Auto" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAuto(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Backlog" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBacklog(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "System" which allows adding and removing callbacks.

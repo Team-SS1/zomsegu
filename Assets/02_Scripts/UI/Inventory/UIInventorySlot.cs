@@ -5,9 +5,9 @@ using UnityEngine.UI;
 using PlayerEnum;
 using TMPro;
 using UnityEngine.EventSystems;
-using UnityEditor.ShaderGraph.Internal;
+using ItemEnum;
 
-public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler , IPointerClickHandler
 {
     [Header("UI")]
     [SerializeField] private Image icon;
@@ -17,16 +17,23 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [Header("Drag")]
     [SerializeField] private Vector2 dragIconOffset = new Vector2(30f, -30f);
 
+    [Header("Click")]
+    [SerializeField] private float doubleClick = 0.25f;
+
+    private float lastClickTime = -1f;
 
     private GameObject dragIcon;
     private RectTransform dragIconRect;
     private Canvas rootCanvas;
+
+    private UIInventory uiInventory;
 
     public SlotRef slotRef { get; private set; }
 
     private void Awake()
     {
         rootCanvas = GetComponentInParent<Canvas>();
+        uiInventory = GetComponentInParent<UIInventory>();
 
         if(canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
@@ -126,6 +133,22 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if(DragContext.payload == null) return;
 
+        SlotRef from = DragContext.payload.from;
+
+        if(from.slotType == SlotType.Equipment && uiInventory != null)
+        {
+            int equippedItemId = ItemTransferService.GetEquippedItemId(from);
+            if (equippedItemId != 0)
+                uiInventory.AdjustFilterBeforeUnEquip(equippedItemId);
+        }
+        if(uiInventory != null &&
+            uiInventory.IsFiltered &&
+            from.slotType == SlotType.Equipment)
+        {
+            ItemTransferService.TryUnEquipToFirstEmptyInventory(from);
+            return;
+        }
+
         DragContext.payload.SetTo(slotRef);
 
         ItemTransferService.TryTransferBetweenSlots(DragContext.payload);
@@ -176,4 +199,18 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         SetIconAlpha(1f);
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(eventData.button != PointerEventData.InputButton.Left) return;
+
+        if(Time.unscaledTime - lastClickTime <= doubleClick)
+        {
+            ItemTransferService.TryUseOrEquipFromInventory(slotRef);
+            lastClickTime = -1f;
+        }
+        else
+        {
+            lastClickTime = Time.unscaledTime;
+        }
+    }
 }

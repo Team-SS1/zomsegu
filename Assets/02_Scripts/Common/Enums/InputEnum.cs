@@ -46,6 +46,8 @@
         Navigate,
         Skip,
         AllSkip,
+        Auto,
+        Backlog,
 
         // === Common ===
         Submit,     // UI & Dialogue

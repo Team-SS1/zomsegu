@@ -27,7 +27,7 @@ public class UIDialogueBacklog : BaseUI
 
     private void Start()
     {
-        uiDialogue = UIManager.Instance.GetOrCreateUI<UIDialogue>(true);
+        uiDialogue = UIManager.Instance.GetPanel<UIDialogue>(true);
 
         closeBtn.onClick.AddListener(() =>
         {
@@ -64,10 +64,10 @@ public class UIDialogueBacklog : BaseUI
 
     public void AddBacklogs(List<DialogueBacklog> backlogs)
     {
-        backlogs.ForEach((log) => AddBackLog(log));
+        backlogs.ForEach((log) => AddBacklog(log));
     }
 
-    private void AddBackLog(in DialogueBacklog backlog)
+    private void AddBacklog(in DialogueBacklog backlog)
     {
         BacklogSlot slot = Instantiate((backlog.isPlayer ? backlogLeftPrefab : backlogRightPrefab), root);
 

@@ -4,7 +4,7 @@
 
     protected override void OnClickInternal()
     {
-        //SetState(!isOn);
+        SetState(!isOn);
     }
 
     public override void SetState(bool active)

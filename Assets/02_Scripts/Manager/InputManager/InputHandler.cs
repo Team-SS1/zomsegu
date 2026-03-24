@@ -3,10 +3,51 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
+public class InputBindingEntry
+{
+    private InputAction inputAction;
+    private Action<InputAction.CallbackContext> action;
+    private bool isLocked;
+
+    public InputAction InputAction => inputAction;
+    public bool IsLocked => isLocked;
+
+    public InputBindingEntry(
+        InputAction inputAction,
+        Action<InputAction.CallbackContext> action,
+        bool isLocked)
+    {
+        this.inputAction = inputAction;
+        this.action = action;
+        this.isLocked = isLocked;
+    }
+
+    public void UnbindInput()
+    {
+        inputAction.started -= action;
+        inputAction.performed -= action;
+        inputAction.canceled -= action;
+    }
+
+    public void BindInput(Action<InputAction.CallbackContext> action)
+    {
+        UnbindInput();      // 기존 바인딩 제거
+        this.action = action;
+        inputAction.started += action;
+        inputAction.performed += action;
+        inputAction.canceled += action;
+    }
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+    }
+}
+
 public class InputHandler
 {
     private InputActionMap map;
-    private readonly Dictionary<InputAction, Action<InputAction.CallbackContext>> bindings = new();
+    private readonly Dictionary<Actions, InputBindingEntry> bindings = new();
 
     #region 생명주기
     public InputHandler(InputActionMap map)
@@ -16,11 +57,9 @@ public class InputHandler
 
     public void Dispose()
     {
-        foreach (var kvp in bindings)
+        foreach (var value in bindings.Values)
         {
-            kvp.Key.started -= kvp.Value;
-            kvp.Key.performed -= kvp.Value;
-            kvp.Key.canceled -= kvp.Value;
+            value.UnbindInput();
         }
         bindings.Clear();
 
@@ -32,8 +71,6 @@ public class InputHandler
     /// <summary>
     /// InputManager에서 사용하는 함수 바인딩
     /// </summary>
-    /// <param name="actions"></param>
-    /// <param name="action"></param>
     public void BindInput(Actions actions, Action<InputAction.CallbackContext> action)
     {
         if (action == null)
@@ -41,33 +78,29 @@ public class InputHandler
             throw new ArgumentNullException(nameof(action), "바인딩할 함수가 null 입니다");
         }
 
-        if (!TryGetInputAction(actions, out InputAction inputAction)) return;
-
-        // 기존 바인딩이 있으면 교체(중복 호출 방지)
-        if (bindings.TryGetValue(inputAction, out var prev))
+        if (!bindings.TryGetValue(actions, out var entry))
         {
-            inputAction.started -= prev;
-            inputAction.performed -= prev;
-            inputAction.canceled -= prev;
+            if (!TryGetInputAction(actions, out InputAction inputAction)) return;
+
+            entry = new InputBindingEntry(inputAction, action, false);
+            bindings[actions] = entry;
         }
 
-        bindings[inputAction] = action;
-
-        inputAction.started += action;
-        inputAction.performed += action;
-        inputAction.canceled += action;
+        entry.BindInput(action);
     }
 
     public void LockInput(Actions actions)
     {
-        if (!TryGetInputAction(actions, out InputAction inputAction)) return;
-        inputAction.Disable();
+        if (!bindings.TryGetValue(actions, out var entry)) return;
+        entry.SetLocked(true);
+        entry.InputAction.Disable();
     }
 
     public void UnlockInput(Actions actions)
     {
-        if (!TryGetInputAction(actions, out InputAction inputAction)) return;
-        inputAction.Enable();
+        if (!bindings.TryGetValue(actions, out var entry)) return;
+        entry.SetLocked(false);
+        entry.InputAction.Enable();
     }
     #endregion
 
@@ -106,6 +139,14 @@ public class InputHandler
     public void Enable()
     {
         map.Enable();
+
+        foreach (InputBindingEntry entry in bindings.Values)
+        {
+            if (entry.IsLocked)
+            {
+                entry.InputAction.Disable();
+            }
+        }
     }
 
     public void Disable()

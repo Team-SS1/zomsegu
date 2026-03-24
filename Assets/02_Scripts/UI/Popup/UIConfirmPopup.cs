@@ -1,4 +1,5 @@
 ﻿using InputEnum;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,12 +11,14 @@ public class UIConfirmPopup : UIPopup
     [SerializeField] private BaseButton btnYes;
     [SerializeField] private BaseButton btnNo;
 
-    private UnityAction onConfirm;
+    private readonly Queue<(string, UnityAction)> events = new();
+
+    private UnityAction OnConfirm;
+    private bool isFirst = true;
 
     #region Unity API
     private void Start()
     {
-        InputManager.Instance.BindInput(ActionMaps.UI, Actions.Close, OnClose);
         InputManager.Instance.BindInput(ActionMaps.UI, Actions.Submit, OnSubmit);
     }
 
@@ -24,8 +27,8 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.AddListener(OnClickYes);
         btnNo.onClick.AddListener(OnClickNo);
 
-        InputManager.Instance.AddMaps(ActionMaps.UI);
         InputManager.Instance.RemoveMaps(ActionMaps.Dialogue);
+        InputManager.Instance.AddMaps(ActionMaps.UI);
     }
 
     private void OnDisable()
@@ -33,23 +36,28 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.RemoveListener(OnClickYes);
         btnNo.onClick.RemoveListener(OnClickNo);
 
-        InputManager.Instance.RemoveMaps(ActionMaps.UI);
         InputManager.Instance.AddMaps(ActionMaps.Dialogue);
+        InputManager.Instance.RemoveMaps(ActionMaps.UI);
     }
     #endregion
 
-    public void Open(string text, UnityAction callback = null)
+    public void Register(string text, UnityAction callback = null)
     {
-        gameObject.SetActive(true);
-        this.message.text = text;
-        this.onConfirm = callback;
+        events.Enqueue((text, callback));
+        Logger.Log("팝업 이벤트 설정");
+
+        if (isFirst)
+        {
+            isFirst = false;
+            (message.text, OnConfirm) = events.Dequeue();
+        }
     }
 
     private void OnClickYes()
     {
-        onConfirm?.Invoke();
+        OnConfirm?.Invoke();
         btnYes.onClick.RemoveListener(OnClickYes);
-        onConfirm = null;
+        OnConfirm = null;
         Close();
     }
 
@@ -66,12 +74,16 @@ public class UIConfirmPopup : UIPopup
         }
     }
 
-    private void OnClose(InputAction.CallbackContext context)
+    public override void Close()
     {
-        if (context.started)
+        if (events.Count > 0)
         {
-            Close();
+            (message.text, OnConfirm) = events.Dequeue();
+            return;
         }
+
+        isFirst = true;
+        base.Close();
     }
 
     #region 에디터 전용

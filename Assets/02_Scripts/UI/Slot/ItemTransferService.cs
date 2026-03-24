@@ -20,7 +20,7 @@ public static class ItemTransferService
             return TryInventoryToInventory(from, to);
 
         if (from.slotType == SlotType.Inventory && to.slotType == SlotType.Equipment) // 인벤 -> 장비 이동
-            return TryInventoryToEquipment(from, to);
+            return TryInventoryToEquipment(from, to, true);
 
         if (from.slotType == SlotType.Equipment && to.slotType == SlotType.Inventory) // 장비 -> 인벤 이동
             return TryEquipmentToInventory(from, to);
@@ -92,7 +92,7 @@ public static class ItemTransferService
 
         return data.Inventory.Move(from.index, to.index);
     }
-    private static bool TryInventoryToEquipment(SlotRef from, SlotRef to) // 인벤에서 장비로 이동
+    private static bool TryInventoryToEquipment(SlotRef from, SlotRef to, bool autoBindToFirstQuickSlot) // 인벤에서 장비로 이동
     {
         PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
         if (data == null) return false;
@@ -159,7 +159,8 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
-            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
+            if(autoBindToFirstQuickSlot)
+                AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
             return true;
         }
 
@@ -176,7 +177,8 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
-            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
+            if(autoBindToFirstQuickSlot)
+                AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
             return true;
         }
         if (equipSlot.HasInstance && equipSlot.equippedItem != null) // 기존 장착 아이템이 인스턴스형이면 스왑
@@ -193,7 +195,8 @@ public static class ItemTransferService
                 inventory.TryAddInstance(removedItem.itemId, removedItem);
                 return false;
             }
-            AutoBindEquippedItemToFirstQuickSlot(from.playerType, removedItem.itemId, removedItem);
+            if(autoBindToFirstQuickSlot)
+                AutoBindEquippedItemToFirstQuickSlot(from.playerType, removedItem.itemId, removedItem);
             return true;
         }
         return false;
@@ -545,10 +548,7 @@ public static class ItemTransferService
             SlotRef from = SlotRef.Inv(playerType, invIndex);
             SlotRef to = SlotRef.Equip(playerType, EquipSlotType.Weapon);
 
-            DragPayload payload = new DragPayload(from);
-            payload.SetTo(to);
-
-            TryTransferBetweenSlots(payload);
+            TryInventoryToEquipment(from, to, false);
         }
     }
     //기타
@@ -703,5 +703,144 @@ public static class ItemTransferService
                 }
             }
         }
+    }
+    public static bool TrySelectQuickSlot(PlayerType playerType, int quickSlotIndex)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if (playerData == null || playerData.QuickSlot == null) return false;
+
+        QuickSlot quickSlot = playerData.QuickSlot;
+        if (quickSlotIndex < 0 || quickSlotIndex >= quickSlot.Capacity) return false;
+
+        quickSlot.SetSelectedIndex(quickSlotIndex);
+
+        TryAutoEquipIfSelectedQuickSlot(playerType, quickSlotIndex);
+
+        return true;
+    }
+    public static bool TryUseOrEquipFromInventory(SlotRef from)
+    {
+        if(from.slotType != SlotType.Inventory) return false;
+
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if(playerData == null) return false;
+
+        Inventory inventory = playerData.Inventory;
+        Equipment equipment = playerData.Equipment;
+
+        if(inventory == null) return false;
+
+        InventorySlot inventorySlot = inventory.GetSlot(from.index);
+        if(inventorySlot == null || inventorySlot.isEmpty) return false;
+
+        CommonItemData common = ItemDB.GetCommon(inventorySlot.itemId);
+        if(common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+
+        switch (itemType)
+        {
+            case ItemType.Weapon:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Weapon);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+                
+            case ItemType.Head:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Head);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Body:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Body);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Leg:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Leg);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Shoes:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Shoes);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Bag:
+                {
+                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Bag);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Accessory:
+                {
+                    if (equipment == null) return false;
+
+                    EquipmentSlot acc1 = equipment.GetSlot(EquipSlotType.Accessory1);
+                    EquipmentSlot acc2 = equipment.GetSlot(EquipSlotType.Accessory2);
+
+                    EquipSlotType targetSlot;
+
+                    if(acc1 ==  null || acc2 == null) return false;
+
+                    if (acc1.isEmpty)
+                        targetSlot = EquipSlotType.Accessory1;
+                    else if (acc2.isEmpty)
+                        targetSlot = EquipSlotType.Accessory2;
+                    else
+                        targetSlot = EquipSlotType.Accessory1;
+
+                    SlotRef to = SlotRef.Equip(from.playerType, targetSlot);
+                    DragPayload payload = new DragPayload(from);
+                    payload.SetTo(to);
+                    return TryTransferBetweenSlots(payload);
+                }
+            case ItemType.Consumable:
+                return TryUseConsumableFromInventory(from);
+
+            default:
+                return false;
+        }
+    }
+    private static bool TryUseConsumableFromInventory(SlotRef from)
+    {
+        if(from.slotType != SlotType.Inventory) return false;
+
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if(playerData == null || playerData.Inventory == null) return false;
+
+        Inventory inventory = playerData.Inventory;
+        InventorySlot inventorySlot = inventory.GetSlot(from.index);
+        if(inventorySlot == null || inventorySlot.isEmpty) return false;
+        if(!inventorySlot.IsStack) return false;
+
+        CommonItemData common = ItemDB.GetCommon(inventorySlot.itemId);
+        if(common == null) return false;
+
+        Debug.Log("아이템 사용");
+        return inventory.TryRemoveStack(from.index, 1);
+    }
+    public static int GetEquippedItemId(SlotRef from)
+    {
+        if (from.slotType != SlotType.Equipment) return 0;
+
+        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        if (data == null || data.Equipment == null) return 0;
+
+        EquipmentSlot equipmentSlot = data.Equipment.GetSlot(from.equipSlot);
+        if (equipmentSlot == null || equipmentSlot.isEmpty) return 0;
+
+        return equipmentSlot.GetItemId();
     }
 }
