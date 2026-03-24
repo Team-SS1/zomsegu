@@ -29,6 +29,8 @@ public class InputManager : GlobalSingleton<InputManager>
         {
             InitializeHandlers();
         }
+
+        SetMaps(GetActionMapsFromInputMode(InputMode.Default));
     }
 
     protected override void OnDestroy()
@@ -79,8 +81,8 @@ public class InputManager : GlobalSingleton<InputManager>
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SetMaps(ActionMaps.None);
-        DisposeHandlers();
+        SetMaps(GetActionMapsFromInputMode(InputMode.Default));
+        inputModeStack.Clear();
     }
     #endregion
 
@@ -100,10 +102,17 @@ public class InputManager : GlobalSingleton<InputManager>
     /// </summary>
     public void PopMode()
     {
-        if (inputModeStack.Count > 1)
+        if (inputModeStack.Count > 0)
         {
             inputModeStack.RemoveAt(inputModeStack.Count - 1);
         }
+
+        if (inputModeStack.Count == 0)
+        {
+            SetMaps(GetActionMapsFromInputMode(InputMode.Default));
+            return;
+        }
+
         ActionMaps actionMaps = GetActionMapsFromInputMode(inputModeStack[^1]);
         SetMaps(actionMaps);
     }

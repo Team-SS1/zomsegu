@@ -38,7 +38,7 @@ public class DialogueInputController : MonoBehaviour
 
     private void OnDisable()
     {
-        InputManager.Instance?.PushMode(InputMode.Gameplay);
+        InputManager.Instance?.PopMode();
     }
     #endregion
 

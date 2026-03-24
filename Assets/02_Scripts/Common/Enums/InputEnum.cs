@@ -2,7 +2,7 @@
 {
     public enum InputMode
     {
-        Title,
+        Default,
         Gameplay,
         Dialogue,
         Modal,
