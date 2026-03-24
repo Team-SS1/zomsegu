@@ -177,8 +177,37 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8742893159964252245, guid: 606d269e94dd0e747bb42e4e98367997, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 523497038}
   m_SourcePrefab: {fileID: 100100000, guid: 606d269e94dd0e747bb42e4e98367997, type: 3}
+--- !u!1 &523497036 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8742893159964252245, guid: 606d269e94dd0e747bb42e4e98367997, type: 3}
+  m_PrefabInstance: {fileID: 37108285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &523497038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523497036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 954732c5ddd10894ca2c336dd63409a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floor01: {fileID: 0}
+  lowerStair12: {fileID: 0}
+  landing12: {fileID: 0}
+  upperStair12: {fileID: 0}
+  floor02: {fileID: 0}
+  lowerStair23: {fileID: 0}
+  landing23: {fileID: 0}
+  upperStair23: {fileID: 0}
+  floor03: {fileID: 0}
 --- !u!1 &1117117679
 GameObject:
   m_ObjectHideFlags: 0
