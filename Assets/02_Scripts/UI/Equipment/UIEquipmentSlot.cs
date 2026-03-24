@@ -30,6 +30,8 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
     private GameObject dragIcon;
     private RectTransform dragIconRect;
     private Canvas rootCanvas;
+
+    [SerializeField] private UIInventory uiInventory;
     public SlotRef slotRef { get; private set; }
 
     private void Awake()
@@ -224,6 +226,10 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
 
         EquipmentSlot equipmentSlot = equipment.GetSlot(slotRef.equipSlot);
         if(equipmentSlot == null || equipmentSlot.isEmpty) return;
+
+        int itemId = equipmentSlot.GetItemId();
+        if(uiInventory != null && itemId != 0)
+            uiInventory.AdjustFilterBeforeUnEquip(itemId);
 
         bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(slotRef);
 

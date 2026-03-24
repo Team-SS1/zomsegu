@@ -4587,6 +4587,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: 8b2274ef44ce03b4985e4782b2224334, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5191,6 +5195,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: b5b3f154e60b1634891f6bd5254a8c86, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -6151,6 +6159,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: c62b0be81d724f84698bfd3f000dc389, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -6756,6 +6768,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: d2cf4be219aa18340ba1816e36a58fc6, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -8705,6 +8721,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: 844f04394e4fdbe4e8c5fef5e90dce21, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -10150,6 +10170,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: 5b8bb7064a53df04d82074d3e0e47a2e, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -12490,6 +12514,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: 0d8b63d2c434dc94183d8b424323a383, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -18565,6 +18593,10 @@ PrefabInstance:
       propertyPath: normalBG
       value: 
       objectReference: {fileID: 21300000, guid: b873d9e664fb3014b88c141740b2522c, type: 3}
+    - target: {fileID: 1094360499053203754, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
+      propertyPath: uiInventory
+      value: 
+      objectReference: {fileID: 2022489626}
     - target: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
