@@ -712,10 +712,25 @@ public static class ItemTransferService
         QuickSlot quickSlot = playerData.QuickSlot;
         if (quickSlotIndex < 0 || quickSlotIndex >= quickSlot.Capacity) return false;
 
+        QuickSlotSlot slot = quickSlot.GetSlot(quickSlotIndex);
+        if(slot == null) return false;
+
         quickSlot.SetSelectedIndex(quickSlotIndex);
 
-        TryAutoEquipIfSelectedQuickSlot(playerType, quickSlotIndex);
+        if (slot.isEmpty) return true;
 
+        CommonItemData common = ItemDB.GetCommon(slot.itemId);
+        if (common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+
+        if(itemType == ItemType.Consumable)
+            return TryUseConsumableFromQuickSlot(playerType, quickSlotIndex);
+        else if(itemType == ItemType.Weapon)
+        {
+            TryAutoEquipIfSelectedQuickSlot(playerType, quickSlotIndex);
+            return true;
+        }       
         return true;
     }
     public static bool TryUseOrEquipFromInventory(SlotRef from)
@@ -842,5 +857,46 @@ public static class ItemTransferService
         if (equipmentSlot == null || equipmentSlot.isEmpty) return 0;
 
         return equipmentSlot.GetItemId();
+    }
+    private static bool TryUseConsumableFromQuickSlot(PlayerType playerType, int quickSlotIndex)
+    {
+        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        if(playerData == null || playerData.QuickSlot == null || playerData.Inventory == null) return false;
+
+        QuickSlot quickSlot = playerData.QuickSlot;
+        Inventory inventory = playerData.Inventory;
+
+        QuickSlotSlot quickSlotSlot = quickSlot.GetSlot(quickSlotIndex);
+        if(quickSlotSlot == null || quickSlotSlot.isEmpty) return false;
+        if (!quickSlotSlot.IsStack) return false;
+
+        CommonItemData common = ItemDB.GetCommon(quickSlotSlot.itemId);
+        if (common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+        if(itemType != ItemType.Consumable) return false;
+
+        int itemId = quickSlotSlot.itemId;
+        int invIndex = -1;
+
+        for(int i = 0; i< inventory.Capacity; i++)
+        {
+            InventorySlot inventorySlot = inventory.GetSlot(i);
+            if(inventorySlot == null || inventorySlot.isEmpty) continue;
+
+            if(inventorySlot.IsStack && inventorySlot.itemId == itemId)
+            {
+                invIndex = i;
+                break;
+            }
+        }
+        if(invIndex < 0) return false;
+
+        //아이템 사용함
+
+        bool success = inventory.TryRemoveStack(invIndex, 1);
+        if(!success) return false;
+
+        return true;
     }
 }
