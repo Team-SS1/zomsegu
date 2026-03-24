@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Test_InputSystem : MonoBehaviour
@@ -51,10 +50,8 @@ public class Test_InputSystem : MonoBehaviour
 
     public void Example_Open_Dialogue_Block_Gameplay()
     {                                                   // 활성화된 Maps
-        mg.SetMaps(InputEnum.ActionMaps.Gameplay);      // Gameplay
-
-        mg.AddMaps(InputEnum.ActionMaps.Dialogue);      // Gameplay | Dialogue
-        mg.RemoveMaps(InputEnum.ActionMaps.Gameplay);   // Dialogue
+        mg.SetInputMode(InputEnum.InputMode.Gameplay);  // Gameplay
+        mg.SetInputMode(InputEnum.InputMode.Dialogue);  // Dialogue
 
         dialoguePanel.SetActive(true);
     }
@@ -65,8 +62,7 @@ public class Test_InputSystem : MonoBehaviour
         {
             dialoguePanel.SetActive(false);
 
-            mg.RemoveMaps(InputEnum.ActionMaps.Dialogue);
-            mg.AddMaps(InputEnum.ActionMaps.Gameplay);
+            mg.SetInputMode(InputEnum.InputMode.Gameplay);
         }
     }
     #endregion
@@ -86,24 +82,6 @@ public class Test_InputSystem : MonoBehaviour
         }
 
         isLock = !isLock;
-    }
-    #endregion
-
-    #region Utils
-    public void ToggleLayer(string text)
-    {
-        Enum.TryParse(text, out InputEnum.ActionMaps actionMaps);
-
-        if (mg.HasMaps(actionMaps))
-        {
-            mg.RemoveMaps(actionMaps);
-            Logger.Log($"{actionMaps} 꺼짐");
-        }
-        else
-        {
-            mg.AddMaps(actionMaps);
-            Logger.Log($"{actionMaps} 켜짐");
-        }
     }
     #endregion
 }
