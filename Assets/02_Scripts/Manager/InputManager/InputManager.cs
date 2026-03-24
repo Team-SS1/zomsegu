@@ -84,33 +84,26 @@ public class InputManager : GlobalSingleton<InputManager>
 
     #region 레이어 설정
     /// <summary>
-    /// 기존 Input Action Maps 설정 모두 제거, 새로운 설정
-    /// 게임 초기화 시 사용 권장
+    /// 인풋 모드 변경하기
     /// </summary>
-    public void SetMaps(ActionMaps actionMaps)
+    public void SetInputMode(InputMode mode)
+    {
+        ActionMaps actionMaps = (mode) switch
+        {
+            InputMode.Dialogue => ActionMaps.Dialogue,
+            InputMode.Modal => ActionMaps.UI,
+            InputMode.Gameplay => ActionMaps.Gameplay | ActionMaps.UI,
+            InputMode.Cutscene => ActionMaps.Cutscene,
+            _ => ActionMaps.None
+        };
+
+        SetMaps(actionMaps);
+    }
+
+    private void SetMaps(ActionMaps actionMaps)
     {
         ActionMaps prev = activeActionMaps;
         activeActionMaps = actionMaps;
-        SyncChangedMaps(prev, activeActionMaps);
-    }
-
-    /// <summary>
-    /// 특정 Input Action Maps 추가
-    /// </summary>
-    public void AddMaps(ActionMaps actionMaps)
-    {
-        ActionMaps prev = activeActionMaps;
-        activeActionMaps |= actionMaps;
-        SyncChangedMaps(prev, activeActionMaps);
-    }
-
-    /// <summary>
-    /// 특정 Input Action Maps 제거
-    /// </summary>
-    public void RemoveMaps(ActionMaps actionMaps)
-    {
-        ActionMaps prev = activeActionMaps;
-        activeActionMaps &= ~actionMaps;
         SyncChangedMaps(prev, activeActionMaps);
     }
 
