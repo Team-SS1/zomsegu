@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         /* --- Test Set --- */
-        InputManager.Instance.SetInputMode(InputEnum.InputMode.Gameplay);
+        InputManager.Instance.PushMode(InputEnum.InputMode.Gameplay);
         /* --- -------- --- */
         InputManager.Instance.BindInput(InputEnum.ActionMaps.Gameplay, InputEnum.Actions.Move, OnMove);
     }

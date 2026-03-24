@@ -27,7 +27,7 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.AddListener(OnClickYes);
         btnNo.onClick.AddListener(OnClickNo);
 
-        InputManager.Instance.SetInputMode(InputMode.Modal);
+        InputManager.Instance.PushMode(InputMode.Modal);
     }
 
     private void OnDisable()
@@ -35,7 +35,7 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.RemoveListener(OnClickYes);
         btnNo.onClick.RemoveListener(OnClickNo);
 
-        InputManager.Instance.SetInputMode(InputMode.Dialogue);
+        InputManager.Instance.PopMode();
     }
     #endregion
 

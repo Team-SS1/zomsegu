@@ -15,6 +15,8 @@ public class InputManager : GlobalSingleton<InputManager>
     [SerializeField] private InputActionAsset inputAssets;
 
     private readonly Dictionary<ActionMaps, InputHandler> handlers = new();
+
+    private readonly List<InputMode> inputModeStack = new();
     private ActionMaps activeActionMaps = ActionMaps.None;
     #endregion
 
@@ -84,19 +86,25 @@ public class InputManager : GlobalSingleton<InputManager>
 
     #region 레이어 설정
     /// <summary>
-    /// 인풋 모드 변경하기
+    /// 인풋 모드 변경
     /// </summary>
-    public void SetInputMode(InputMode mode)
+    public void PushMode(InputMode mode)
     {
-        ActionMaps actionMaps = (mode) switch
-        {
-            InputMode.Dialogue => ActionMaps.Dialogue,
-            InputMode.Modal => ActionMaps.UI,
-            InputMode.Gameplay => ActionMaps.Gameplay | ActionMaps.UI,
-            InputMode.Cutscene => ActionMaps.Cutscene,
-            _ => ActionMaps.None
-        };
+        inputModeStack.Add(mode);
+        ActionMaps actionMaps = GetActionMapsFromInputMode(inputModeStack[^1]);
+        SetMaps(actionMaps);
+    }
 
+    /// <summary>
+    /// 이전 모드로 변경
+    /// </summary>
+    public void PopMode()
+    {
+        if (inputModeStack.Count > 1)
+        {
+            inputModeStack.RemoveAt(inputModeStack.Count - 1);
+        }
+        ActionMaps actionMaps = GetActionMapsFromInputMode(inputModeStack[^1]);
         SetMaps(actionMaps);
     }
 
@@ -237,6 +245,20 @@ public class InputManager : GlobalSingleton<InputManager>
     public static bool IsSingleFlag(ActionMaps value)
     {
         return value != 0 && (value & (value - 1)) == 0;
+    }
+    #endregion
+
+    #region Utils
+    private ActionMaps GetActionMapsFromInputMode(InputMode mode)
+    {
+        return (mode) switch
+        {
+            InputMode.Dialogue => ActionMaps.Dialogue,
+            InputMode.Modal => ActionMaps.UI,
+            InputMode.Gameplay => ActionMaps.Gameplay | ActionMaps.UI | ActionMaps.System,
+            InputMode.Cutscene => ActionMaps.Cutscene,
+            _ => ActionMaps.None | ActionMaps.System
+        };
     }
     #endregion
 

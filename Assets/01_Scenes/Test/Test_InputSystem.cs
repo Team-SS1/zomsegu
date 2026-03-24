@@ -50,8 +50,8 @@ public class Test_InputSystem : MonoBehaviour
 
     public void Example_Open_Dialogue_Block_Gameplay()
     {                                                   // 활성화된 Maps
-        mg.SetInputMode(InputEnum.InputMode.Gameplay);  // Gameplay
-        mg.SetInputMode(InputEnum.InputMode.Dialogue);  // Dialogue
+        mg.PushMode(InputEnum.InputMode.Gameplay);  // Gameplay
+        mg.PushMode(InputEnum.InputMode.Dialogue);  // Dialogue
 
         dialoguePanel.SetActive(true);
     }
@@ -62,7 +62,7 @@ public class Test_InputSystem : MonoBehaviour
         {
             dialoguePanel.SetActive(false);
 
-            mg.SetInputMode(InputEnum.InputMode.Gameplay);
+            mg.PushMode(InputEnum.InputMode.Gameplay);
         }
     }
     #endregion

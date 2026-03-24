@@ -33,12 +33,12 @@ public class DialogueInputController : MonoBehaviour
 
     private void OnEnable()
     {
-        InputManager.Instance?.SetInputMode(InputMode.Dialogue);
+        InputManager.Instance?.PushMode(InputMode.Dialogue);
     }
 
     private void OnDisable()
     {
-        InputManager.Instance?.SetInputMode(InputMode.Gameplay);
+        InputManager.Instance?.PushMode(InputMode.Gameplay);
     }
     #endregion
 
