@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UIEnum;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 
-public class UIManager : GlobalSingleton<UIManager>
+public class UIManager : SceneSingleton<UIManager>
 {
     [Header("Database")]
     [SerializeField] private GoDatabase uiDatabase;
@@ -47,45 +46,30 @@ public class UIManager : GlobalSingleton<UIManager>
             string[] splits = order.ToString().Split("_");
             if (splits.Length == 2)
             {
-                root = splits[1].Equals("Panel")
-                   ? Instantiate(panelCanvasPrefab)
-                   : Instantiate(popupCanvasPrefab);
-                root.name = order.ToString();
-                root.SetActive(false);
+                if (splits[1].Equals("Panel"))
+                {
+                    root = Instantiate(panelCanvasPrefab);
+                    root.SetActive(true);
+                }
+                else
+                {
+                    root = Instantiate(popupCanvasPrefab);
+                    root.SetActive(false);
+                }
+                root.name = $"UI_Root_{order.ToString()}";
 
                 uiRoots[order] = root.GetComponent<RectTransform>();
+
+                var renderer = root.GetComponent<Canvas>();
+                renderer.sortingOrder = (int)order;
             }
+
+            uisByOrder[order] = new List<BaseUI>();
         }
 
         GameObject newGo = new("EventSystem");
         newGo.AddComponent<EventSystem>();
         newGo.AddComponent<StandaloneInputModule>();
-    }
-    #endregion
-
-    #region 씬 관리
-    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        base.OnSceneLoaded(scene, mode);
-
-        uiCache.Clear();
-        foreach (UIOrder order in Enum.GetValues(typeof(UIOrder)))
-        {
-            List<BaseUI> uis = this.uisByOrder[order];
-
-            for (int i = uis.Count - 1; i >= 0; i--)
-            {
-                BaseUI ui = uis[i];
-                if (ui.DontDestroy) continue;
-                uis.RemoveAt(i);
-                Destroy(ui);
-            }
-
-            if (uiRoots[order].childCount == 0)
-            {
-                uiRoots[order].gameObject.SetActive(false);
-            }
-        }
     }
     #endregion
 
@@ -120,7 +104,7 @@ public class UIManager : GlobalSingleton<UIManager>
         }
 
         T prefab = GetResource<T>();
-        T newUi = Instantiate(prefab, uiRoots[cachedPrefab.Order]);
+        T newUi = Instantiate(prefab, uiRoots[prefab.Order]);
         uisByOrder[newUi.Order].Add(newUi);
 
         return newUi;
@@ -228,7 +212,6 @@ public class UIManager : GlobalSingleton<UIManager>
             for (int i = uiList.Count - 1; i >= 0; i--)
             {
                 uiList[i].gameObject.SetActive(false);
-                uiList.RemoveAt(i);
             }
 
             uiRoots[order].gameObject.SetActive(false);
