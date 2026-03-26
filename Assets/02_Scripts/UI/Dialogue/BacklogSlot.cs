@@ -13,6 +13,8 @@ public class BacklogSlot : MonoBehaviour
         this.portrait.sprite = portrait;
         this.speaker.text = speaker;
         dialogueText.text = text;
+
+        gameObject.SetActive(true);
     }
 
     public void SetDimmed()

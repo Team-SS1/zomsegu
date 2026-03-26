@@ -72,7 +72,6 @@ public class UIDialogue : BaseUI
     private WaitForSecondsRealtime skipDelay;
 
     private List<DialogueBacklog> backlogs = new();
-    private DialogueBacklog curBacklog;
 
     public event Action OnChangeMode;
 
@@ -235,13 +234,13 @@ public class UIDialogue : BaseUI
         {
             ShowLine(curDialogue);
 
-            curBacklog = new DialogueBacklog
+            DialogueBacklog backlog = new()
             {
                 isPlayer = curDialogue.isPlayer,
                 speaker = curDialogue.speaker,
                 dialogueText = curDialogue.text
             };
-            backlogs.Add(curBacklog);
+            backlogs.Add(backlog);
         }
 
         return true;
@@ -251,9 +250,12 @@ public class UIDialogue : BaseUI
     {
         curChoice = data;
         SetNeedChoice(false);
-        curBacklog.choiceTexts[curChoiceIndex]
-            = $"<color=#FF0000><b>{curBacklog.choiceTexts[curChoiceIndex]}</b></color>";
-        backlogs.Add(curBacklog);
+
+        DialogueBacklog backlog = backlogs[^1];
+        backlog.choiceTexts[curChoiceIndex]
+            = $"<color=#FF0000><b>{backlog.choiceTexts[curChoiceIndex]}</b></color>";
+        backlogs[^1] = backlog;
+
         TryShowNextLine();
     }
 
@@ -263,13 +265,14 @@ public class UIDialogue : BaseUI
         typer.OnEnd += CreateChoiceButton;
         typer.PlayLine(data.text);
 
-        curBacklog = new DialogueBacklog
+        DialogueBacklog backlog = new()
         {
             isPlayer = data.isPlayer,
             speaker = data.speaker,
             dialogueText = data.text,
             choiceTexts = new string[data.choiceIds.Count]
         };
+        backlogs.Add(backlog);
     }
 
     private WaitForSecondsRealtime CreateChoiceButton()
@@ -301,7 +304,10 @@ public class UIDialogue : BaseUI
 
             choiceBtn.Init(this, choiceData, i);
             choiceBtnsCos.Add(choiceBtn.CoPlayLine());
-            curBacklog.choiceTexts[i] = $"{i + 1}. {choiceData.text}";
+
+            DialogueBacklog backlog = backlogs[^1];
+            backlog.choiceTexts[i] = $"{i + 1}. {choiceData.text}";
+            backlogs[^1] = backlog;
         }
 
         curChoiceIndex = -1;
@@ -424,7 +430,6 @@ public class UIDialogue : BaseUI
             case DialogueMode.Backlog:
                 var ui = UIManager.Instance.OpenPanel<UIDialogueBacklog>();
                 ui.AddBacklogs(backlogs);
-                backlogs.Clear();
                 typer.SkipOrComplete();
                 if (!needChoice)
                 {
@@ -451,7 +456,7 @@ public class UIDialogue : BaseUI
             skipCoroutine = null;
         }
 
-        UIManager.Instance.ClosePanel<UIDialogueBacklog>();
+        UIManager.Instance?.ClosePanel<UIDialogueBacklog>();
     }
 
     private void SetNeedChoice(bool active)
