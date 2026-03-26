@@ -1358,6 +1358,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1916e164712c64e89c028b69e934e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  order: 10
+  dontDestroy: 0
   dialogueWindowBtn: {fileID: 8459416694161135913}
   portrait: {fileID: 631175679155018061}
   speaker: {fileID: 7282039423806790239}

@@ -270,6 +270,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b80b4b325f10368439f12d63e3721253, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  order: 40
+  dontDestroy: 0
   message: {fileID: 6730248510765005511}
   btnYes: {fileID: 6885642246855824754}
   btnNo: {fileID: 7341655605683962191}
