@@ -45,7 +45,17 @@ public class MonsterKnockback : MonoBehaviour
             EffectPool.Instance.SpawnHit(hitPos, dir);
         }
 
-        knockbackRoutine = StartCoroutine(KnockbackRoutine(dir.normalized));
+        float resist = GetStaggerResistance01();
+
+        // 저항이 높을수록 짧고 약하게
+        float finalForce = knockbackForce * (1f - resist);
+        float finalDuration = knockbackDuration * (1f - resist);
+
+        // 너무 0에 가까워지지 않게
+        finalForce = Mathf.Max(0.05f, finalForce);
+        finalDuration = Mathf.Max(0.02f, finalDuration);
+
+        knockbackRoutine = StartCoroutine(KnockbackRoutine(dir.normalized, finalForce, finalDuration));
     }
 
     public void StopImmediate()
@@ -62,17 +72,16 @@ public class MonsterKnockback : MonoBehaviour
             rb.velocity = Vector2.zero;
     }
 
-    private IEnumerator KnockbackRoutine(Vector2 dir)
+    private IEnumerator KnockbackRoutine(Vector2 dir, float force, float duration)
     {
         IsKnockbacking = true;
 
-        float timer = knockbackDuration;
-
+        float timer = duration;
         rb.velocity = Vector2.zero;
 
         while (timer > 0f)
         {
-            rb.velocity = dir * knockbackForce;
+            rb.velocity = dir * force;
             timer -= Time.deltaTime;
             yield return null;
         }
@@ -80,6 +89,14 @@ public class MonsterKnockback : MonoBehaviour
         rb.velocity = Vector2.zero;
         IsKnockbacking = false;
         knockbackRoutine = null;
+    }
+
+    private float GetStaggerResistance01()
+    {
+        if (zombie != null && zombie.stat != null)
+            return Mathf.Clamp01(zombie.stat.StaggerResistance);
+
+        return 0f;
     }
 
     private Vector2 GetHitEffectOrigin()
