@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UIEnum;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -15,11 +16,8 @@ public class UIManager : GlobalSingleton<UIManager>
 
     private readonly Dictionary<Type, BaseUI> uiCache = new();  // 리소스 캐시
 
-    private RectTransform panelRoot;
-    private RectTransform popupRoot;
-
-    private readonly Dictionary<Type, BaseUI> panelMap = new(); // 기본 ui
-    private readonly List<UIPopup> popupStack = new();          // 팝업 ui
+    private Dictionary<UIOrder, RectTransform> uiRoots = new();
+    private Dictionary<UIOrder, List<BaseUI>> uisByOrder = new();
 
     private UIInputCoordinator coordinator;
 
@@ -42,9 +40,22 @@ public class UIManager : GlobalSingleton<UIManager>
     #region 초기화
     private void Init()
     {
-        panelRoot = Instantiate(panelCanvasPrefab).GetComponent<RectTransform>();
-        popupRoot = Instantiate(popupCanvasPrefab).GetComponent<RectTransform>();
-        popupRoot.gameObject.SetActive(false);
+        foreach (UIOrder order in Enum.GetValues(typeof(UIOrder)))
+        {
+            GameObject root;
+
+            string[] splits = order.ToString().Split("_");
+            if (splits.Length == 2)
+            {
+                root = splits[1].Equals("Panel")
+                   ? Instantiate(panelCanvasPrefab)
+                   : Instantiate(popupCanvasPrefab);
+                root.name = order.ToString();
+                root.SetActive(false);
+
+                uiRoots[order] = root.GetComponent<RectTransform>();
+            }
+        }
 
         GameObject newGo = new("EventSystem");
         newGo.AddComponent<EventSystem>();
@@ -57,9 +68,24 @@ public class UIManager : GlobalSingleton<UIManager>
     {
         base.OnSceneLoaded(scene, mode);
 
-        panelMap.Clear();
-        popupStack.Clear();
-        popupRoot.gameObject.SetActive(false);
+        uiCache.Clear();
+        foreach (UIOrder order in Enum.GetValues(typeof(UIOrder)))
+        {
+            List<BaseUI> uis = this.uisByOrder[order];
+
+            for (int i = uis.Count - 1; i >= 0; i--)
+            {
+                BaseUI ui = uis[i];
+                if (ui.DontDestroy) continue;
+                uis.RemoveAt(i);
+                Destroy(ui);
+            }
+
+            if (uiRoots[order].childCount == 0)
+            {
+                uiRoots[order].gameObject.SetActive(false);
+            }
+        }
     }
     #endregion
 
@@ -68,38 +94,36 @@ public class UIManager : GlobalSingleton<UIManager>
     /// ui 프리팹 가져오기
     /// gameobject 활성화 상태를 지정하고 싶을 경우 active 사용
     /// </summary>
-    public T GetPanel<T>(bool active = false) where T : BaseUI
+    public T GetPanel<T>() where T : BaseUI
     {
-        var type = typeof(T);
-
-        if (panelMap.TryGetValue(type, out BaseUI ui))  // 이미 존재
-        {
-            ui.gameObject.SetActive(active);
-            return ui as T;
-        }
-
-        T prefab = GetResource<T>();
-        ui = Instantiate(prefab, panelRoot);
-        ui.gameObject.SetActive(active);
-
-        panelMap[type] = ui;
-
-        return ui as T;
+        return GetOrCreateUI<T>();
     }
 
     private T GetOrCreatePopup<T>() where T : UIPopup
     {
-        foreach (UIPopup popup in popupStack)
+        return GetOrCreateUI<T>();
+    }
+
+    private T GetOrCreateUI<T>() where T : BaseUI
+    {
+        var type = typeof(T);
+
+        if (uiCache.TryGetValue(type, out BaseUI cachedPrefab))
         {
-            if (popup is T) return popup as T;
+            foreach (BaseUI ui in uisByOrder[cachedPrefab.Order])
+            {
+                if (ui is T)
+                {
+                    return ui as T;
+                }
+            }
         }
 
         T prefab = GetResource<T>();
-        T ui = Instantiate(prefab, popupRoot);
+        T newUi = Instantiate(prefab, uiRoots[cachedPrefab.Order]);
+        uisByOrder[newUi.Order].Add(newUi);
 
-        popupStack.Add(ui);
-
-        return ui;
+        return newUi;
     }
 
     private T GetResource<T>() where T : BaseUI
@@ -129,22 +153,34 @@ public class UIManager : GlobalSingleton<UIManager>
     #endregion
 
     #region 열기 / 닫기 - panel
-    public void OpenPanel<T>() where T : BaseUI
+    public T OpenPanel<T>() where T : BaseUI
     {
-        T ui = GetPanel<T>(true);
+        T ui = GetPanel<T>();
+        ui.gameObject.SetActive(true);
+        return ui;
     }
 
     public void ClosePanel<T>() where T : BaseUI
     {
-        if (!panelMap.TryGetValue(typeof(T), out BaseUI ui)) return;
-        ui.gameObject.SetActive(false);
+        if (!uiCache.TryGetValue(typeof(T), out BaseUI cachedPrefab)) return;
+
+        foreach (BaseUI ui in uisByOrder[cachedPrefab.Order])
+        {
+            if (ui is T)
+            {
+                ui.gameObject.SetActive(false);
+            }
+        }
     }
 
     public void CloseAllPanels()
     {
-        foreach (BaseUI ui in panelMap.Values)
+        foreach (UIOrder order in GetUIOrderPanels())
         {
-            ui.gameObject.SetActive(false);
+            foreach (BaseUI ui in uisByOrder[order])
+            {
+                ui.gameObject.SetActive(false);
+            }
         }
     }
     #endregion
@@ -157,7 +193,7 @@ public class UIManager : GlobalSingleton<UIManager>
         ui.OnUIClick -= ClickPopup;
         ui.OnUIClick += ClickPopup;
 
-        popupRoot.gameObject.SetActive(true);
+        uiRoots[ui.Order].gameObject.SetActive(true);
         ui.gameObject.SetActive(true);
 
         return ui;
@@ -167,37 +203,43 @@ public class UIManager : GlobalSingleton<UIManager>
     {
         ui.Close();
 
-        if (GetActivePopupCount() == 0)
+        if (GetActivePopupCount(ui.Order) == 0)
         {
-            popupRoot.gameObject.SetActive(false);
+            uiRoots[ui.Order].gameObject.SetActive(false);
         }
     }
 
     public void CloseTopPopup()
     {
-        if (GetActivePopupCount() == 0) return;
+        foreach (UIOrder order in GetUIOrderPopups())
+        {
+            if (GetActivePopupCount(order) == 0) continue;
 
-        UIPopup ui = popupStack[^1];
-        ClosePopup(ui);
+            UIPopup ui = uisByOrder[order][^1] as UIPopup;
+            ClosePopup(ui);
+        }
     }
-
 
     public void CloseAllPopups()
     {
-        for (int i = popupStack.Count - 1; i >= 0; i--)
+        foreach (UIOrder order in GetUIOrderPopups())
         {
-            popupStack[i].gameObject.SetActive(false);
-            popupStack.RemoveAt(i);
-        }
+            List<BaseUI> uiList = uisByOrder[order];
+            for (int i = uiList.Count - 1; i >= 0; i--)
+            {
+                uiList[i].gameObject.SetActive(false);
+                uiList.RemoveAt(i);
+            }
 
-        popupRoot.gameObject.SetActive(false);
+            uiRoots[order].gameObject.SetActive(false);
+        }
     }
 
     private void ClickPopup(UIPopup ui)
     {
-        int idx = popupStack.IndexOf(ui);
-        popupStack.RemoveAt(idx);
-        popupStack.Add(ui);
+        int idx = uisByOrder[ui.Order].IndexOf(ui);
+        uisByOrder[ui.Order].RemoveAt(idx);
+        uisByOrder[ui.Order].Add(ui);
 
         ui.TryGetComponent<RectTransform>(out var rect);
         rect.SetSiblingIndex(rect.parent.childCount - 1);
@@ -206,28 +248,44 @@ public class UIManager : GlobalSingleton<UIManager>
 
     #region Utils
     /// <summary>
-    /// ui (팝업 제외) 활성화 확인
+    /// ui 활성화 확인
     /// </summary>
     public bool IsOpen<T>() where T : BaseUI
     {
-        if (!panelMap.TryGetValue(typeof(T), out BaseUI ui))
+        foreach (List<BaseUI> uIs in uisByOrder.Values)
         {
-            return false;
+            foreach (var ui in uIs)
+            {
+                if (ui is T)
+                {
+                    return ui.gameObject.activeSelf;
+                }
+            }
         }
 
-        return ui.gameObject.activeSelf;
+        return false;
     }
 
     /// <summary>
-    /// ui 정리하고 싶을 경우 (ex. 씬 전환)
+    /// ui 캐시 정리하고 싶을 경우 (ex. 씬 전환)
     /// </summary>
     public void ClearCache() => uiCache.Clear();
 
-    private int GetActivePopupCount()
+    private int GetActivePopupCount(UIOrder order)
     {
         int activeCount = 0;
-        popupStack.ForEach(ui => activeCount += ui.gameObject.activeSelf ? 1 : 0);
+        uisByOrder[order].ForEach(ui => activeCount += ui.gameObject.activeSelf ? 1 : 0);
         return activeCount;
+    }
+
+    private UIOrder[] GetUIOrderPopups()
+    {
+        return new UIOrder[] { UIOrder.Top_Popup, UIOrder.Middle_Popup };
+    }
+
+    private UIOrder[] GetUIOrderPanels()
+    {
+        return new UIOrder[] { UIOrder.Top_Panel, UIOrder.Middle_Panel, UIOrder.Bottom_Panel };
     }
     #endregion
 
