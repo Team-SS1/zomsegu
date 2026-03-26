@@ -83,9 +83,9 @@ public class UIManager : SceneSingleton<UIManager>
     {
         var type = typeof(T);
 
-        if (uiCache.TryGetValue(type, out BaseUI cachedPrefab))
+        if (uiCache.TryGetValue(type, out BaseUI cachedPrefab))     // 캐시에서 검색
         {
-            foreach (BaseUI ui in uisByOrder[cachedPrefab.Order])
+            foreach (BaseUI ui in uisByOrder[cachedPrefab.Order])   // 씬에 올라가 있는지 확인
             {
                 if (ui is T)
                 {
