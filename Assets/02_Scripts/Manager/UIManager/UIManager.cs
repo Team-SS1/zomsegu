@@ -166,10 +166,12 @@ public class UIManager : SceneSingleton<UIManager>
     {
         UIPopup popup = ui as UIPopup;
 
-        popup.OnUIClick -= ClickPopup;
-        popup.OnUIClick += ClickPopup;
+        popup.OnUIClick -= MovePopupToTop;
+        popup.OnUIClick += MovePopupToTop;
 
         uiRoots[popup.Order].gameObject.SetActive(true);
+
+        MovePopupToTop(popup);
         popup.gameObject.SetActive(true);
     }
     #endregion
@@ -215,8 +217,15 @@ public class UIManager : SceneSingleton<UIManager>
         {
             if (GetActivePopupCount(order) == 0) continue;
 
-            UIPopup ui = uisByOrder[order][^1] as UIPopup;
-            ui.Close();
+            List<BaseUI> uis = uisByOrder[order];
+            for (int i = uis.Count - 1; i >= 0; i--)
+            {
+                if (uis[i].gameObject.activeSelf)
+                {
+                    (uis[i] as UIPopup).Close();
+                    return;
+                }
+            }
         }
     }
 
@@ -236,7 +245,7 @@ public class UIManager : SceneSingleton<UIManager>
     }
     #endregion 
 
-    private void ClickPopup(UIPopup ui)
+    private void MovePopupToTop(UIPopup ui)
     {
         int idx = uisByOrder[ui.Order].IndexOf(ui);
         uisByOrder[ui.Order].RemoveAt(idx);
