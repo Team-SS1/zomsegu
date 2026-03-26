@@ -422,7 +422,7 @@ public class UIDialogue : BaseUI
                 if (!typer.IsTyping) TryShowNextLine();
                 break;
             case DialogueMode.Backlog:
-                var ui = UIManager.Instance.GetPanel<UIDialogueBacklog>(true);
+                var ui = UIManager.Instance.OpenPanel<UIDialogueBacklog>();
                 ui.AddBacklogs(backlogs);
                 backlogs.Clear();
                 typer.SkipOrComplete();

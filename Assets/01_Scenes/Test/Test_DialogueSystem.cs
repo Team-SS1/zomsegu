@@ -18,7 +18,7 @@ public class Test_DialogueSystem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        var ui = UIManager.Instance.GetPanel<UIDialogue>(true);
+        var ui = UIManager.Instance.OpenPanel<UIDialogue>();
         ui.StartDialogue(1);
     }
 }
