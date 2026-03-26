@@ -67,6 +67,7 @@ public class UIManager : SceneSingleton<UIManager>
             uisByOrder[order] = new List<BaseUI>();
         }
 
+        if (FindAnyObjectByType<EventSystem>() != null) return;
         GameObject newGo = new("EventSystem");
         newGo.AddComponent<EventSystem>();
         newGo.AddComponent<StandaloneInputModule>();
@@ -127,8 +128,7 @@ public class UIManager : SceneSingleton<UIManager>
 
         if (prefab == null)
         {
-            Logger.LogWarning($"{type} 프리팹 못찾음. 경로: Resources/UI");
-            return null;
+            throw new InvalidOperationException($"{type} 프리팹 못찾음. 경로: Resources/UI");
         }
 
         uiCache[type] = prefab;
@@ -185,7 +185,7 @@ public class UIManager : SceneSingleton<UIManager>
 
     public void ClosePopup(UIPopup ui)
     {
-        ui.Close();
+        ui.gameObject.SetActive(false);
 
         if (GetActivePopupCount(ui.Order) == 0)
         {
@@ -200,7 +200,7 @@ public class UIManager : SceneSingleton<UIManager>
             if (GetActivePopupCount(order) == 0) continue;
 
             UIPopup ui = uisByOrder[order][^1] as UIPopup;
-            ClosePopup(ui);
+            ui.Close();
         }
     }
 
@@ -211,7 +211,8 @@ public class UIManager : SceneSingleton<UIManager>
             List<BaseUI> uiList = uisByOrder[order];
             for (int i = uiList.Count - 1; i >= 0; i--)
             {
-                uiList[i].gameObject.SetActive(false);
+                UIPopup ui = uiList[i] as UIPopup;
+                ui.Close();
             }
 
             uiRoots[order].gameObject.SetActive(false);
