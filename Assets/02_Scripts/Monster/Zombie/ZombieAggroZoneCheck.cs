@@ -3,8 +3,6 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class ZombieAggroZoneCheck : MonoBehaviour
 {
-    public float radius = 3f;
-
     private Zombie z;
     private CircleCollider2D col;
 
@@ -14,14 +12,30 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         col = GetComponent<CircleCollider2D>();
 
         col.isTrigger = true;
-        col.radius = radius;
+        SyncRadiusFromStat();
+    }
+
+    private void Start()
+    {
+        SyncRadiusFromStat();
     }
 
     private void OnValidate()
     {
         if (col == null) col = GetComponent<CircleCollider2D>();
         col.isTrigger = true;
-        col.radius = radius;
+    }
+
+    private void SyncRadiusFromStat()
+    {
+        if (z == null || z.stat == null || col == null)
+            return;
+
+        col.radius = Mathf.Max(
+            z.stat.VisionFrontRadius,
+            z.stat.VisionBackRadius,
+            z.stat.VisionFOVRadius
+        );
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -33,7 +47,8 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         if (targetRoot == null)
             return;
 
-        z.OnTargetSeen(targetRoot);
+        if (CanSeeTarget(targetRoot))
+            z.OnTargetSeen(targetRoot);
     }
 
     private void OnTriggerStay2D(Collider2D other)
@@ -45,15 +60,13 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         if (targetRoot == null)
             return;
 
-        // 같은 타겟이면 "계속 보고 있음" 갱신
-        if (z.Target == targetRoot)
-        {
-            z.MarkTargetSeen();
+        if (!CanSeeTarget(targetRoot))
             return;
-        }
 
-        // 더 가까운 새 타겟이면 갱신 가능
-        z.OnTargetSeen(targetRoot);
+        if (z.Target == targetRoot)
+            z.MarkTargetSeen();
+        else
+            z.OnTargetSeen(targetRoot);
     }
 
     private Transform ResolveTargetRoot(Collider2D other)
@@ -61,16 +74,66 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         if (other == null)
             return null;
 
-        // 플레이어 루트 찾기
         Player player = other.GetComponentInParent<Player>();
         if (player != null)
             return player.transform;
 
-        // 필요 시 좀비도 감지 대상으로 포함
         Zombie otherZombie = other.GetComponentInParent<Zombie>();
         if (otherZombie != null && otherZombie != z)
             return otherZombie.transform;
 
         return null;
+    }
+
+    private bool CanSeeTarget(Transform targetRoot)
+    {
+        if (z == null || z.stat == null || targetRoot == null)
+            return false;
+
+        Vector2 origin = z.GetNavigationOrigin();
+        Vector2 targetPos = GetTargetCenter(targetRoot);
+
+        Vector2 toTarget = targetPos - origin;
+        float dist = toTarget.magnitude;
+        if (dist <= 0.001f)
+            return true;
+
+        Vector2 forward = z.FacingDirection.sqrMagnitude > 0.001f
+            ? z.FacingDirection.normalized
+            : Vector2.down;
+
+        Vector2 dir = toTarget / dist;
+        float dot = Vector2.Dot(forward, dir);
+
+        // 정면 부채꼴
+        if (dist <= z.stat.VisionFOVRadius)
+        {
+            float angle = Vector2.Angle(forward, dir);
+            if (angle <= z.stat.VisionFOVAngle * 0.5f)
+                return true;
+        }
+
+        // 전면 180도
+        if (dot >= 0f && dist <= z.stat.VisionFrontRadius)
+            return true;
+
+        // 후면 180도
+        if (dot < 0f && dist <= z.stat.VisionBackRadius)
+            return true;
+
+        return false;
+    }
+
+    private Vector2 GetTargetCenter(Transform t)
+    {
+        Collider2D hitCol = t.GetComponent<Collider2D>();
+        if (hitCol != null)
+            return hitCol.bounds.center;
+
+        SpriteRenderer sr = t.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+            return sr.bounds.center;
+
+        return t.position;
     }
 }

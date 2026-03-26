@@ -58,7 +58,8 @@ public class ZombieCombat : MonoBehaviour
         z.CurrentAttackType = type;
         z.CurrentAttack = GetAttack(type);
 
-        attackTimeoutTimer = z.CurrentAttack.AttackSpeed + AttackEndSafetyBuffer;
+        float attackDuration = (z.stat != null) ? z.stat.AttackSpeed : 1f;
+        attackTimeoutTimer = attackDuration + AttackEndSafetyBuffer;
 
 #if UNITY_EDITOR
         Debug.Log($"[ZombieCombat] StartAttack: {type}, timeout={attackTimeoutTimer:F2}");
