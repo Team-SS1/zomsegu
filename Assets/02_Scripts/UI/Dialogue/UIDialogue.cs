@@ -462,6 +462,7 @@ public class UIDialogue : BaseUI
     private void SetNeedChoice(bool active)
     {
         needChoice = active;
+        OnChangeMode?.Invoke();
 
         if (needChoice)
         {
