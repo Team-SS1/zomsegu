@@ -40,11 +40,29 @@ public class SceneSingleton<T> : MonoBehaviour where T : Component
         if (instance == null)
         {
             instance = this as T;
+            return;
         }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    protected virtual void OnDestroy()
+    {
+        instance = null;
     }
 
     private void OnApplicationQuit()
     {
         isQuitting = true;
+    }
+
+    // 플레이 시작 시 이전 play 정보 없게 하기
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        instance = null;
+        isQuitting = false;
     }
 }
