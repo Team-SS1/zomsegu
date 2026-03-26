@@ -79,17 +79,7 @@ public class UIManager : SceneSingleton<UIManager>
     /// ui 프리팹 가져오기
     /// gameobject 활성화 상태를 지정하고 싶을 경우 active 사용
     /// </summary>
-    public T GetPanel<T>() where T : BaseUI
-    {
-        return GetOrCreateUI<T>();
-    }
-
-    private T GetOrCreatePopup<T>() where T : UIPopup
-    {
-        return GetOrCreateUI<T>();
-    }
-
-    private T GetOrCreateUI<T>() where T : BaseUI
+    public T GetUI<T>() where T : BaseUI
     {
         var type = typeof(T);
 
@@ -128,13 +118,13 @@ public class UIManager : SceneSingleton<UIManager>
     private T GetResource<T>() where T : BaseUI
     {
         var type = typeof(T);
+        T prefab = null;
 
         if (uiCache.TryGetValue(type, out BaseUI ui))
         {
             return ui as T;
         }
 
-        T prefab = null;
         foreach (GameObject go in uiDatabase.GetDatabase())
         {
             if (go.TryGetComponent(out prefab)) break;
@@ -150,14 +140,41 @@ public class UIManager : SceneSingleton<UIManager>
     }
     #endregion
 
-    #region 열기 / 닫기 - panel
-    public T OpenPanel<T>() where T : BaseUI
+    #region 열기
+    public T OpenUI<T>() where T : BaseUI
     {
-        T ui = GetPanel<T>();
-        ui.gameObject.SetActive(true);
+        T ui = GetUI<T>();
+
+        if (ui as UIPopup)
+        {
+            SetPopup(ui);
+        }
+        else
+        {
+            SetPanel(ui);
+        }
+
         return ui;
     }
 
+    private void SetPanel<T>(T ui) where T : BaseUI
+    {
+        ui.gameObject.SetActive(true);
+    }
+
+    private void SetPopup<T>(T ui) where T : BaseUI
+    {
+        UIPopup popup = ui as UIPopup;
+
+        popup.OnUIClick -= ClickPopup;
+        popup.OnUIClick += ClickPopup;
+
+        uiRoots[popup.Order].gameObject.SetActive(true);
+        popup.gameObject.SetActive(true);
+    }
+    #endregion
+
+    #region 닫기
     public void ClosePanel<T>() where T : BaseUI
     {
         if (!uiCache.TryGetValue(typeof(T), out BaseUI cachedPrefab)) return;
@@ -180,21 +197,6 @@ public class UIManager : SceneSingleton<UIManager>
                 ui.gameObject.SetActive(false);
             }
         }
-    }
-    #endregion
-
-    #region 열기 / 닫기 - 팝업 ui
-    public T OpenPopup<T>() where T : UIPopup
-    {
-        T ui = GetOrCreatePopup<T>();
-
-        ui.OnUIClick -= ClickPopup;
-        ui.OnUIClick += ClickPopup;
-
-        uiRoots[ui.Order].gameObject.SetActive(true);
-        ui.gameObject.SetActive(true);
-
-        return ui;
     }
 
     public void ClosePopup(UIPopup ui)
@@ -232,6 +234,7 @@ public class UIManager : SceneSingleton<UIManager>
             uiRoots[order].gameObject.SetActive(false);
         }
     }
+    #endregion 
 
     private void ClickPopup(UIPopup ui)
     {
@@ -242,7 +245,6 @@ public class UIManager : SceneSingleton<UIManager>
         ui.TryGetComponent<RectTransform>(out var rect);
         rect.SetSiblingIndex(rect.parent.childCount - 1);
     }
-    #endregion
 
     #region Utils
     /// <summary>

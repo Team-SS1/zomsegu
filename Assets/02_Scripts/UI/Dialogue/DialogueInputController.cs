@@ -94,7 +94,7 @@ public class DialogueInputController : MonoBehaviour
         if (context.performed)
         {
             UIManager.Instance
-                .OpenPopup<UIConfirmPopup>()
+                .OpenUI<UIConfirmPopup>()
                 .Register("현재 대화를 \n전체스킵하시겠습니까?\n", dialogue.AllSkip);
         }
     }

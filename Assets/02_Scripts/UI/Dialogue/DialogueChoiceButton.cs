@@ -83,7 +83,7 @@ public class DialogueChoiceButton : ToggleButton, IPointerEnterHandler, IPointer
 
     public void SubmitChoice()
     {
-        var popup = UIManager.Instance.OpenPopup<UIConfirmPopup>();
+        var popup = UIManager.Instance.OpenUI<UIConfirmPopup>();
         popup?.Register($"{no + 1}. {data.text}를 선택합니다.", () =>
         {
             ui.CurChoiceIndex = no;

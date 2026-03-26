@@ -27,7 +27,7 @@ public class UIDialogueBacklog : BaseUI
 
     private void Start()
     {
-        uiDialogue = UIManager.Instance.GetPanel<UIDialogue>();
+        uiDialogue = UIManager.Instance.GetUI<UIDialogue>();
 
         closeBtn.onClick.AddListener(() =>
         {
