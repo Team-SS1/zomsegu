@@ -33,20 +33,12 @@ public class DialogueInputController : MonoBehaviour
 
     private void OnEnable()
     {
-        InputManager mg = InputManager.Instance;
-        if (mg == null) return;
-        mg.RemoveMaps(ActionMaps.Gameplay);
-        mg.RemoveMaps(ActionMaps.UI);
-        mg.AddMaps(ActionMaps.Dialogue);
+        InputManager.Instance?.PushMode(InputMode.Dialogue);
     }
 
     private void OnDisable()
     {
-        InputManager mg = InputManager.Instance;
-        if (mg == null) return;
-        mg.AddMaps(ActionMaps.Gameplay);
-        mg.AddMaps(ActionMaps.UI);
-        mg.RemoveMaps(ActionMaps.Dialogue);
+        InputManager.Instance?.PopMode();
     }
     #endregion
 

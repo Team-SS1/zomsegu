@@ -15,6 +15,8 @@ public class InputManager : GlobalSingleton<InputManager>
     [SerializeField] private InputActionAsset inputAssets;
 
     private readonly Dictionary<ActionMaps, InputHandler> handlers = new();
+
+    private readonly List<InputMode> inputModeStack = new();
     private ActionMaps activeActionMaps = ActionMaps.None;
     #endregion
 
@@ -27,6 +29,8 @@ public class InputManager : GlobalSingleton<InputManager>
         {
             InitializeHandlers();
         }
+
+        SetMaps(GetActionMapsFromInputMode(InputMode.Default));
     }
 
     protected override void OnDestroy()
@@ -77,40 +81,46 @@ public class InputManager : GlobalSingleton<InputManager>
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SetMaps(ActionMaps.None);
-        DisposeHandlers();
+        SetMaps(GetActionMapsFromInputMode(InputMode.Default));
+        inputModeStack.Clear();
     }
     #endregion
 
     #region 레이어 설정
     /// <summary>
-    /// 기존 Input Action Maps 설정 모두 제거, 새로운 설정
-    /// 게임 초기화 시 사용 권장
+    /// 인풋 모드 변경
     /// </summary>
-    public void SetMaps(ActionMaps actionMaps)
+    public void PushMode(InputMode mode)
+    {
+        inputModeStack.Add(mode);
+        ActionMaps actionMaps = GetActionMapsFromInputMode(inputModeStack[^1]);
+        SetMaps(actionMaps);
+    }
+
+    /// <summary>
+    /// 이전 모드로 변경
+    /// </summary>
+    public void PopMode()
+    {
+        if (inputModeStack.Count > 0)
+        {
+            inputModeStack.RemoveAt(inputModeStack.Count - 1);
+        }
+
+        if (inputModeStack.Count == 0)
+        {
+            SetMaps(GetActionMapsFromInputMode(InputMode.Default));
+            return;
+        }
+
+        ActionMaps actionMaps = GetActionMapsFromInputMode(inputModeStack[^1]);
+        SetMaps(actionMaps);
+    }
+
+    private void SetMaps(ActionMaps actionMaps)
     {
         ActionMaps prev = activeActionMaps;
         activeActionMaps = actionMaps;
-        SyncChangedMaps(prev, activeActionMaps);
-    }
-
-    /// <summary>
-    /// 특정 Input Action Maps 추가
-    /// </summary>
-    public void AddMaps(ActionMaps actionMaps)
-    {
-        ActionMaps prev = activeActionMaps;
-        activeActionMaps |= actionMaps;
-        SyncChangedMaps(prev, activeActionMaps);
-    }
-
-    /// <summary>
-    /// 특정 Input Action Maps 제거
-    /// </summary>
-    public void RemoveMaps(ActionMaps actionMaps)
-    {
-        ActionMaps prev = activeActionMaps;
-        activeActionMaps &= ~actionMaps;
         SyncChangedMaps(prev, activeActionMaps);
     }
 
@@ -244,6 +254,20 @@ public class InputManager : GlobalSingleton<InputManager>
     public static bool IsSingleFlag(ActionMaps value)
     {
         return value != 0 && (value & (value - 1)) == 0;
+    }
+    #endregion
+
+    #region Utils
+    private ActionMaps GetActionMapsFromInputMode(InputMode mode)
+    {
+        return (mode) switch
+        {
+            InputMode.Dialogue => ActionMaps.Dialogue,
+            InputMode.Modal => ActionMaps.UI,
+            InputMode.Gameplay => ActionMaps.Gameplay | ActionMaps.UI | ActionMaps.System,
+            InputMode.Cutscene => ActionMaps.Cutscene,
+            _ => ActionMaps.None | ActionMaps.System
+        };
     }
     #endregion
 
