@@ -77,6 +77,9 @@ public class ZombieCombat : MonoBehaviour
         if (!z.HasValidTarget()) return;
         if (z.CurrentAttack == null) return;
 
+        if (!z.CanAttackTarget(z.Target))
+            return;
+
         Vector2 targetPos = z.GetTargetBodyOrigin();
         float range = z.CurrentAttack.AttackRange;
 

@@ -47,6 +47,9 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         if (targetRoot == null)
             return;
 
+        if (!z.CanAggroTarget(targetRoot))
+            return;
+
         if (CanSeeTarget(targetRoot))
             z.OnTargetSeen(targetRoot);
     }
@@ -58,6 +61,9 @@ public class ZombieAggroZoneCheck : MonoBehaviour
 
         Transform targetRoot = ResolveTargetRoot(other);
         if (targetRoot == null)
+            return;
+
+        if (!z.CanAggroTarget(targetRoot))
             return;
 
         if (!CanSeeTarget(targetRoot))
@@ -74,13 +80,14 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         if (other == null)
             return null;
 
+        // 플레이어 우선
         Player player = other.GetComponentInParent<Player>();
         if (player != null)
             return player.transform;
 
-        Zombie otherZombie = other.GetComponentInParent<Zombie>();
-        if (otherZombie != null && otherZombie != z)
-            return otherZombie.transform;
+        //Zombie otherZombie = other.GetComponentInParent<Zombie>();
+        //if (otherZombie != null && otherZombie != z)
+        //    return otherZombie.transform;
 
         return null;
     }

@@ -46,6 +46,13 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
     private float _lastSeenTime;
     [SerializeField] private float seenMemorySeconds = 0.2f;
 
+    [Header("Target Layers")]
+    [SerializeField] private LayerMask aggroTargetLayers;
+    [SerializeField] private LayerMask attackTargetLayers;
+
+    public LayerMask AggroTargetLayers => aggroTargetLayers;
+    public LayerMask AttackTargetLayers => attackTargetLayers;
+
     // ===== 여기 중요 =====
     [Header("References")]
     [SerializeField] private MonsterKnockback knockback;
@@ -182,6 +189,23 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
             enabled = false;
             return;
         }
+    }
+
+    public bool IsInLayerMask(GameObject obj, LayerMask mask)
+    {
+        return ((mask.value & (1 << obj.layer)) != 0);
+    }
+
+    public bool CanAggroTarget(Transform t)
+    {
+        if (t == null) return false;
+        return IsInLayerMask(t.gameObject, aggroTargetLayers);
+    }
+
+    public bool CanAttackTarget(Transform t)
+    {
+        if (t == null) return false;
+        return IsInLayerMask(t.gameObject, attackTargetLayers);
     }
 
     public void MarkTargetSeen()
