@@ -105,7 +105,13 @@ public class UIManager : SceneSingleton<UIManager>
         }
 
         T prefab = GetResource<T>();
+
         T newUi = Instantiate(prefab, uiRoots[prefab.Order]);
+        var rect = newUi.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+
         uisByOrder[newUi.Order].Add(newUi);
 
         return newUi;
