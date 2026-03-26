@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3280412789026530523}
   - component: {fileID: 9063736843929022297}
   m_Layer: 5
-  m_Name: MainCanvas
+  m_Name: InputPassthroughCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

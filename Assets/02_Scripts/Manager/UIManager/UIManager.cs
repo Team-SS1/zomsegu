@@ -10,8 +10,8 @@ public class UIManager : SceneSingleton<UIManager>
     [SerializeField] private GoDatabase uiDatabase;
 
     [Header("Canvas Prefab")]
-    [SerializeField] private GameObject panelCanvasPrefab;
-    [SerializeField] private GameObject popupCanvasPrefab;
+    [SerializeField] private GameObject inputBlockingCanvasPrefab;
+    [SerializeField] private GameObject inputPassthroughCanvasPrefab;
 
     private readonly Dictionary<Type, BaseUI> uiCache = new();  // 리소스 캐시
 
@@ -46,17 +46,17 @@ public class UIManager : SceneSingleton<UIManager>
             string[] splits = order.ToString().Split("_");
             if (splits.Length == 2)
             {
-                if (splits[1].Equals("Panel"))
+                if (order == UIOrder.Top_Popup)
                 {
-                    root = Instantiate(panelCanvasPrefab);
-                    root.SetActive(true);
+                    root = Instantiate(inputBlockingCanvasPrefab);
+                    root.SetActive(false);
                 }
                 else
                 {
-                    root = Instantiate(popupCanvasPrefab);
-                    root.SetActive(false);
+                    root = Instantiate(inputPassthroughCanvasPrefab);
+                    root.SetActive(true);
                 }
-                root.name = $"UI_Root_{order.ToString()}";
+                root.name = $"UI_Root_{order}";
 
                 uiRoots[order] = root.GetComponent<RectTransform>();
 
@@ -278,8 +278,8 @@ public class UIManager : SceneSingleton<UIManager>
     private void Reset()
     {
         uiDatabase = AssetLoader.FindAndLoadByName<GoDatabase>("UIDatabase");
-        panelCanvasPrefab = AssetLoader.FindAndLoadByName("MainCanvas");
-        popupCanvasPrefab = AssetLoader.FindAndLoadByName("PopupCanvas");
+        inputBlockingCanvasPrefab = AssetLoader.FindAndLoadByName("InputBlockingCanvas");
+        inputPassthroughCanvasPrefab = AssetLoader.FindAndLoadByName("InputPassthroughCanvas");
     }
 #endif
     #endregion

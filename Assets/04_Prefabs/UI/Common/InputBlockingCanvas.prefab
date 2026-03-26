@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3199651758766411783}
   - component: {fileID: 118238549844183568}
   m_Layer: 5
-  m_Name: PopupCanvas
+  m_Name: InputBlockingCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
