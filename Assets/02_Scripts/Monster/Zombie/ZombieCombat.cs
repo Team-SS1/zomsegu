@@ -58,7 +58,8 @@ public class ZombieCombat : MonoBehaviour
         z.CurrentAttackType = type;
         z.CurrentAttack = GetAttack(type);
 
-        attackTimeoutTimer = z.CurrentAttack.AttackSpeed + AttackEndSafetyBuffer;
+        float attackDuration = (z.stat != null) ? z.stat.AttackSpeed : 1f;
+        attackTimeoutTimer = attackDuration + AttackEndSafetyBuffer;
 
 #if UNITY_EDITOR
         Debug.Log($"[ZombieCombat] StartAttack: {type}, timeout={attackTimeoutTimer:F2}");
@@ -75,6 +76,9 @@ public class ZombieCombat : MonoBehaviour
         if (hasHitThisAttack || z.IsDead) return;
         if (!z.HasValidTarget()) return;
         if (z.CurrentAttack == null) return;
+
+        if (!z.CanAttackTarget(z.Target))
+            return;
 
         Vector2 targetPos = z.GetTargetBodyOrigin();
         float range = z.CurrentAttack.AttackRange;

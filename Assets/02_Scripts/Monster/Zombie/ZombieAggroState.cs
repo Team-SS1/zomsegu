@@ -31,7 +31,7 @@ public sealed class ZombieAggroState : IZombieState
     {
         if (z.IsDead) return;
 
-        if (!z.HasValidTarget())
+        if (!z.HasValidTarget() && !z.CanAttackTarget(z.Target))
         {
             z.EnterIdle();
             return;

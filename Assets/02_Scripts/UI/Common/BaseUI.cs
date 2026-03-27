@@ -2,6 +2,10 @@
 
 public abstract class BaseUI : MonoBehaviour
 {
+    [SerializeField] private UIEnum.UIOrder order;
+
+    public UIEnum.UIOrder Order => order;
+
     // ===== Unity API ===== 
     private void Awake()
     {

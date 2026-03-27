@@ -21,13 +21,13 @@ public class UIDialogueBacklog : BaseUI
     [SerializeField] private Button closeBtn;
 
     private UIDialogue uiDialogue;
-    private List<BacklogSlot> backlogs = new();
+    private List<BacklogSlot> backlogSlots = new();
 
     private Coroutine scrollRoutine;
 
     private void Start()
     {
-        uiDialogue = UIManager.Instance.GetPanel<UIDialogue>(true);
+        uiDialogue = UIManager.Instance.GetUI<UIDialogue>();
 
         closeBtn.onClick.AddListener(() =>
         {
@@ -53,6 +53,8 @@ public class UIDialogueBacklog : BaseUI
             StopCoroutine(scrollRoutine);
             scrollRoutine = null;
         }
+
+        backlogSlots.ForEach(slot => slot.gameObject.SetActive(false));
     }
 
     private IEnumerator CoOpenAndScrollBottom()
@@ -64,13 +66,27 @@ public class UIDialogueBacklog : BaseUI
 
     public void AddBacklogs(List<DialogueBacklog> backlogs)
     {
-        backlogs.ForEach((log) => AddBacklog(log));
+        for (int i = 0; i < backlogs.Count; i++)
+        {
+            DialogueBacklog backlog = backlogs[i];
+
+            if (backlogSlots.Count <= i)
+            {
+                BacklogSlot slot = Instantiate((backlog.isPlayer ? backlogLeftPrefab : backlogRightPrefab), root);
+                backlogSlots.Add(slot);
+            }
+
+            SetSlot(backlogSlots[i], backlog);
+        }
+
+        if (backlogSlots.Count > 1)
+        {
+            backlogSlots[^2].SetDimmed();
+        }
     }
 
-    private void AddBacklog(in DialogueBacklog backlog)
+    private void SetSlot(BacklogSlot slot, in DialogueBacklog backlog)
     {
-        BacklogSlot slot = Instantiate((backlog.isPlayer ? backlogLeftPrefab : backlogRightPrefab), root);
-
         string text = backlog.dialogueText;
         if (backlog.choiceTexts != null)
         {
@@ -81,21 +97,15 @@ public class UIDialogueBacklog : BaseUI
         }
 
         slot.Init(backlog.portrait, backlog.speaker, text);
-        backlogs.Add(slot);
-
-        if (backlogs.Count > 1)
-        {
-            backlogs[^2].SetDimmed();
-        }
     }
 
     public void ResetLogs()
     {
-        for (int i = backlogs.Count - 1; i >= 0; i--)
+        for (int i = backlogSlots.Count - 1; i >= 0; i--)
         {
-            Destroy(backlogs[i].gameObject);
+            Destroy(backlogSlots[i].gameObject);
         }
-        backlogs.Clear();
+        backlogSlots.Clear();
     }
 
     #region 에디터 전용

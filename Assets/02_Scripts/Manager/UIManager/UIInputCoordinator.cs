@@ -17,7 +17,6 @@ public class UIInputCoordinator
             (Actions.Close, OnClose)
         };
 
-        input.AddMaps(ActionMaps.UI);
         input.BindInputs(ActionMaps.UI, bindings);
     }
 

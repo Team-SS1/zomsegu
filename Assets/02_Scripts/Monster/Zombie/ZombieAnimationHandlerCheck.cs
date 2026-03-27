@@ -26,6 +26,7 @@ public class ZombieAnimationHandlerCheck : MonoBehaviour
 
         UpdateDirection();
         UpdateAnimatorState();
+        UpdateAnimatorSpeed();
     }
 
     private void UpdateDirection()
@@ -50,6 +51,21 @@ public class ZombieAnimationHandlerCheck : MonoBehaviour
 
         animator.SetFloat("MoveX", lastDir.x);
         animator.SetFloat("MoveY", lastDir.y);
+    }
+
+    private void UpdateAnimatorSpeed()
+    {
+        if (zombie == null || zombie.stat == null)
+        {
+            animator.speed = 1f;
+            return;
+        }
+
+        // AttackSpeed = "원하는 길이(초)"
+        if (zombie.IsAttacking)
+            animator.speed = 1f / Mathf.Max(0.01f, zombie.stat.AttackSpeed);
+        else
+            animator.speed = 1f;
     }
 
     private void UpdateAnimatorState()

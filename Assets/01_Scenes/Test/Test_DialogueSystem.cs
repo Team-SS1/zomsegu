@@ -11,14 +11,21 @@ public class Test_DialogueSystem : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            UIConfirmPopup ui = UIManager.Instance.OpenPopup<UIConfirmPopup>();
-            ui.Register("open pop up ui", null);
+            UIManager.Instance.OpenUI<TestPanel>();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            UIManager.Instance.OpenUI<TestPopup_1>();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            UIManager.Instance.OpenUI<TestPopup_2>();
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        var ui = UIManager.Instance.GetPanel<UIDialogue>(true);
+        var ui = UIManager.Instance.OpenUI<UIDialogue>();
         ui.StartDialogue(1);
     }
 }

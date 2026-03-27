@@ -27,8 +27,7 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.AddListener(OnClickYes);
         btnNo.onClick.AddListener(OnClickNo);
 
-        InputManager.Instance.RemoveMaps(ActionMaps.Dialogue);
-        InputManager.Instance.AddMaps(ActionMaps.UI);
+        InputManager.Instance.PushMode(InputMode.Modal);
     }
 
     private void OnDisable()
@@ -36,15 +35,13 @@ public class UIConfirmPopup : UIPopup
         btnYes.onClick.RemoveListener(OnClickYes);
         btnNo.onClick.RemoveListener(OnClickNo);
 
-        InputManager.Instance.AddMaps(ActionMaps.Dialogue);
-        InputManager.Instance.RemoveMaps(ActionMaps.UI);
+        InputManager.Instance.PopMode();
     }
     #endregion
 
     public void Register(string text, UnityAction callback = null)
     {
         events.Enqueue((text, callback));
-        Logger.Log("팝업 이벤트 설정");
 
         if (isFirst)
         {

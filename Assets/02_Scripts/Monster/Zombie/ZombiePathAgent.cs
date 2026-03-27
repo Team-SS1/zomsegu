@@ -75,25 +75,33 @@ public class ZombiePathAgent : MonoBehaviour
 
     private float GetStuckDecisionTime()
     {
-        switch (z.zombieType)
-        {
-            case MonsterEnum.ZombieType.Athlete:
-            case MonsterEnum.ZombieType.Police:
-            case MonsterEnum.ZombieType.Soldier:
-            case MonsterEnum.ZombieType.Firefighter:
-                return 0.5f;
-        }
+        if (z.stat == null)
+            return 2f;
 
-        float ms = z.stat != null ? z.stat.MoveSpeed : 0f;
-        if (ms >= 120f) return 1f;
-        if (ms >= 80f) return 2f;
-        return 3f;
+        switch (z.stat.ZombieCategory)
+        {
+            case 3: return 0.5f; // 특수좀비
+            case 2: return 1f;   // 청년좀비
+            case 1: return 2f;   // 중년좀비
+            case 0: return 999f; // 노인좀비는 길찾기 안 함
+            default: return 999f;
+        }
+    }
+
+    private bool CanUsePathfinding()
+    {
+        if (z == null || z.stat == null)
+            return false;
+
+        // 0 = 노인좀비는 길찾기 사용 안 함
+        return z.stat.ZombieCategory != 0;
     }
 
     public bool TickPathAndStuck_Aggro()
     {
         if (grid == null) return false;
         if (!z.HasValidTarget()) return false;
+        if (!CanUsePathfinding()) return false;
 
         if (z.IsAttacking || z.IsTakingDamage || (z.Knockback != null && z.Knockback.IsKnockbacking))
         {
@@ -160,6 +168,7 @@ public class ZombiePathAgent : MonoBehaviour
     public bool TickPathAndStuck_Investigate(Vector2 investigatePos)
     {
         if (grid == null) return false;
+        if (!CanUsePathfinding()) return false;
 
         if (z.IsAttacking || z.IsTakingDamage || (z.Knockback != null && z.Knockback.IsKnockbacking))
         {
@@ -392,6 +401,9 @@ public class ZombiePathAgent : MonoBehaviour
         if (grid == null)
             return;
 
+        if (!CanUsePathfinding())
+            return;
+
         pathMode = true;
         pathModeTimer = pathModeDuration;   // 지속시간 초기화
         repathTimer = 0f;                   // 즉시 재탐색 가능하게
@@ -411,6 +423,9 @@ public class ZombiePathAgent : MonoBehaviour
     public void ForcePathModeAfterAttack()
     {
         if (grid == null)
+            return;
+
+        if (!CanUsePathfinding())
             return;
 
         pathMode = true;

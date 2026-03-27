@@ -1,5 +1,14 @@
 ﻿namespace InputEnum
 {
+    public enum InputMode
+    {
+        Default,
+        Gameplay,
+        Dialogue,
+        Modal,
+        Cutscene,
+    }
+
     // 입력 처리 시 레이어
     [System.Flags]
     public enum ActionMaps
