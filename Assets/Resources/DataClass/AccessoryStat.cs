@@ -11,7 +11,9 @@ public class AccessoryStat
 	public int VisionRadiusLimitedAdd;
 	public int VisionRadiusMinAdd;
 	public int VisionFOVAngleAdd;
-	public int ExtraInventorySlot;
+	public float BagCapacity;
+	public float BagWeightLimit;
+	public int PenaltyFreeWeight;
 
 	public static Dictionary<int, AccessoryStat> tableDic = new Dictionary<int, AccessoryStat>();
 }

@@ -9,7 +9,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 20
+    "BagCapacity": 20.0,
+    "BagWeightLimit": 20.0,
+    "PenaltyFreeWeight": 5
   },
   {
     "ItemID": 35001,
@@ -21,7 +23,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 20
+    "BagCapacity": 20.0,
+    "BagWeightLimit": 20.0,
+    "PenaltyFreeWeight": 5
   },
   {
     "ItemID": 35002,
@@ -33,7 +37,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 30
+    "BagCapacity": 30.0,
+    "BagWeightLimit": 30.0,
+    "PenaltyFreeWeight": 10
   },
   {
     "ItemID": 35003,
@@ -45,7 +51,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 40
+    "BagCapacity": 40.0,
+    "BagWeightLimit": 40.0,
+    "PenaltyFreeWeight": 15
   },
   {
     "ItemID": 35004,
@@ -57,7 +65,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 40
+    "BagCapacity": 40.0,
+    "BagWeightLimit": 40.0,
+    "PenaltyFreeWeight": 15
   },
   {
     "ItemID": 35005,
@@ -69,7 +79,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 50
+    "BagCapacity": 50.0,
+    "BagWeightLimit": 50.0,
+    "PenaltyFreeWeight": 20
   },
   {
     "ItemID": 35100,
@@ -81,7 +93,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35101,
@@ -93,7 +107,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35102,
@@ -105,7 +121,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35103,
@@ -117,7 +135,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35104,
@@ -129,7 +149,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35105,
@@ -141,7 +163,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35106,
@@ -153,7 +177,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35107,
@@ -165,7 +191,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35108,
@@ -177,7 +205,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35109,
@@ -189,7 +219,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35200,
@@ -201,7 +233,9 @@
     "VisionRadiusLimitedAdd": 4,
     "VisionRadiusMinAdd": 2,
     "VisionFOVAngleAdd": 20,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35201,
@@ -213,7 +247,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35202,
@@ -225,7 +261,9 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   },
   {
     "ItemID": 35203,
@@ -237,6 +275,8 @@
     "VisionRadiusLimitedAdd": 0,
     "VisionRadiusMinAdd": 0,
     "VisionFOVAngleAdd": 0,
-    "ExtraInventorySlot": 0
+    "BagCapacity": 0.0,
+    "BagWeightLimit": 0.0,
+    "PenaltyFreeWeight": 0
   }
 ]

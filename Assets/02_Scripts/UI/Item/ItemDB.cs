@@ -16,6 +16,34 @@ public static class ItemDB // 스택이 가능한 아이템 : 스택형 , 스택
 #endif
         return null;
     }
+    public static bool TryGetWeaponStat(int itemId, out WeaponStat weaponStat)
+        => WeaponStat.tableDic.TryGetValue(itemId, out weaponStat);
+    public static bool TryGetArmorStat(int itemId, out ArmorStat armorStat)
+        => ArmorStat.tableDic.TryGetValue(itemId, out armorStat);
+    public static bool TryGetAccessoryStat(int itemId, out AccessoryStat accessoryStat)
+        => AccessoryStat.tableDic.TryGetValue(itemId, out accessoryStat);
+    public static bool TryGetConsumableStat(int itemId, out ConsumableStat consumableStat)
+        => ConsumableStat.tableDic.TryGetValue(itemId, out consumableStat);
+    public static string GetItemName(int itemId)
+    {
+        CommonItemData common = GetCommon(itemId);
+        return common != null ? common.ItemName : string.Empty;
+    }
+    public static string GetDescription(int itemId)
+    {
+        CommonItemData common = GetCommon(itemId);
+        return common != null ? common.Description : string.Empty;
+    }
+    public static string GetIconPath(int itemId)
+    {
+        CommonItemData common = GetCommon(itemId);
+        return common != null ? common.Icon : string.Empty;
+    }
+    public static int GetRarity(int itemId)
+    {
+        CommonItemData common = GetCommon(itemId);
+        return common != null ? common.ItemRarity : 0;
+    }
     public static bool UseInstance(int itemId)
     {
         CommonItemData common = GetCommon(itemId);
