@@ -40,8 +40,278 @@ public static class ItemTooltipBuilder
 
         List<ItemTooltipLine> lines = data.Lines;
 
-        
+        AddBasicLines(lines, itemId);
 
+        ItemType itemType = (ItemType)common.ItemType;
+
+        switch (itemType)
+        {
+            case ItemType.Weapon:
+                BuildWeaponLines(lines, itemId, instance, compareItemId);
+                break;
+
+            case ItemType.Head:
+            case ItemType.Body:
+            case ItemType.Leg:
+                BuildArmorLines(lines, itemId, instance);
+                break;
+
+            case ItemType.Shoes:
+                BuildShoesLines(lines, itemId, compareItemId);
+                break;
+
+            case ItemType.Bag:
+                BuildBagLines(lines, itemId, compareItemId);
+                break;
+
+            case ItemType.Accessory:
+                BuildAccessoryLines(lines, itemId);
+                break;
+
+            case ItemType.Consumable:
+                BuildConsumableLines(lines, itemId);
+                break;
+
+            case ItemType.Misc:
+                BuildMiscLines(lines, itemId);
+                break;
+        }
+
+        AddWeightVolumeLine(lines, itemId);
+
+        return data;
+    }
+    private static void AddBasicLines(List<ItemTooltipLine> lines, int itemId)
+    {
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "유형",
+            Value = GetItemTypeText(itemId),
+            ValueColor = COLOR_WHITE
+        });
+        int rarity = ItemDB.GetRarity(itemId);
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "등급",
+            Value = GetRarityText(itemId),
+            ValueColor = COLOR_WHITE
+        });
+    }
+    private static void BuildWeaponLines(List<ItemTooltipLine> lines, int itemId, ItemStack instance, int compareItemId)
+    {
+        if (!ItemDB.TryGetWeaponStat(itemId, out var weaponStat)) return;
+
+        bool isRanged = ItemDB.IsRangedWeapon(itemId);
+
+        string attackText = Mathf.FloorToInt(weaponStat.Attack).ToString(); //소수점 버리기
+        Color attackColor = GetAttackColor(weaponStat.Attack);
+
+        if (compareItemId != 0 && ItemDB.TryGetWeaponStat(compareItemId, out var compareStat))
+        {
+            int diff = Mathf.FloorToInt(weaponStat.Attack - compareStat.Attack);
+            if (diff > 0)
+                attackText += $"(+{diff})";
+            else if (diff < 0)
+                attackText += $"(-{Mathf.Abs(diff)})";
+        }
+
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "공격력",
+            Value = attackText,
+            ValueColor = attackColor
+        });
+
+        lines.Add(new ItemTooltipLine         //////여기서부터 보면 비교했을때 컬러 변화가 안들어 가있음 나중에 수정
+        {
+            Label = "공격속도",
+            Value = GetAttackSpeedText(weaponStat.AttackSpeed),
+            ValueColor = COLOR_WHITE
+        });
+
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "공격사거리",
+            Value = GetAttackRangeText(weaponStat.AttackRange, isRanged),
+            ValueColor = COLOR_WHITE
+        });
+
+        if (!isRanged)
+        {
+            lines.Add(new ItemTooltipLine
+            {
+                Label = "공격범위",
+                Value = GetAttackAngleText(weaponStat.AttackAngle),
+                ValueColor = COLOR_WHITE
+            });
+        }
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "치명타확률",
+            Value = $"{weaponStat.CritChance}%",
+            ValueColor = COLOR_WHITE
+        });
+
+        if (!isRanged)
+        {
+            int maxDurability = weaponStat.Durability;
+            int currentDurability = instance != null ? instance.durability : maxDurability;
+
+            lines.Add(new ItemTooltipLine
+            {
+                Label = "내구도",
+                Value = $"{currentDurability}/{maxDurability}",
+                ValueColor = COLOR_WHITE
+            });
+        }
+    }
+    private static void BuildArmorLines(List<ItemTooltipLine> lines, int itemId, ItemStack instance)
+    {
+        if (!ItemDB.TryGetArmorStat(itemId, out var stat)) return;
+
+        int maxDurability = stat.Durability;
+        int currentDurability = instance != null ? instance.durability : maxDurability;
+
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "내구도",
+            Value = $"{currentDurability}/{maxDurability}",
+            ValueColor = COLOR_WHITE
+        });
+    }
+    private static void BuildShoesLines(List<ItemTooltipLine> lines, int itemId, int comparItmeId)
+    {
+        if(!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
+
+        string moveSpeedText = Mathf.FloorToInt(stat.SpdBuffAdd).ToString();
+
+        if(comparItmeId != 0 && ItemDB.TryGetAccessoryStat(comparItmeId, out var compareStat))
+        {
+            int diff = Mathf.FloorToInt(stat.SpdBuffAdd - compareStat.SpdBuffAdd);
+            if (diff > 0)
+                moveSpeedText += $"(+{diff})";
+            else if (diff < 0)
+                moveSpeedText += $"(-{Mathf.Abs(diff)})";
+        }
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "이동속도",
+            Value = moveSpeedText,
+            ValueColor = COLOR_WHITE
+        } );
+    }
+    private static void BuildBagLines(List<ItemTooltipLine> lines, int itemId, int compareItemId)
+    {
+        if(!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
+
+        string bagCapacityText = stat.BagCapacity.ToString("0.#");
+        string bagWeightLimitText = stat.BagWeightLimit.ToString("0.#");
+        string penaltyFreeWeightText = stat.PenaltyFreeWeight.ToString();
+
+        if(compareItemId != 0 && ItemDB.TryGetAccessoryStat(compareItemId, out var compareStat))
+        {
+            float capacityDiff = stat.BagCapacity - compareStat.BagCapacity;
+            float weightLimitDiff = stat.BagWeightLimit - compareStat.BagWeightLimit;
+            int penaltyFreeWeightDiff = stat.PenaltyFreeWeight - compareStat.PenaltyFreeWeight;
+
+            if (capacityDiff > 0f)
+                bagCapacityText += $"(+{capacityDiff:0.#})";
+            else if(capacityDiff < 0f)
+                bagCapacityText += $"(-{Mathf.Abs(capacityDiff):0.#})";
+
+            if(weightLimitDiff > 0f)
+                bagWeightLimitText += $"(+{weightLimitDiff:0.#})";
+            else if(weightLimitDiff < 0f)
+                bagWeightLimitText += $"(-{Mathf.Abs(weightLimitDiff):0.#})";
+
+            if(penaltyFreeWeightDiff > 0)
+                penaltyFreeWeightText += $"(+{penaltyFreeWeightDiff})";
+            else if(penaltyFreeWeightDiff < 0)
+                penaltyFreeWeightText += $"(-{Mathf.Abs(penaltyFreeWeightDiff)})";
+        }
+
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "수납용량",
+            Value = bagCapacityText,
+            ValueColor = COLOR_WHITE
+        });
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "수납무게",
+            Value = bagWeightLimitText,
+            Suffix = "kg",
+            ValueColor = COLOR_WHITE
+        });
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "무게 면제",
+            Value = penaltyFreeWeightText,
+            Suffix = "kg",
+            ValueColor = COLOR_WHITE
+        });
+    }
+    private static void BuildAccessoryLines(List<ItemTooltipLine> lines, int itemId)
+    {
+        if (!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
+        
+        AddIfNotZero(lines, "공격력 증가", Mathf.FloorToInt(stat.AtkBuffAdd).ToString(), stat.AtkBuffAdd);
+        AddIfNotZero(lines, "공격속도 감소",$"{stat.AtkSpdBuffAdd:0.0}초" , stat.AtkSpdBuffAdd,true);
+        AddIfNotZero(lines, "이동속도 증가", Mathf.FloorToInt(stat.SpdBuffAdd).ToString(), stat.SpdBuffAdd);
+        AddIfNotZero(lines, "최대 스태미너 증가", Mathf.FloorToInt(stat.MaxStaminaBuffAdd).ToString(), stat.MaxStaminaBuffAdd);
+    }
+    private static void BuildMiscLines(List<ItemTooltipLine> lines, int itemId)
+    {
+        // 잡동사니는 현재로서는 특별한 스탯이 없지만, 나중에 추가될 수 있으므로 이 메서드를 만들어두었습니다.
+    }
+
+    private static void BuildConsumableLines(List<ItemTooltipLine> lines, int itemId)
+    {
+        if (!ItemDB.TryGetConsumableStat(itemId, out var stat)) return;
+        
+        AddIfNotZero(lines, "배고픔 회복", $"{stat.HungerRecover}칸", stat.HungerRecover);
+        AddIfNotZero(lines, "목마름 회복", $"{stat.ThirstRecover}칸", stat.ThirstRecover);
+
+        AddIfNotZero(lines, "공격력 증가", Mathf.FloorToInt(stat.AtkBuffAdd).ToString(), stat.AtkBuffAdd);
+        AddIfNotZero(lines, "공격속도 감소", $"{stat.AtkSpdBuffAdd:0.0}초", stat.AtkSpdBuffAdd);
+        AddIfNotZero(lines, "이동속도 증가", Mathf.FloorToInt(stat.SpdBuffAdd).ToString(), stat.SpdBuffAdd);
+        AddIfNotZero(lines, "최대 스태미너 증가", Mathf.FloorToInt(stat.MaxStaminaBuffAdd).ToString(), stat.MaxStaminaBuffAdd);
+
+        if(stat.Duration != 0)
+        {
+            lines.Add(new ItemTooltipLine
+            {
+                Label = "지속시간",
+                Value = $"{stat.Duration}초",
+                ValueColor = COLOR_WHITE
+            });
+        }
+    }
+    private static void AddWeightVolumeLine(List<ItemTooltipLine> lines, int itemId)
+    {
+        float volume = ItemDB.GetVolume(itemId);
+        float weight = ItemDB.GetWeight(itemId);
+
+        lines.Add(new ItemTooltipLine
+        {
+            Label = "용량/무게",
+            Value = $"{volume:0.#}/{weight:0.#}",
+            Suffix = "kg",
+            ValueColor = COLOR_WHITE
+        });
+    }
+    private static void AddIfNotZero(List<ItemTooltipLine> lines, string label, string valueText, float rawValue, bool minusPrefix = false)
+    {
+        if(Mathf.Approximately(rawValue, 0f)) return;
+
+        string prefix = minusPrefix ? "-" : "+";
+
+        lines.Add(new ItemTooltipLine
+        {
+            Label = label,
+            Value = $"{prefix}{valueText}",
+            ValueColor = COLOR_GREEN
+        });
     }
     private static string GetDisplayName(int itemId, bool isEquipped)
     {
