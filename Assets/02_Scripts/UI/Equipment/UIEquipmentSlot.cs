@@ -8,7 +8,7 @@ using ItemEnum;
 using TMPro;
 using Newtonsoft.Json.Bson;
 
-public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler
+public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI amountTXT;
@@ -24,6 +24,8 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
 
     [Header("Click")]
     [SerializeField] private float doubleClick = 0.25f;
+
+    [SerializeField] private UITooltipManage toolTipManage;
 
     private float lastClickTime = -1f;
 
@@ -237,5 +239,24 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         {
             //나중에 장착 해제 팝업 띄울 시 사용
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Equipment equipment = GetEquipment();
+        if(equipment == null) return;
+
+        EquipmentSlot equipmentSlot = equipment.GetSlot(slotRef.equipSlot);
+        if(equipmentSlot == null || equipmentSlot.isEmpty) return;
+
+        int itemId = equipmentSlot.GetItemId();
+        ItemStack instance = equipmentSlot.equippedItem;
+
+        toolTipManage?.ShowEquipmentTooltip(transform as RectTransform, itemId, instance, true);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        toolTipManage?.HideAll();
     }
 }

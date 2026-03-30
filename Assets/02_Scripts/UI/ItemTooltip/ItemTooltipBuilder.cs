@@ -102,54 +102,69 @@ public static class ItemTooltipBuilder
         if (!ItemDB.TryGetWeaponStat(itemId, out var weaponStat)) return;
 
         bool isRanged = ItemDB.IsRangedWeapon(itemId);
+        
+        WeaponStat compareStat = null;
+        bool hasCompare = false;
 
-        string attackText = Mathf.FloorToInt(weaponStat.Attack).ToString(); //소수점 버리기
-        Color attackColor = GetAttackColor(weaponStat.Attack);
-
-        if (compareItemId != 0 && ItemDB.TryGetWeaponStat(compareItemId, out var compareStat))
+        if(compareItemId != 0)
         {
-            int diff = Mathf.FloorToInt(weaponStat.Attack - compareStat.Attack);
-            if (diff > 0)
-                attackText += $"(+{diff})";
-            else if (diff < 0)
-                attackText += $"(-{Mathf.Abs(diff)})";
+            hasCompare = ItemDB.TryGetWeaponStat(compareItemId, out compareStat);
         }
+
+        Color attackColor = GetAttackColor(weaponStat.Attack);
+        if(hasCompare)
+            attackColor = GetHigherBetterColor(weaponStat.Attack, compareStat.Attack);
 
         lines.Add(new ItemTooltipLine
         {
             Label = "공격력",
-            Value = attackText,
-            ValueColor = attackColor
+            Value = Mathf.FloorToInt(weaponStat.Attack).ToString(),
+            ValueColor = attackColor,
         });
 
-        lines.Add(new ItemTooltipLine         //////여기서부터 보면 비교했을때 컬러 변화가 안들어 가있음 나중에 수정
+        Color attackSpeedColor = COLOR_WHITE;
+        if(hasCompare)
+            attackSpeedColor = GetLowerBetterColor(weaponStat.AttackSpeed, compareStat.AttackSpeed);
+        lines.Add(new ItemTooltipLine        
         {
             Label = "공격속도",
             Value = GetAttackSpeedText(weaponStat.AttackSpeed),
-            ValueColor = COLOR_WHITE
+            ValueColor = attackSpeedColor
         });
 
+
+        Color rangeColor = COLOR_WHITE;
+        if(hasCompare)
+            rangeColor = GetHigherBetterColor(weaponStat.AttackRange, compareStat.AttackRange);
         lines.Add(new ItemTooltipLine
         {
             Label = "공격사거리",
             Value = GetAttackRangeText(weaponStat.AttackRange, isRanged),
-            ValueColor = COLOR_WHITE
+            ValueColor = rangeColor
         });
 
         if (!isRanged)
         {
+            Color angleColor = COLOR_WHITE;
+            if(hasCompare)
+                angleColor = GetHigherBetterColor(weaponStat.AttackAngle, compareStat.AttackAngle);
+
             lines.Add(new ItemTooltipLine
             {
                 Label = "공격범위",
                 Value = GetAttackAngleText(weaponStat.AttackAngle),
-                ValueColor = COLOR_WHITE
+                ValueColor = angleColor
             });
         }
+
+        Color critColor = COLOR_WHITE;
+        if(hasCompare)
+            critColor = GetHigherBetterColor(weaponStat.CritChance, compareStat.CritChance);
         lines.Add(new ItemTooltipLine
         {
             Label = "치명타확률",
             Value = $"{weaponStat.CritChance}%",
-            ValueColor = COLOR_WHITE
+            ValueColor = critColor
         });
 
         if (!isRanged)
@@ -183,72 +198,67 @@ public static class ItemTooltipBuilder
     {
         if(!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
 
-        string moveSpeedText = Mathf.FloorToInt(stat.SpdBuffAdd).ToString();
+        AccessoryStat compareStat = null;
+        bool hasCompare = false;
 
-        if(comparItmeId != 0 && ItemDB.TryGetAccessoryStat(comparItmeId, out var compareStat))
+        if(comparItmeId != 0)
         {
-            int diff = Mathf.FloorToInt(stat.SpdBuffAdd - compareStat.SpdBuffAdd);
-            if (diff > 0)
-                moveSpeedText += $"(+{diff})";
-            else if (diff < 0)
-                moveSpeedText += $"(-{Mathf.Abs(diff)})";
+            hasCompare = ItemDB.TryGetAccessoryStat(comparItmeId, out compareStat);
         }
+
+        Color moveSpeedColor = COLOR_WHITE;
+        if(hasCompare)
+            moveSpeedColor = GetHigherBetterColor(stat.SpdBuffAdd, compareStat.SpdBuffAdd);
         lines.Add(new ItemTooltipLine
         {
             Label = "이동속도",
-            Value = moveSpeedText,
-            ValueColor = COLOR_WHITE
+            Value = Mathf.FloorToInt(stat.SpdBuffAdd).ToString(),
+            ValueColor = moveSpeedColor
         } );
     }
     private static void BuildBagLines(List<ItemTooltipLine> lines, int itemId, int compareItemId)
     {
         if(!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
 
-        string bagCapacityText = stat.BagCapacity.ToString("0.#");
-        string bagWeightLimitText = stat.BagWeightLimit.ToString("0.#");
-        string penaltyFreeWeightText = stat.PenaltyFreeWeight.ToString();
+        AccessoryStat compareStat = null;
+        bool hasCompare = false;
 
-        if(compareItemId != 0 && ItemDB.TryGetAccessoryStat(compareItemId, out var compareStat))
+        if(compareItemId != 0)
         {
-            float capacityDiff = stat.BagCapacity - compareStat.BagCapacity;
-            float weightLimitDiff = stat.BagWeightLimit - compareStat.BagWeightLimit;
-            int penaltyFreeWeightDiff = stat.PenaltyFreeWeight - compareStat.PenaltyFreeWeight;
-
-            if (capacityDiff > 0f)
-                bagCapacityText += $"(+{capacityDiff:0.#})";
-            else if(capacityDiff < 0f)
-                bagCapacityText += $"(-{Mathf.Abs(capacityDiff):0.#})";
-
-            if(weightLimitDiff > 0f)
-                bagWeightLimitText += $"(+{weightLimitDiff:0.#})";
-            else if(weightLimitDiff < 0f)
-                bagWeightLimitText += $"(-{Mathf.Abs(weightLimitDiff):0.#})";
-
-            if(penaltyFreeWeightDiff > 0)
-                penaltyFreeWeightText += $"(+{penaltyFreeWeightDiff})";
-            else if(penaltyFreeWeightDiff < 0)
-                penaltyFreeWeightText += $"(-{Mathf.Abs(penaltyFreeWeightDiff)})";
+            hasCompare = ItemDB.TryGetAccessoryStat(compareItemId, out compareStat);
         }
+
+        Color bagCapacityColor = COLOR_WHITE;
+        if(hasCompare)
+            bagCapacityColor = GetHigherBetterColor(stat.BagCapacity, compareStat.BagCapacity);
 
         lines.Add(new ItemTooltipLine
         {
             Label = "수납용량",
-            Value = bagCapacityText,
-            ValueColor = COLOR_WHITE
+            Value = stat.BagCapacity.ToString("0.#"),
+            ValueColor = bagCapacityColor
         });
+
+        Color bagWeightLimitColor = COLOR_WHITE;
+        if(hasCompare)
+            bagWeightLimitColor = GetHigherBetterColor(stat.BagWeightLimit, compareStat.BagWeightLimit);
         lines.Add(new ItemTooltipLine
         {
             Label = "수납무게",
-            Value = bagWeightLimitText,
+            Value = stat.BagWeightLimit.ToString("0.#"),
             Suffix = "kg",
-            ValueColor = COLOR_WHITE
+            ValueColor = bagWeightLimitColor
         });
+
+        Color penaltyFreeWeightColor = COLOR_WHITE;
+        if(hasCompare)
+            penaltyFreeWeightColor = GetHigherBetterColor(stat.PenaltyFreeWeight, compareStat.PenaltyFreeWeight);
         lines.Add(new ItemTooltipLine
         {
             Label = "무게 면제",
-            Value = penaltyFreeWeightText,
+            Value = stat.PenaltyFreeWeight.ToString(),
             Suffix = "kg",
-            ValueColor = COLOR_WHITE
+            ValueColor = penaltyFreeWeightColor
         });
     }
     private static void BuildAccessoryLines(List<ItemTooltipLine> lines, int itemId)
@@ -287,6 +297,7 @@ public static class ItemTooltipBuilder
             });
         }
     }
+
     private static void AddWeightVolumeLine(List<ItemTooltipLine> lines, int itemId)
     {
         float volume = ItemDB.GetVolume(itemId);
@@ -312,6 +323,18 @@ public static class ItemTooltipBuilder
             Value = $"{prefix}{valueText}",
             ValueColor = COLOR_GREEN
         });
+    }
+    private static Color GetHigherBetterColor(float current, float equipped)
+    {
+        if(current > equipped) return COLOR_GREEN;
+        else if (current < equipped) return COLOR_RED;
+        return COLOR_WHITE;
+    }
+    private static Color GetLowerBetterColor(float current, float equipped)
+    {
+        if (current < equipped) return COLOR_GREEN;
+        else if (current > equipped) return COLOR_RED;
+        return COLOR_WHITE;
     }
     private static string GetDisplayName(int itemId, bool isEquipped)
     {

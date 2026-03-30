@@ -21,6 +21,7 @@ public class UIItemTooltipLine : MonoBehaviour
 
         string label = string.IsNullOrEmpty(line.Label) ? "" : $"{line.Label} : ";
         string value = string.IsNullOrEmpty(line.Value) ? "" : $"<color=#{valueHex}>{line.Value}</color>";
+ 
         string suffix = string.IsNullOrEmpty(line.Suffix) ? "" : line.Suffix;
 
         txt.text = $"{label}{value}{suffix}";
