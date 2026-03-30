@@ -14,6 +14,7 @@ public static class ItemTooltipBuilder
     private static readonly Color COLOR_WHITE = Hex("#FFFFFF");
     private static readonly Color COLOR_GREEN = Hex("#3DDC84");
     private static readonly Color COLOR_RED = Hex("#F44336");
+    private static readonly Color COLOR_GRAY = Hex("#BFBFBF");
 
     private static readonly Color COLOR_ATK_1 = Hex("#E74C3C");
     private static readonly Color COLOR_ATK_2 = Hex("#F39C3D");
@@ -40,32 +41,32 @@ public static class ItemTooltipBuilder
 
         List<ItemTooltipLine> lines = data.Lines;
 
-        AddBasicLines(lines, itemId);
+        AddBasicLines(lines, itemId, isEquipped);
 
         ItemType itemType = (ItemType)common.ItemType;
 
         switch (itemType)
         {
             case ItemType.Weapon:
-                BuildWeaponLines(lines, itemId, instance, compareItemId);
+                BuildWeaponLines(lines, itemId, instance, compareItemId, isEquipped);
                 break;
 
             case ItemType.Head:
             case ItemType.Body:
             case ItemType.Leg:
-                BuildArmorLines(lines, itemId, instance);
+                BuildArmorLines(lines, itemId, instance, isEquipped);
                 break;
 
             case ItemType.Shoes:
-                BuildShoesLines(lines, itemId, compareItemId);
+                BuildShoesLines(lines, itemId, compareItemId, isEquipped);
                 break;
 
             case ItemType.Bag:
-                BuildBagLines(lines, itemId, compareItemId);
+                BuildBagLines(lines, itemId, compareItemId, isEquipped);
                 break;
 
             case ItemType.Accessory:
-                BuildAccessoryLines(lines, itemId);
+                BuildAccessoryLines(lines, itemId, isEquipped);
                 break;
 
             case ItemType.Consumable:
@@ -81,23 +82,23 @@ public static class ItemTooltipBuilder
 
         return data;
     }
-    private static void AddBasicLines(List<ItemTooltipLine> lines, int itemId)
+    private static void AddBasicLines(List<ItemTooltipLine> lines, int itemId, bool isEquipped)
     {
         lines.Add(new ItemTooltipLine
         {
             Label = "유형",
             Value = GetItemTypeText(itemId),
-            ValueColor = COLOR_WHITE
+            ValueColor = GetDisplayColor(COLOR_WHITE, isEquipped)
         });
         int rarity = ItemDB.GetRarity(itemId);
         lines.Add(new ItemTooltipLine
         {
             Label = "등급",
             Value = GetRarityText(itemId),
-            ValueColor = COLOR_WHITE
+            ValueColor = GetDisplayColor(COLOR_WHITE, isEquipped)
         });
     }
-    private static void BuildWeaponLines(List<ItemTooltipLine> lines, int itemId, ItemStack instance, int compareItemId)
+    private static void BuildWeaponLines(List<ItemTooltipLine> lines, int itemId, ItemStack instance, int compareItemId, bool isEquipped)
     {
         if (!ItemDB.TryGetWeaponStat(itemId, out var weaponStat)) return;
 
@@ -112,8 +113,10 @@ public static class ItemTooltipBuilder
         }
 
         Color attackColor = GetAttackColor(weaponStat.Attack);
-        if(hasCompare)
+        if (hasCompare && !isEquipped)
             attackColor = GetHigherBetterColor(weaponStat.Attack, compareStat.Attack);
+
+        attackColor = GetDisplayColor(attackColor, isEquipped);
 
         lines.Add(new ItemTooltipLine
         {
@@ -123,8 +126,10 @@ public static class ItemTooltipBuilder
         });
 
         Color attackSpeedColor = COLOR_WHITE;
-        if(hasCompare)
+        if(hasCompare && !isEquipped)
             attackSpeedColor = GetLowerBetterColor(weaponStat.AttackSpeed, compareStat.AttackSpeed);
+
+        attackColor = GetDisplayColor(attackSpeedColor, isEquipped);
         lines.Add(new ItemTooltipLine        
         {
             Label = "공격속도",
@@ -134,8 +139,9 @@ public static class ItemTooltipBuilder
 
 
         Color rangeColor = COLOR_WHITE;
-        if(hasCompare)
+        if(hasCompare && !isEquipped)
             rangeColor = GetHigherBetterColor(weaponStat.AttackRange, compareStat.AttackRange);
+        rangeColor = GetDisplayColor(rangeColor, isEquipped);
         lines.Add(new ItemTooltipLine
         {
             Label = "공격사거리",
@@ -146,9 +152,9 @@ public static class ItemTooltipBuilder
         if (!isRanged)
         {
             Color angleColor = COLOR_WHITE;
-            if(hasCompare)
+            if(hasCompare && !isEquipped)
                 angleColor = GetHigherBetterColor(weaponStat.AttackAngle, compareStat.AttackAngle);
-
+            angleColor = GetDisplayColor(angleColor, isEquipped);
             lines.Add(new ItemTooltipLine
             {
                 Label = "공격범위",
@@ -158,8 +164,10 @@ public static class ItemTooltipBuilder
         }
 
         Color critColor = COLOR_WHITE;
-        if(hasCompare)
+        if(hasCompare && !isEquipped)
             critColor = GetHigherBetterColor(weaponStat.CritChance, compareStat.CritChance);
+
+        critColor = GetDisplayColor(critColor, isEquipped);
         lines.Add(new ItemTooltipLine
         {
             Label = "치명타확률",
@@ -176,11 +184,11 @@ public static class ItemTooltipBuilder
             {
                 Label = "내구도",
                 Value = $"{currentDurability}/{maxDurability}",
-                ValueColor = COLOR_WHITE
+                ValueColor = GetDisplayColor(COLOR_WHITE, isEquipped)
             });
         }
     }
-    private static void BuildArmorLines(List<ItemTooltipLine> lines, int itemId, ItemStack instance)
+    private static void BuildArmorLines(List<ItemTooltipLine> lines, int itemId, ItemStack instance, bool isEquipped)
     {
         if (!ItemDB.TryGetArmorStat(itemId, out var stat)) return;
 
@@ -191,10 +199,10 @@ public static class ItemTooltipBuilder
         {
             Label = "내구도",
             Value = $"{currentDurability}/{maxDurability}",
-            ValueColor = COLOR_WHITE
+            ValueColor = GetDisplayColor(COLOR_WHITE, isEquipped)
         });
     }
-    private static void BuildShoesLines(List<ItemTooltipLine> lines, int itemId, int comparItmeId)
+    private static void BuildShoesLines(List<ItemTooltipLine> lines, int itemId, int comparItmeId, bool isEquipped)
     {
         if(!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
 
@@ -207,16 +215,16 @@ public static class ItemTooltipBuilder
         }
 
         Color moveSpeedColor = COLOR_WHITE;
-        if(hasCompare)
+        if(hasCompare && !isEquipped)
             moveSpeedColor = GetHigherBetterColor(stat.SpdBuffAdd, compareStat.SpdBuffAdd);
         lines.Add(new ItemTooltipLine
         {
             Label = "이동속도",
             Value = Mathf.FloorToInt(stat.SpdBuffAdd).ToString(),
-            ValueColor = moveSpeedColor
+            ValueColor = GetDisplayColor(moveSpeedColor, isEquipped)
         } );
     }
-    private static void BuildBagLines(List<ItemTooltipLine> lines, int itemId, int compareItemId)
+    private static void BuildBagLines(List<ItemTooltipLine> lines, int itemId, int compareItemId, bool isEquipped)
     {
         if(!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
 
@@ -229,46 +237,46 @@ public static class ItemTooltipBuilder
         }
 
         Color bagCapacityColor = COLOR_WHITE;
-        if(hasCompare)
+        if(hasCompare && !isEquipped)
             bagCapacityColor = GetHigherBetterColor(stat.BagCapacity, compareStat.BagCapacity);
 
         lines.Add(new ItemTooltipLine
         {
             Label = "수납용량",
             Value = stat.BagCapacity.ToString("0.#"),
-            ValueColor = bagCapacityColor
+            ValueColor = GetDisplayColor(bagCapacityColor, isEquipped)
         });
 
         Color bagWeightLimitColor = COLOR_WHITE;
-        if(hasCompare)
+        if(hasCompare && !isEquipped)
             bagWeightLimitColor = GetHigherBetterColor(stat.BagWeightLimit, compareStat.BagWeightLimit);
         lines.Add(new ItemTooltipLine
         {
             Label = "수납무게",
             Value = stat.BagWeightLimit.ToString("0.#"),
             Suffix = "kg",
-            ValueColor = bagWeightLimitColor
+            ValueColor = GetDisplayColor(bagWeightLimitColor, isEquipped)
         });
 
         Color penaltyFreeWeightColor = COLOR_WHITE;
-        if(hasCompare)
+        if(hasCompare && !isEquipped)
             penaltyFreeWeightColor = GetHigherBetterColor(stat.PenaltyFreeWeight, compareStat.PenaltyFreeWeight);
         lines.Add(new ItemTooltipLine
         {
             Label = "무게 면제",
             Value = stat.PenaltyFreeWeight.ToString(),
             Suffix = "kg",
-            ValueColor = penaltyFreeWeightColor
+            ValueColor = GetDisplayColor(penaltyFreeWeightColor, isEquipped)
         });
     }
-    private static void BuildAccessoryLines(List<ItemTooltipLine> lines, int itemId)
+    private static void BuildAccessoryLines(List<ItemTooltipLine> lines, int itemId, bool isEquipped)
     {
         if (!ItemDB.TryGetAccessoryStat(itemId, out var stat)) return;
         
-        AddIfNotZero(lines, "공격력 증가", Mathf.FloorToInt(stat.AtkBuffAdd).ToString(), stat.AtkBuffAdd);
-        AddIfNotZero(lines, "공격속도 감소",$"{stat.AtkSpdBuffAdd:0.0}초" , stat.AtkSpdBuffAdd,true);
-        AddIfNotZero(lines, "이동속도 증가", Mathf.FloorToInt(stat.SpdBuffAdd).ToString(), stat.SpdBuffAdd);
-        AddIfNotZero(lines, "최대 스태미너 증가", Mathf.FloorToInt(stat.MaxStaminaBuffAdd).ToString(), stat.MaxStaminaBuffAdd);
+        AddIfNotZero(lines, "공격력 증가", Mathf.FloorToInt(stat.AtkBuffAdd).ToString(), stat.AtkBuffAdd, false, isEquipped);
+        AddIfNotZero(lines, "공격속도 감소",$"{stat.AtkSpdBuffAdd:0.0}초" , stat.AtkSpdBuffAdd,true, isEquipped);
+        AddIfNotZero(lines, "이동속도 증가", Mathf.FloorToInt(stat.SpdBuffAdd).ToString(), stat.SpdBuffAdd, false, isEquipped);
+        AddIfNotZero(lines, "최대 스태미너 증가", Mathf.FloorToInt(stat.MaxStaminaBuffAdd).ToString(), stat.MaxStaminaBuffAdd,false, isEquipped);
     }
     private static void BuildMiscLines(List<ItemTooltipLine> lines, int itemId)
     {
@@ -311,7 +319,7 @@ public static class ItemTooltipBuilder
             ValueColor = COLOR_WHITE
         });
     }
-    private static void AddIfNotZero(List<ItemTooltipLine> lines, string label, string valueText, float rawValue, bool minusPrefix = false)
+    private static void AddIfNotZero(List<ItemTooltipLine> lines, string label, string valueText, float rawValue, bool minusPrefix = false, bool isEquipped = false)
     {
         if(Mathf.Approximately(rawValue, 0f)) return;
 
@@ -321,8 +329,12 @@ public static class ItemTooltipBuilder
         {
             Label = label,
             Value = $"{prefix}{valueText}",
-            ValueColor = COLOR_GREEN
+            ValueColor = isEquipped ? COLOR_GRAY : COLOR_GREEN
         });
+    }
+    private static Color GetDisplayColor(Color originalColor, bool isEquipped)
+    {
+        return isEquipped ? COLOR_GRAY : originalColor;
     }
     private static Color GetHigherBetterColor(float current, float equipped)
     {
