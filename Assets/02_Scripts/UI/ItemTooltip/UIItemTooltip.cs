@@ -56,23 +56,33 @@ public class UIItemTooltip : MonoBehaviour
             descriptionTXT.gameObject.SetActive(!string.IsNullOrEmpty(data.Description));
         }
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform); //레이아웃 계산을 기다리지 말고 지금 바로 완성된 형태로 만들기
+        Canvas.ForceUpdateCanvases();
+
+        if(lineContainer != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(lineContainer as RectTransform);
+
+        if(descriptionTXT != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(descriptionTXT.transform as RectTransform);
+
+        Canvas.ForceUpdateCanvases();
     }
     public void Clear()
     {
-        if(icon != null)
+        if (icon != null)
         {
             icon.sprite = null;
             icon.enabled = false;
         }
+
         if (nameTXT != null)
             nameTXT.text = "";
 
-        for(int i = 0; i< spawnedLines.Count; i++)
+        for (int i = 0; i < spawnedLines.Count; i++)
         {
             if (spawnedLines[i] != null)
-                Destroy(spawnedLines[i].gameObject);
+                spawnedLines[i].gameObject.SetActive(false);
         }
+
         spawnedLines.Clear();
 
         if (descriptionTXT != null)
@@ -81,6 +91,7 @@ public class UIItemTooltip : MonoBehaviour
             descriptionTXT.gameObject.SetActive(false);
         }
     }
+
     public void Show(ItemTooltipData data)
     {
         gameObject.SetActive(true);
