@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ItemEnum;
+using UnityEngine.UI;
 
 public class UITooltipManage : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class UITooltipManage : MonoBehaviour
 
     [Header("Offset")]
     [SerializeField] private Vector2 mainOffset = new Vector2(30f, 0f);
-    [SerializeField] private Vector2 compareOffset = new Vector2(20f, 0f);
+    [SerializeField] private Vector2 compareOffset = new Vector2(0f, 0f); //툴팁 간격
 
     private RectTransform canvasRect;
     private Camera uiCamera;
@@ -90,7 +91,7 @@ public class UITooltipManage : MonoBehaviour
     }
     private void PlaceTooltips(RectTransform target, bool hasCompare)
     {
-        if(canvasRect == null || mainTooltip == null) return;
+        if(canvasRect == null || mainTooltip == null || target == null) return;
 
         RectTransform mainRect = mainTooltip.GetComponent<RectTransform>();
         RectTransform compareRect = compareTooltip != null ? compareTooltip.GetComponent<RectTransform>() : null;
@@ -102,24 +103,46 @@ public class UITooltipManage : MonoBehaviour
 
         bool isRightSide = screenPoint.x >= Screen.width*0.5f;
 
+        float y =  mainOffset.y;
         float canvasHalfWidth = canvasRect.rect.width * 0.5f;
-        float fixedX = isRightSide ? -canvasHalfWidth*0.45f : canvasHalfWidth*0.45f;
 
-        mainRect.pivot = isRightSide ? new Vector2(0f, 0.5f) : new Vector2(1f, 0.5f);
+        float tooltipWidth = 280f; //툴팁 너비
+        float spacing = compareOffset.x; //툴팁 간격
 
-        mainRect.anchoredPosition = new Vector2(fixedX, localPoint.y + mainOffset.y);
-        ClampToCanvas(mainRect);
+        float singleRatio = 0.38f;
+        float grouptRatio = 0.42f;
 
-        if(hasCompare && compareRect != null && compareTooltip.gameObject.activeSelf)
+        mainRect.pivot = new Vector2(0f, 0.5f);
+        if(compareRect != null)
+            compareRect.pivot = new Vector2(0f, 0.5f);
+
+        bool showCompare = hasCompare && compareRect != null && compareRect.gameObject.activeSelf;
+
+        if (!showCompare)
         {
-            compareRect.pivot = mainRect.pivot;
+            float startX = isRightSide
+                ? -canvasHalfWidth * singleRatio
+                : canvasHalfWidth * singleRatio;
 
-            float dir = isRightSide ? 1f : -1f;
-            float compareX = mainRect.anchoredPosition.x + dir * (mainRect.rect.width + compareOffset.x);
-
-            compareRect.anchoredPosition = new Vector2(compareX, mainRect.anchoredPosition.y);
-            ClampToCanvas(compareRect);
+            mainRect.anchoredPosition = new Vector2(startX, y);
+            ClampToCanvas(mainRect);
+            return;
         }
+
+        float grouptWidth = tooltipWidth * 2 + spacing;
+
+        float groupCenterX = isRightSide
+            ? -canvasHalfWidth * grouptRatio
+            : canvasHalfWidth * grouptRatio;
+
+        float mainX = groupCenterX - (grouptWidth * 0.5f);
+        float compareX = mainX + tooltipWidth + spacing;
+
+        mainRect.anchoredPosition = new Vector2(mainX, y);
+        compareRect.anchoredPosition = new Vector2(compareX, y);
+
+        ClampToCanvas(mainRect);
+        ClampToCanvas(compareRect);
     }
     private void ClampToCanvas(RectTransform rect)
     {

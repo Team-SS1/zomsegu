@@ -18,11 +18,11 @@ public class UIItemTooltipLine : MonoBehaviour
         }
 
         string valueHex = ColorUtility.ToHtmlStringRGB(line.ValueColor);
+        string labelHex = ColorUtility.ToHtmlStringRGB(line.LabelColor);
 
-        string label = string.IsNullOrEmpty(line.Label) ? "" : $"{line.Label} : ";
+        string label = string.IsNullOrEmpty(line.Label) ? "" : $"<color=#{labelHex}>{line.Label} : </color>";
         string value = string.IsNullOrEmpty(line.Value) ? "" : $"<color=#{valueHex}>{line.Value}</color>";
- 
-        string suffix = string.IsNullOrEmpty(line.Suffix) ? "" : line.Suffix;
+        string suffix = string.IsNullOrEmpty(line.Suffix) ? "" : $"<color=#{labelHex}>{line.Suffix}</color>";
 
         txt.text = $"{label}{value}{suffix}";
     }
