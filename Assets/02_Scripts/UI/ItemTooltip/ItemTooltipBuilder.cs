@@ -37,7 +37,8 @@ public static class ItemTooltipBuilder
             IconSprite = LoadIcon(ItemDB.GetIconPath(itemId)),
             Name = GetDisplayName(itemId, isEquipped),
             NameColor = isEquipped ? COLOR_GRAY : GetRarityColor(rarity),
-            Description = ItemDB.GetDescription(itemId)
+            Description = ItemDB.GetDescription(itemId),
+            DescriptionColor = isEquipped ? COLOR_GRAY : COLOR_WHITE
         };
 
         List<ItemTooltipLine> lines = data.Lines;

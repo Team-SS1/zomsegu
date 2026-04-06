@@ -17,6 +17,8 @@ public class UIItemTooltip : MonoBehaviour
     [Header("Prefab")]
     [SerializeField] private UIItemTooltipLine linePrefab;
 
+    [SerializeField] private RectTransform bgRect;
+
     private readonly List<UIItemTooltipLine> spawnedLines = new();
 
     public void SetTooltip(ItemTooltipData data)
@@ -53,18 +55,11 @@ public class UIItemTooltip : MonoBehaviour
         if(descriptionTXT != null)
         {
             descriptionTXT.text = data.Description;
+            descriptionTXT.color = data.DescriptionColor;
             descriptionTXT.gameObject.SetActive(!string.IsNullOrEmpty(data.Description));
         }
 
-        Canvas.ForceUpdateCanvases();
-
-        if(lineContainer != null)
-            LayoutRebuilder.ForceRebuildLayoutImmediate(lineContainer as RectTransform);
-
-        if(descriptionTXT != null)
-            LayoutRebuilder.ForceRebuildLayoutImmediate(descriptionTXT.transform as RectTransform);
-
-        Canvas.ForceUpdateCanvases();
+        RefreshLayout();
     }
     public void Clear()
     {
@@ -101,5 +96,26 @@ public class UIItemTooltip : MonoBehaviour
     {
         Clear();
         gameObject.SetActive(false);
+    }
+    public void RefreshLayout()
+    {
+        Canvas.ForceUpdateCanvases();
+
+        if(lineContainer != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(lineContainer as RectTransform);
+
+        if(descriptionTXT != null)
+        {
+            descriptionTXT.ForceMeshUpdate();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(descriptionTXT.transform as RectTransform);
+        }
+
+        if(bgRect != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(bgRect);
+
+        Canvas.ForceUpdateCanvases();
+
+        if(bgRect != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(bgRect);
     }
 }
