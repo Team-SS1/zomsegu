@@ -68,12 +68,20 @@ public class UITooltipManage : MonoBehaviour
             if (compareData != null)
             {
                 compareTooltip.Show(compareData);
+
+                mainTooltip.RefreshLayout();
+                compareTooltip.RefreshLayout();
+
                 PlaceTooltips(target, true);
                 return;
             }
         }
 
         compareTooltip.Hide();
+
+        compareTooltip.Hide();
+        mainTooltip.RefreshLayout();
+
         PlaceTooltips(target, false);
     }
 

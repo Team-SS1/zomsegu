@@ -13096,6 +13096,7 @@ MonoBehaviour:
   lineContainer: {fileID: 1793084065}
   descriptionTXT: {fileID: 384944519}
   linePrefab: {fileID: 3164200271231822995, guid: 4c6a9d0b0c4f7fd4caaad2960809c3de, type: 3}
+  bgRect: {fileID: 369432627}
 --- !u!1001 &1343064087
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20479,6 +20480,7 @@ MonoBehaviour:
   lineContainer: {fileID: 706533508}
   descriptionTXT: {fileID: 1970514079}
   linePrefab: {fileID: 3164200271231822995, guid: 4c6a9d0b0c4f7fd4caaad2960809c3de, type: 3}
+  bgRect: {fileID: 183648317}
 --- !u!1001 &2869101239130180103
 PrefabInstance:
   m_ObjectHideFlags: 0

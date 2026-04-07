@@ -8,5 +8,6 @@ public class ItemTooltipData
     public string Name;
     public Color NameColor = Color.white;
     public string Description;
+    public Color DescriptionColor = Color.white;
     public List<ItemTooltipLine> Lines = new();
 }
