@@ -17,6 +17,9 @@ public class LootSource // 아이템이 생성되는 출처
     [Header("Items")]
     public List<LootItem> lootItems = new List<LootItem>();
 
+    [Header("Display Rule")]
+    public bool mergeStackableForDisplay = true; // 플레이어 드롭 아이템은 낱개로 보이지만, 다른 아이템들은 합쳐져서 보이는 경우가 있음. 이 옵션은 그런 경우에 사용됨.
+
     [Header("Investigation")]
     public bool requiredInvestigation; //조사 필요 여부
     public float baseInvestigationTime = 0f; // 조사에 필요한 기본 시간 (초 단위)

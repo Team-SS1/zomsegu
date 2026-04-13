@@ -5,6 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class SearchDisplayEntry // 탐색창에 보이는 한줄
 {
+    [Header("Source")]
+    public LootSource source; 
+
     [Header("Base")]
     public int itemId;
     public ItemStack representativeInstance;
