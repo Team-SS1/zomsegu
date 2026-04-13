@@ -27,10 +27,6 @@ public static class SearchEntrySorter
         if (rarityCompare != 0)
             return rarityCompare;
 
-        int typeCompare = commonA.ItemType.CompareTo(commonB.ItemType); // 아이템 타입 오름차순 정렬 (낮은 타입 번호가 먼저 오도록)
-        if (typeCompare != 0)
-            return typeCompare;
-
         return commonB.ItemID.CompareTo(commonA.ItemID); // 아이템 ID 내림차순 정렬 (높은 ID가 먼저 오도록)
     }
 }
