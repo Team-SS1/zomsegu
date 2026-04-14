@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using ItemEnum;
 using PlayerEnum;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
-using ItemEnum;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class UISearchWindow : MonoBehaviour
 {
@@ -146,7 +147,15 @@ public class UISearchWindow : MonoBehaviour
         if (entry == null)
             return false;
 
-        // 여긴 나중에 작성 루팅 서비스 기능 넣으면 작성
+        bool success = SearchLootService.TryPickupEntry(targetPlayerType, entry);
+
+        if (!success)
+        {
+#if UNITY_EDITOR
+            Debug.Log("탐색창 아이템 획득 실패");
+#endif
+            return false;
+        }
 
         int previousIndex = selectedIndex;
 

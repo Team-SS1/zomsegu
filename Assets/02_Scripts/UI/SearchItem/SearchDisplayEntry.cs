@@ -13,7 +13,7 @@ public class SearchDisplayEntry // 탐색창에 보이는 한줄
     public ItemStack representativeInstance;
 
     [Header("Merged Items")]
-    public List<LootItem> lootItems = new List<LootItem>();
+    public List<LootItem> lootItems = new List<LootItem>(); // 한개든 스택이든 여기 아이템 들어가 있음
 
     public bool IsStackGroup => representativeInstance == null;
     public bool IsInstanceEntry => representativeInstance != null;
