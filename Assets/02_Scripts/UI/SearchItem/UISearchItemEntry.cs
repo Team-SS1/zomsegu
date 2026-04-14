@@ -105,13 +105,41 @@ public class UISearchItemEntry : MonoBehaviour, IPointerEnterHandler, IPointerEx
             _ => selected ? normalSelectedBG : normalBG
         };
     }
+
+    private void OnClickRoot()
+    {
+        if(owner == null)
+            return;
+
+        float now = Time.unscaledTime;
+        bool isDoubleClick = now - lastClickTime <= DOUBLE_CLICK_DELAY;
+        lastClickTime = now;
+
+        owner.OnClickEntry(this);
+
+        if (isDoubleClick) ;
+            owner.OnDoubleClickEntry(this);
+
+    }
+    private void OnClickPickupButton()
+    {
+        if(owner == null) return;
+        
+        owner.OnClickPickupButton(this);
+    }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        throw new System.NotImplementedException();
+        if (owner == null)
+            return;
+
+        owner.OnHoverEntry(this);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        throw new System.NotImplementedException();
+        if (owner == null)
+            return;
+
+        owner.OnExitEntry(this);
     }
 }
