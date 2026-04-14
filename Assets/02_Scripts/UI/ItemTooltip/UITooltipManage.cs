@@ -59,7 +59,7 @@ public class UITooltipManage : MonoBehaviour
 
         mainTooltip.Show(mainData);
 
-        bool showCompare = ShouldShowCompare(itemId, compareItemId);
+        bool showCompare = ShouldShowCompare(itemId, compareItemId, instance, compareInstance);
 
         if (showCompare)
         {
@@ -105,17 +105,6 @@ public class UITooltipManage : MonoBehaviour
 
         if (compareTooltip != null)
             compareTooltip.Hide();
-    }
-
-    private bool ShouldShowCompare(int itemId, int compareItemId)
-    {
-        if (compareItemId == 0) return false;
-
-        CommonItemData common = ItemDB.GetCommon(itemId);
-        if (common == null) return false;
-
-        ItemType itemType = (ItemType)common.ItemType;
-        return itemType == ItemType.Shoes || itemType == ItemType.Weapon || itemType == ItemType.Bag;
     }
 
     private void PlaceTooltips(RectTransform target, bool hasCompare)
@@ -184,5 +173,31 @@ public class UITooltipManage : MonoBehaviour
 
         mainRect.anchoredPosition = new Vector2(groupX, y);
         compareRect.anchoredPosition = new Vector2(groupX + tooltipWidth + spacing, y);
+    }
+    private bool ShouldShowCompare(int itemId, int compareItemId, ItemStack instance, ItemStack compareInstance)
+    {
+        if (compareItemId == 0) return false;
+
+        CommonItemData common = ItemDB.GetCommon(itemId);
+        if (common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+
+        bool canCompareType = itemType == ItemType.Shoes || itemType == ItemType.Weapon || itemType == ItemType.Bag;
+
+        if(!canCompareType) return false;
+
+        if (itemId == compareItemId)
+        {
+            if (instance != null || compareInstance != null)
+            {
+                if (instance.guid == compareInstance.guid)
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+        }return true;
     }
 }
