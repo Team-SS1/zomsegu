@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class AttackInput : MonoBehaviour
+public class AttackInput
 {
     public float baseAttack;
     public float weaponAttack;
     public float consumeBuff;
-    public float otherBuffAddition;
-    public float otherBuffmultiplication = 1f;
+    public float otherBuffAddition = 0f;
+    public float otherBuffMultiplication = 1f;
 
     public float conditionDebuff;
     

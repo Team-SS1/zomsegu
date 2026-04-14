@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class MovementInput : MonoBehaviour
+public class MovementInput
 {
     public float baseMovement;
     public float equipMovement;

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class AttackSpeedInput : MonoBehaviour
+public class AttackSpeedInput
 {
     public float weaponAttackSpeed;
     public float consumeBuff;
