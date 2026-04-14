@@ -160,18 +160,6 @@ public class UISearchWindow : MonoBehaviour
         int previousIndex = selectedIndex;
 
         RefreshWindow(false);
-
-        if (currentEntries.Count == 0)
-        {
-            selectedIndex = -1;
-            HideTooltip();
-            return true;
-        }
-
-        selectedIndex = Mathf.Clamp(previousIndex, 0, currentEntries.Count-1);
-        RefreshSelection();
-        ShowTooltipBySelectedIndex(); // 아이템 선택시 목록 바로 밑에게 선택되기 때문에
-
         return true;
     }
     public void RefreshWindow(bool resetSelection)

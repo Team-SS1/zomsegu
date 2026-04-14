@@ -83,7 +83,7 @@ public class UISearchItemEntry : MonoBehaviour, IPointerEnterHandler, IPointerEx
                 iconSprite = Resources.Load<Sprite>(iconPath);
 
             iconImage.sprite = iconSprite;
-            iconImage.enabled = iconImage != null;
+            iconImage.enabled = iconSprite != null;
         }
         RefreshBackground();
     }
@@ -117,7 +117,7 @@ public class UISearchItemEntry : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
         owner.OnClickEntry(this);
 
-        if (isDoubleClick) ;
+        if (isDoubleClick)
             owner.OnDoubleClickEntry(this);
 
     }
