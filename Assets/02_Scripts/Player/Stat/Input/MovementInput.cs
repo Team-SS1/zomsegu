@@ -7,7 +7,7 @@ public class MovementInput
     public float equipMovement;
     public float inventoryWeight;
     public float consumeBuff;
-    public float OtherBuffAddition;
+    public float otherBuffAddition;
     public float otherBuffMultiplication = 1f;
 
     public float conditionDebuff;
