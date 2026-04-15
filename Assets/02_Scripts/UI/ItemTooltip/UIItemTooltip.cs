@@ -54,7 +54,9 @@ public class UIItemTooltip : MonoBehaviour
 
         if(descriptionTXT != null)
         {
-            descriptionTXT.text = data.Description;
+            string description = ConvertDescription(data.Description);
+
+            descriptionTXT.text = description;
             descriptionTXT.color = data.DescriptionColor;
             descriptionTXT.gameObject.SetActive(!string.IsNullOrEmpty(data.Description));
         }
@@ -117,5 +119,10 @@ public class UIItemTooltip : MonoBehaviour
 
         if(bgRect != null)
             LayoutRebuilder.ForceRebuildLayoutImmediate(bgRect);
+    }
+    private string ConvertDescription(string description)
+    {
+        if (string.IsNullOrEmpty(description)) return "";
+        return description.Replace("\\n","\n");
     }
 }

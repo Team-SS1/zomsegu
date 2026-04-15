@@ -51,4 +51,9 @@ namespace ItemEnum
         Consumable,
         Misc
     }
+    public enum LootSourceType // 아이템이 생성되는 출처
+    {
+        GroundScan,
+        Container,
+    }
 }
