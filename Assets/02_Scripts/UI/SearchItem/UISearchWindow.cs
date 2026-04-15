@@ -16,7 +16,6 @@ public class UISearchWindow : MonoBehaviour
     [Header("List")]
     [SerializeField] private Transform content;
     [SerializeField] private UISearchItemEntry entryPrefab;
-    [SerializeField] private GameObject emptyObj;
 
     [Header("Player")]
     [SerializeField] private PlayerType targetPlayerType = PlayerType.Player_SHIN;
@@ -210,9 +209,6 @@ public class UISearchWindow : MonoBehaviour
             entryUI.SetEntry(this, currentEntries[i], i == selectedIndex);
             spawnedEntries.Add(entryUI);
         }
-
-        if (emptyObj != null)
-            emptyObj.SetActive(currentEntries.Count == 0);
 
         RefreshSelection();
     }
