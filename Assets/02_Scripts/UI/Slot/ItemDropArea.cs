@@ -19,7 +19,7 @@ public class ItemDropArea : MonoBehaviour, IDropHandler
             return;
         }
 
-        PlayerData fromData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData fromData = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (fromData == null || fromData.Inventory == null) return;
 
         InventorySlot fromSlot = fromData.Inventory.GetSlot(from.index);

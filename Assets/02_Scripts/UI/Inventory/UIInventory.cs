@@ -94,7 +94,7 @@ public class UIInventory : MonoBehaviour
     }
     private Inventory GetInventory(PlayerType player)
     {
-        PlayerData data = PlayerManager.Instance.GetPlayerData(player);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(player);
         return data != null ? data.Inventory : null;
     }
     private void ClearAllSlots()

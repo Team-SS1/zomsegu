@@ -159,7 +159,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private Inventory GetInventory()
     {
-        PlayerData data = PlayerManager.Instance.GetPlayerData(slotRef.playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(slotRef.playerType);
         return data != null ? data.Inventory : null;
     }
 
@@ -232,7 +232,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if(common != null)
         {
             ItemType itemType = (ItemType)common.ItemType;
-            PlayerData playerData = PlayerManager.Instance.GetPlayerData(slotRef.playerType);
+            PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(slotRef.playerType);
 
             if(playerData != null&&playerData.Equipment != null)
             {

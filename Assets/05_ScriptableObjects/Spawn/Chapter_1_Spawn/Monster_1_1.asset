@@ -15,6 +15,7 @@ MonoBehaviour:
   spawnType: 1
   spawnId: 02000000
   spawnCount: 5
+  triggerSpawn: 1
   spawnRandom: 0
   spawnRadius: 3
   spawnTriggerRadius: 1.5

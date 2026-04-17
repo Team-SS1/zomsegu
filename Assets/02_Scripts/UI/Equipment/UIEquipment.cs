@@ -49,7 +49,7 @@ public class UIEquipment : MonoBehaviour
     }
     private void Refresh(PlayerType playerType)
     {
-        PlayerData data = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(playerType);
         if(data == null || data.Equipment == null)
         {
             ClearAll();

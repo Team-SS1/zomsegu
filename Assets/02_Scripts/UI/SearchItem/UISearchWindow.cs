@@ -272,7 +272,7 @@ public class UISearchWindow : MonoBehaviour
         CommonItemData common = ItemDB.GetCommon(itemId);
         if (common == null) return 0;
 
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(targetPlayerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(targetPlayerType);
         if (playerData == null || playerData.Equipment == null) return 0;
 
         ItemType itemType = (ItemType)common.ItemType;
@@ -297,7 +297,7 @@ public class UISearchWindow : MonoBehaviour
         if(compareItemId == 0)
             return null;
 
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(targetPlayerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(targetPlayerType);
         if (playerData == null || playerData.Equipment == null) return null;
 
         EquipSlotType[] compareSlots =

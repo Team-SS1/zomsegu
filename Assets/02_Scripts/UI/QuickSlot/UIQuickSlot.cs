@@ -49,7 +49,7 @@ public class UIQuickSlot : MonoBehaviour
     }
     private void Refresh(PlayerType playerType)
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if(playerData == null || playerData.QuickSlot == null)
         {
             ClearAll();
