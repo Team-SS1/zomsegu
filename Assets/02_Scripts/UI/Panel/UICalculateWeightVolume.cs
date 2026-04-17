@@ -40,7 +40,7 @@ public class UICalculateWeightVolume : MonoBehaviour
     }
     private Inventory GetInventory(PlayerType playerType)
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         return playerData !=null ? playerData.Inventory : null;
     }
 }

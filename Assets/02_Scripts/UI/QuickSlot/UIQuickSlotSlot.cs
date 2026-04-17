@@ -64,7 +64,7 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
 
         if (slot.IsStack)
         {
-            PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+            PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
             int amount = playerData != null && playerData.Inventory != null ?
                 playerData.Inventory.GetStackAmount(slot.itemId) : 0;
 
@@ -72,7 +72,7 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
         }
         else if (slot.IsInstance)
         {
-            PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+            PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
             ItemStack instance = FindInstance(playerData, slot.guid);
 
             if (instance != null && instance.HasDurability)
@@ -224,7 +224,7 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
     }
     private QuickSlot GetQuickSlot()
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(slotRef.playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(slotRef.playerType);
         return playerData != null ? playerData.QuickSlot : null;
     }
     private void SetIconAlpha(float alpha)

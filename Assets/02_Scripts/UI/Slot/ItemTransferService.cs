@@ -45,8 +45,8 @@ public static class ItemTransferService
         if (from.slotType != SlotType.Inventory) return false;
         if (from.playerType == targetPlayer) return false;
 
-        PlayerData fromData = PlayerManager.Instance.GetPlayerData(from.playerType);
-        PlayerData toData = PlayerManager.Instance.GetPlayerData(targetPlayer);
+        PlayerData fromData = PlayerDataManager.Instance.GetPlayerData(from.playerType);
+        PlayerData toData = PlayerDataManager.Instance.GetPlayerData(targetPlayer);
 
         if (fromData == null || toData == null) return false;
 
@@ -87,14 +87,14 @@ public static class ItemTransferService
     //실제 슬롯 이동 코드
     private static bool TryInventoryToInventory(SlotRef from, SlotRef to) // 인벤에서 인벤으로 이동
     {
-        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null || data.Inventory == null) return false;
 
         return data.Inventory.Move(from.index, to.index);
     }
     private static bool TryInventoryToEquipment(SlotRef from, SlotRef to, bool autoBindToFirstQuickSlot) // 인벤에서 장비로 이동
     {
-        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null) return false;
 
         Inventory inventory = data.Inventory;
@@ -203,7 +203,7 @@ public static class ItemTransferService
     }
     private static bool TryEquipmentToInventory(SlotRef from, SlotRef to) // 장비에서 인벤으로 이동
     {
-        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null) return false;
 
         Inventory inventory = data.Inventory;
@@ -329,7 +329,7 @@ public static class ItemTransferService
     {
         if (from.slotType != SlotType.Equipment) return false;
 
-        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null) return false;
 
         Inventory inventory = data.Inventory;
@@ -376,7 +376,7 @@ public static class ItemTransferService
     }
     private static bool TryInventoryToQuickSlot(SlotRef from, SlotRef to) // 인벤에서 퀵슬롯으로 이동
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (playerData == null) return false;
 
         Inventory inventory = playerData.Inventory;
@@ -421,7 +421,7 @@ public static class ItemTransferService
     }
     private static bool TryQuickSlotToQuickSlot(SlotRef from, SlotRef to) // 퀵슬롯에서 퀵슬롯으로 이동
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (playerData == null || playerData.QuickSlot == null) return false;
 
         return playerData.QuickSlot.Swap(from.index, to.index);
@@ -436,7 +436,7 @@ public static class ItemTransferService
     //외부로 드래그 관련
     private static bool TryInventorytoWorldDrop(SlotRef from, int amount) // 인벤에서 월드 드롭
     {
-        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null || data.Inventory == null) return false;
 
         Inventory inventory = data.Inventory;
@@ -479,14 +479,14 @@ public static class ItemTransferService
     {
         if(from.slotType != SlotType.QuickSlot) return false;
 
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if(playerData == null || playerData.QuickSlot == null) return false;
 
         return playerData.QuickSlot.ClearSlot(from.index);
     }
     private static void TryAutoEquipIfSelectedQuickSlot(PlayerType playerType, int quickSlotIndex)
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if (playerData == null) return;
 
         QuickSlot quickSlot = playerData.QuickSlot;
@@ -574,7 +574,7 @@ public static class ItemTransferService
 
         if (itemType != ItemType.Weapon) return;
 
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if (playerData == null) return;
 
         QuickSlot quickSlot = playerData.QuickSlot;
@@ -676,7 +676,7 @@ public static class ItemTransferService
     }
     public static void ValidateQuickSlots(PlayerType playerType)
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if (playerData == null) return;
 
         QuickSlot quickSlot = playerData.QuickSlot;
@@ -706,7 +706,7 @@ public static class ItemTransferService
     }
     public static bool TrySelectQuickSlot(PlayerType playerType, int quickSlotIndex)
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if (playerData == null || playerData.QuickSlot == null) return false;
 
         QuickSlot quickSlot = playerData.QuickSlot;
@@ -737,7 +737,7 @@ public static class ItemTransferService
     {
         if(from.slotType != SlotType.Inventory) return false;
 
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if(playerData == null) return false;
 
         Inventory inventory = playerData.Inventory;
@@ -832,7 +832,7 @@ public static class ItemTransferService
     {
         if(from.slotType != SlotType.Inventory) return false;
 
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if(playerData == null || playerData.Inventory == null) return false;
 
         Inventory inventory = playerData.Inventory;
@@ -850,7 +850,7 @@ public static class ItemTransferService
     {
         if (from.slotType != SlotType.Equipment) return 0;
 
-        PlayerData data = PlayerManager.Instance.GetPlayerData(from.playerType);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null || data.Equipment == null) return 0;
 
         EquipmentSlot equipmentSlot = data.Equipment.GetSlot(from.equipSlot);
@@ -860,7 +860,7 @@ public static class ItemTransferService
     }
     private static bool TryUseConsumableFromQuickSlot(PlayerType playerType, int quickSlotIndex)
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if(playerData == null || playerData.QuickSlot == null || playerData.Inventory == null) return false;
 
         QuickSlot quickSlot = playerData.QuickSlot;

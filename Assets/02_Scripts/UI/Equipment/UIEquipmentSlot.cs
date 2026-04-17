@@ -78,7 +78,7 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
             amountTXT.text = $"{slot.equippedItem.durability}/{slot.equippedItem.maxDurability}";
         else if (slot.HasRangedWeapon)
         {
-            PlayerData data = PlayerManager.Instance.GetPlayerData(playerType);
+            PlayerData data = PlayerDataManager.Instance.GetPlayerData(playerType);
             if (data != null && data.Inventory != null)
             {
                 int amount = data.Inventory.GetStackAmount(slot.rangedWeaponItem);
@@ -108,7 +108,7 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
     }
     private Equipment GetEquipment()
     {
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(slotRef.playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(slotRef.playerType);
         return playerData != null ? playerData.Equipment : null;
     }
     public void OnDrop(PointerEventData eventData)

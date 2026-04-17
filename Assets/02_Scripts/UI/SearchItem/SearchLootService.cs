@@ -9,7 +9,7 @@ public static class SearchLootService // 탐색창 아이템 줍는 메서드
     {
         if (entry == null || entry.source == null || entry.itemId == 0) return false;
 
-        PlayerData playerData = PlayerManager.Instance.GetPlayerData(playerType);
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if (playerData == null || playerData.Inventory == null) return false;
 
         Inventory inventory = playerData.Inventory;

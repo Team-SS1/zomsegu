@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     /*----- Initialize -----*/
     public void Init()
     {
-        data = PlayerManager.Instance.GetPlayerData(playerType);
+        data = PlayerDataManager.Instance.GetPlayerData(playerType);
         var BaseStat = data.Stat;
 
         MaxStamina = BaseStat.BaseMaxStamina; // 추후 최대 계산값 적용
