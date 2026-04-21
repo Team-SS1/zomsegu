@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using ItemEnum;
 using PlayerEnum;
-using Unity.VisualScripting;
-using TMPro.EditorUtilities;
 public static class ItemTransferService
 {
     public static bool TryTransferBetweenSlots(DragPayload payload) // 슬롯 간 이동

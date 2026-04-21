@@ -8,11 +8,12 @@ public class DataManager : GlobalSingleton<DataManager>
     protected override void Awake()
     {
         base.Awake();
-    }
-    private void Start()
-    {
         DataTableLoader.LoadTables();
         EventManager.Instance.Init();
         PlayerDataManager.Instance.Init();
+    }
+    private void Start()
+    {
+        
     }
 }
