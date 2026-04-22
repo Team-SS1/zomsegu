@@ -25,80 +25,13 @@ public static class ItemUseService
 
         ItemType itemType = (ItemType)common.ItemType;
 
-        switch (itemType)
-        {
-            case ItemType.Weapon:
-                {
-                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Weapon);
-                    DragPayload payload = new DragPayload(from);
-                    payload.SetTo(to);
-                    return ItemTransferService.TryTransferBetweenSlots(payload);
-                }
+        if(itemType == ItemType.Consumable)
+            return TryUseConsumableFromInventory(from);
 
-            case ItemType.Head:
-                {
-                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Head);
-                    DragPayload payload = new DragPayload(from);
-                    payload.SetTo(to);
-                    return ItemTransferService.TryTransferBetweenSlots(payload);
-                }
-            case ItemType.Body:
-                {
-                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Body);
-                    DragPayload payload = new DragPayload(from);
-                    payload.SetTo(to);
-                    return ItemTransferService.TryTransferBetweenSlots(payload);
-                }
-            case ItemType.Leg:
-                {
-                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Leg);
-                    DragPayload payload = new DragPayload(from);
-                    payload.SetTo(to);
-                    return ItemTransferService.TryTransferBetweenSlots(payload);
-                }
-            case ItemType.Shoes:
-                {
-                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Shoes);
-                    DragPayload payload = new DragPayload(from);
-                    payload.SetTo(to);
-                    return ItemTransferService.TryTransferBetweenSlots(payload);
-                }
-            case ItemType.Bag:
-                {
-                    SlotRef to = SlotRef.Equip(from.playerType, EquipSlotType.Bag);
-                    DragPayload payload = new DragPayload(from);
-                    payload.SetTo(to);
-                    return ItemTransferService.TryTransferBetweenSlots(payload);
-                }
-            case ItemType.Accessory:
-                {
-                    if (equipment == null) return false;
+        if(!TryGetTargetEquipSlot(itemType, equipment, out EquipSlotType targetSlot))
+            return false;
 
-                    EquipmentSlot acc1 = equipment.GetSlot(EquipSlotType.Accessory1);
-                    EquipmentSlot acc2 = equipment.GetSlot(EquipSlotType.Accessory2);
-
-                    EquipSlotType targetSlot;
-
-                    if (acc1 == null || acc2 == null) return false;
-
-                    if (acc1.isEmpty)
-                        targetSlot = EquipSlotType.Accessory1;
-                    else if (acc2.isEmpty)
-                        targetSlot = EquipSlotType.Accessory2;
-                    else
-                        targetSlot = EquipSlotType.Accessory1;
-
-                    SlotRef to = SlotRef.Equip(from.playerType, targetSlot);
-                    DragPayload payload = new DragPayload(from);
-                    payload.SetTo(to);
-                    return ItemTransferService.TryTransferBetweenSlots(payload);
-                }
-            case ItemType.Consumable:
-                return TryUseConsumableFromInventory(from);
-
-            default:
-                return false;
-        }
+        return TryTransferInventoryItemToEquip(from, targetSlot);
     }
     internal static bool TryUseConsumableFromInventory(SlotRef from) // 인벤 아이템 사용하기
     {
@@ -159,5 +92,58 @@ public static class ItemUseService
         if (!success) return false;
 
         return true;
+    }
+    private static bool TryTransferInventoryItemToEquip(SlotRef from, EquipSlotType targetSlot) // 인벤 아이템 장비 슬롯으로 옮기기
+    {
+        SlotRef to = SlotRef.Equip(from.playerType, targetSlot);
+
+        DragPayload payload = new DragPayload(from);
+        payload.to = to;
+
+        return ItemTransferService.TryTransferBetweenSlots(payload);
+    }
+    private static bool TryGetTargetEquipSlot(ItemType itemType, Equipment equipment, out EquipSlotType targetSlot) // 아이템 타입에 맞는 장비 슬롯 찾기
+    {
+        targetSlot = EquipSlotType.Weapon; // 기본값
+
+        switch (itemType)
+        {
+            case ItemType.Head:
+                targetSlot = EquipSlotType.Head;
+                return true;
+            case ItemType.Body:
+                targetSlot = EquipSlotType.Body;
+                return true;
+            case ItemType.Leg:
+                targetSlot = EquipSlotType.Leg;
+                return true;
+            case ItemType.Shoes:
+                targetSlot = EquipSlotType.Shoes;
+                return true;
+            case ItemType.Bag:
+                targetSlot = EquipSlotType.Bag;
+                return true;
+            case ItemType.Weapon:
+                targetSlot = EquipSlotType.Weapon;
+                return true;
+            case ItemType.Accessory:
+                if(equipment == null) return false;
+
+                EquipmentSlot acc1 = equipment.GetSlot(EquipSlotType.Accessory1);
+                EquipmentSlot acc2 = equipment.GetSlot(EquipSlotType.Accessory2);
+
+                if (acc1 == null || acc2 == null) return false;
+
+                if(acc1.isEmpty)
+                    targetSlot = EquipSlotType.Accessory1;
+                else if (acc2.isEmpty)
+                    targetSlot = EquipSlotType.Accessory2;
+                else
+                    targetSlot = EquipSlotType.Accessory1; // 둘 다 차있으면 액세서리1에 덮어쓰기
+
+                return true;
+            default:
+                return false;
+        }
     }
 }
