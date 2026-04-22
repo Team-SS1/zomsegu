@@ -32,7 +32,7 @@ public static class DropTransferService
         if (slot.IsStack)
         {
             int removeAmount = amount <= 0 ? slot.amount : amount;
-            removeAmount = Mathf.Clamp(removeAmount, 1, amount);
+            removeAmount = Mathf.Clamp(removeAmount, 1, slot.amount);
 
             int itemId = slot.itemId;
 
