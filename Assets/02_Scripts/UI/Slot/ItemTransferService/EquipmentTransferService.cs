@@ -31,7 +31,7 @@ public static class EquipmentTransferService
             {
                 bool success = equipment.EquipRangedItem(to.equipSlot, itemId);
                 if (success)
-                    QuickSlotService.AutoBindEquippedItemToFirstQuickSlot(from.playerType, itemId, null);
+                    HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, itemId, null);
                 return success;
             }
 
@@ -39,7 +39,7 @@ public static class EquipmentTransferService
             {
                 bool success = equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
                 if (success)
-                    QuickSlotService.AutoBindEquippedItemToFirstQuickSlot(from.playerType, itemId, null);
+                    HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, itemId, null);
                 return success;
             }
             else if (equipSlot.HasInstance && equipSlot.equippedItem != null)
@@ -55,7 +55,7 @@ public static class EquipmentTransferService
                 }
                 bool success = equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
                 if (success)
-                    QuickSlotService.AutoBindEquippedItemToFirstQuickSlot(from.playerType, itemId, null);
+                    HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, itemId, null);
                 return success;
             }
             return false;
@@ -74,8 +74,7 @@ public static class EquipmentTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
-            if (autoBindToFirstQuickSlot)
-                QuickSlotService.AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
+            HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, removed.itemId, removed);
             return true;
         }
 
@@ -92,8 +91,7 @@ public static class EquipmentTransferService
                 inventory.TryAddInstance(removed.itemId, removed);
                 return false;
             }
-            if (autoBindToFirstQuickSlot)
-                QuickSlotService.AutoBindEquippedItemToFirstQuickSlot(from.playerType, removed.itemId, removed);
+            HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, removed.itemId, removed);
             return true;
         }
         if (equipSlot.HasInstance && equipSlot.equippedItem != null) // 기존 장착 아이템이 인스턴스형이면 스왑
@@ -110,10 +108,86 @@ public static class EquipmentTransferService
                 inventory.TryAddInstance(removedItem.itemId, removedItem);
                 return false;
             }
-            if (autoBindToFirstQuickSlot)
-                QuickSlotService.AutoBindEquippedItemToFirstQuickSlot(from.playerType, removedItem.itemId, removedItem);
+            HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, removedItem.itemId, removedItem);
             return true;
         }
+        return false;
+    }
+    private static void HandleAutoBindOnEquip(bool autoBindToFirstQuickSlot, PlayerType playerType, int itemId, ItemStack instance)
+    {
+        if(!autoBindToFirstQuickSlot) return;
+        QuickSlotService.AutoBindEquippedItemToFirstQuickSlot(playerType, itemId, instance);
+    }
+    internal static bool TryEquipWeaponFromQuickSlot(PlayerType playerType, QuickSlotSlot slot) // 퀵슬롯에서 무기 장착 시도
+    {
+        if(slot == null || slot.isEmpty) return false;
+
+        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
+        if (playerData == null) return false;
+
+        Inventory inventory = playerData.Inventory;
+        Equipment equipment = playerData.Equipment;
+
+        if (inventory == null || equipment == null) return false;
+
+        CommonItemData common = ItemDB.GetCommon(slot.itemId);
+        if (common == null) return false;
+
+        ItemType itemType = (ItemType)common.ItemType;
+        if(itemType != ItemType.Weapon) return false;
+
+        if (slot.IsStack)
+            return TryEquipRangedWeaponFromQuickSlot(slot.itemId, inventory, equipment);
+
+        if (slot.IsInstance)
+        {
+            int invIndex = inventory.FindIndexByGuid(slot.guid);
+            if(invIndex < 0) return false;
+
+            SlotRef from = SlotRef.Inv(playerType, invIndex);
+            SlotRef to = SlotRef.Equip(playerType, EquipSlotType.Weapon);
+
+            return TryInventoryToEquipment(from, to, false);
+        }
+        return false;
+    }
+    private static bool TryEquipRangedWeaponFromQuickSlot(int itemId, Inventory inventory, Equipment equipment)
+    {
+        EquipmentSlot weaponSlot = equipment.GetSlot(EquipSlotType.Weapon);
+        if (weaponSlot == null) return false;
+
+        if(weaponSlot.HasRangedWeapon && weaponSlot.rangedWeaponItem == itemId) // 이미 장착된 원거리 무기와 같은 아이템이면 true 반환
+            return true; 
+
+        if(weaponSlot.isEmpty)
+            return equipment.EquipRangedItem(EquipSlotType.Weapon, itemId);
+
+        if(weaponSlot.HasRangedWeapon)
+            return equipment.SwapRangedItem(EquipSlotType.Weapon, itemId, out _, out _);
+
+        if(weaponSlot.HasInstance && weaponSlot.equippedItem != null)
+        {
+            ItemStack oldInstance = weaponSlot.equippedItem;
+
+            if (!inventory.TryAddInstance(oldInstance.itemId, oldInstance))
+                return false;
+
+            if (!equipment.UnEquip(EquipSlotType.Weapon, out _, out _))
+            {
+                inventory.TryRemoveInstance(oldInstance.guid, out _);
+                return false;
+            }
+
+            if(!equipment.EquipRangedItem(EquipSlotType.Weapon, itemId))
+            {
+                inventory.TryRemoveInstance(oldInstance.guid, out _);
+                equipment.EquipInstance(EquipSlotType.Weapon, oldInstance);
+                return false;
+            }
+
+            return true;
+        }
+
         return false;
     }
     internal static bool TryEquipmentToInventory(SlotRef from, SlotRef to) // 장비 -> 인벤
