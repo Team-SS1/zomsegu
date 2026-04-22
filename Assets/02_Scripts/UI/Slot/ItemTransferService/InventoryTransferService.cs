@@ -58,7 +58,13 @@ public static class InventoryTransferService
 
             if (!toInv.TryAddStack(itemId, moveAmount)) return false;
 
-            return fromInv.TryRemoveStack(fromIndex, moveAmount);
+            bool removed = fromInv.TryRemoveStack(fromIndex, moveAmount);
+            if (!removed)
+            {
+                toInv.TryRemoveStack(toIndex, moveAmount); 
+                return false;
+            }
+            return true;
         }
         if (fromSlot.IsInstance)
         {
@@ -68,7 +74,11 @@ public static class InventoryTransferService
             if (!toInv.TryAddInstance(instance.itemId, instance)) return false;
 
             bool removed = fromInv.TryRemoveInstance(guid, out _);
-            if (!removed) return false;
+            if (!removed)
+            {
+                toInv.TryRemoveInstance(guid, out _);
+                return false;
+            }
             return true;
         }
 
