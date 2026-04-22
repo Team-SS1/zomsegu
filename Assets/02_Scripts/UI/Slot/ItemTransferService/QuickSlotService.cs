@@ -168,11 +168,8 @@ public static class QuickSlotService
         if (playerData == null) return;
 
         QuickSlot quickSlot = playerData.QuickSlot;
-        Inventory inventory = playerData.Inventory;
-        Equipment equipment = playerData.Equipment;
 
-        if (equipment == null || inventory == null || quickSlot == null) return;
-        if (quickSlot.SelectedIndex != quickSlotIndex) return;
+        if (quickSlot == null) return;
 
         QuickSlotSlot slot = quickSlot.GetSlot(quickSlotIndex);
         if (slot == null || slot.isEmpty) return;
@@ -183,52 +180,7 @@ public static class QuickSlotService
         ItemType itemType = (ItemType)common.ItemType;
         if (itemType != ItemType.Weapon) return;
 
-        if (slot.IsStack) //퀵슬롯에 슽택형 아이템 등록시
-        {
-            EquipmentSlot weaponSlot = equipment.GetSlot(EquipSlotType.Weapon);
-            if (weaponSlot == null) return;
-
-            if (weaponSlot.HasRangedWeapon && weaponSlot.rangedWeaponItem == slot.itemId) return; // 기존 장착 아이템이랑 똑같으면 return;
-
-            if (weaponSlot.isEmpty)
-            {
-                equipment.EquipRangedItem(EquipSlotType.Weapon, slot.itemId);
-                return;
-            }
-
-            if (weaponSlot.HasRangedWeapon)
-            {
-                equipment.SwapRangedItem(EquipSlotType.Weapon, slot.itemId, out _, out _);
-                return;
-            }
-
-            if (weaponSlot.HasInstance && weaponSlot.equippedItem != null)
-            {
-                ItemStack oldInstance = weaponSlot.equippedItem;
-
-                if (!inventory.TryAddInstance(oldInstance.itemId, oldInstance)) return;
-
-                if (!equipment.UnEquip(EquipSlotType.Weapon, out _, out _))
-                {
-                    inventory.TryRemoveInstance(oldInstance.guid, out _);
-                    return;
-                }
-
-                equipment.EquipRangedItem(EquipSlotType.Weapon, slot.itemId);
-            }
-
-            return;
-        }
-        if (slot.IsInstance) // 퀵슬롯에 인스턴스형 아이템 등록시
-        {
-            int invIndex = inventory.FindIndexByGuid(slot.guid);
-            if (invIndex < 0) return;
-
-            SlotRef from = SlotRef.Inv(playerType, invIndex);
-            SlotRef to = SlotRef.Equip(playerType, EquipSlotType.Weapon);
-
-            EquipmentTransferService.TryInventoryToEquipment(from, to, false);
-        }
+        EquipmentTransferService.TryEquipWeaponFromQuickSlot(playerType, slot);
     }
     private static bool CanRegisterQuickSlot(InventorySlot slot) // 등록 가능한 아이템인지 확인
     {
