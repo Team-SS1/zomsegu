@@ -19,7 +19,7 @@ public static class EquipmentQueryService
 
     // 장착한 아이템 ItemStack (인스턴스형 아이템)
     // 장착한 아이템의 변하는 정보(내구도 등)가 필요할 때 조회
-    public static ItemStack GetEquippedItemStack(PlayerType playerType, EquipSlotType equipSlotType) 
+    public static ItemStack GetEquippedInstance(PlayerType playerType, EquipSlotType equipSlotType) 
     {
         PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
         if (playerData == null || playerData.Equipment == null) return null;

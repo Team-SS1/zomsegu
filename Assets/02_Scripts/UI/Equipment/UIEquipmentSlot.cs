@@ -223,14 +223,10 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
     }
     private void TryUnEquipByClick()
     {
-        Equipment equipment = GetEquipment();
-        if (equipment == null) return;
+        if(!EquipmentQueryService.HasEquippedItem(slotRef.playerType, slotRef.equipSlot)) return;
 
-        EquipmentSlot equipmentSlot = equipment.GetSlot(slotRef.equipSlot);
-        if(equipmentSlot == null || equipmentSlot.isEmpty) return;
-
-        int itemId = equipmentSlot.GetItemId();
-        if(uiInventory != null && itemId != 0)
+        int itemId = EquipmentQueryService.GetEquippedItemId(slotRef.playerType, slotRef.equipSlot);
+        if (uiInventory != null && itemId != 0)
             uiInventory.AdjustFilterBeforeUnEquip(itemId);
 
         bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(slotRef);
@@ -246,14 +242,10 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Equipment equipment = GetEquipment();
-        if(equipment == null) return;
+        int itemId = EquipmentQueryService.GetEquippedItemId(slotRef.playerType, slotRef.equipSlot);
+        if(itemId == 0) return;
 
-        EquipmentSlot equipmentSlot = equipment.GetSlot(slotRef.equipSlot);
-        if(equipmentSlot == null || equipmentSlot.isEmpty) return;
-
-        int itemId = equipmentSlot.GetItemId();
-        ItemStack instance = equipmentSlot.equippedItem;
+        ItemStack instance = EquipmentQueryService.GetEquippedInstance(slotRef.playerType, slotRef.equipSlot);
 
         toolTipManage?.ShowEquipmentTooltip(transform as RectTransform, itemId, instance, true);
     }
