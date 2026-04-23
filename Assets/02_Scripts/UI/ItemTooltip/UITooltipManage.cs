@@ -75,8 +75,6 @@ public class UITooltipManage : MonoBehaviour
         }
 
         compareTooltip.Hide();
-
-        compareTooltip.Hide();
         mainTooltip.RefreshLayout();
 
         PlaceTooltips(target, false);
@@ -186,7 +184,7 @@ public class UITooltipManage : MonoBehaviour
 
         if (itemId == compareItemId)
         {
-            if (instance != null || compareInstance != null)
+            if (instance != null && compareInstance != null)
             {
                 if (instance.guid == compareInstance.guid)
                     return false;
