@@ -170,6 +170,7 @@ public static class QuickSlotService
         QuickSlot quickSlot = playerData.QuickSlot;
 
         if (quickSlot == null) return;
+        if(quickSlot.SelectedIndex != quickSlotIndex) return;
 
         QuickSlotSlot slot = quickSlot.GetSlot(quickSlotIndex);
         if (slot == null || slot.isEmpty) return;
