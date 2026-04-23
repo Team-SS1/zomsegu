@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using PlayerEnum;
+﻿using PlayerEnum;
 using ItemEnum;
 
 public static class EquipmentQueryService

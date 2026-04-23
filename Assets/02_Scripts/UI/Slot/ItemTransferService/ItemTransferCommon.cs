@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using ItemEnum;
+﻿using ItemEnum;
 public static class ItemTransferCommon
 {
     private static readonly EquipSlotType[] EquipSlots =

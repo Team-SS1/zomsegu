@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using ItemEnum;
+﻿using ItemEnum;
 
 public static class SearchDisplayTextUtil // 탐색창에 보이는 텍스트 관련 유틸리티 클래스
 {

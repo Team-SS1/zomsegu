@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using PlayerEnum;
 using UnityEngine.UI;
 using EventEnum;
-using Unity.VisualScripting;
 
 public class UIMainCharacterPanel : MonoBehaviour
 {

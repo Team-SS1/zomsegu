@@ -1,7 +1,4 @@
 ﻿using ItemEnum;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public static class ItemDB // 스택이 가능한 아이템 : 스택형 , 스택이 불가능한 아이템 : 인스턴스형

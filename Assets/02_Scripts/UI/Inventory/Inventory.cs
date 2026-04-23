@@ -1,8 +1,7 @@
-﻿using PlayerEnum;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using EventEnum;
+using PlayerEnum;
 using System.Linq;
 
 public class Inventory

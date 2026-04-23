@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using ItemEnum;
+﻿using ItemEnum;
 using PlayerEnum;
 public static class ItemTransferService
 {

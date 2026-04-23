@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
-using UnityEngine.Rendering.Universal;
 
 public class UISearchItemEntry : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler //아이템 한칸 UI
 {

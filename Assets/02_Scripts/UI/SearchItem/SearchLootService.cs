@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using PlayerEnum;
 
 public static class SearchLootService // 탐색창 아이템 줍는 메서드

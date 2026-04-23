@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using ItemEnum;
+﻿using ItemEnum;
 using PlayerEnum;
 
 public static class EquipmentTransferService

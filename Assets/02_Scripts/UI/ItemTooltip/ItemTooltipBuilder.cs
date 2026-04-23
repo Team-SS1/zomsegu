@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System;
 using ItemEnum;
-using PlayerEnum;
 public static class ItemTooltipBuilder
 {
     private static readonly Color COLOR_NORMAL = Hex("#B0B0B0");

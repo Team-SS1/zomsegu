@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using PlayerEnum;
 using EventEnum;
 public class UIActiveCharacterContext : MonoBehaviour //지금 액티브 플레이어 기준이 없기 때문에 임시로 만듬

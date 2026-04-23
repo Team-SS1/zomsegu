@@ -1,9 +1,6 @@
 ﻿using ItemEnum;
 using PlayerEnum;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 [Serializable]
 public struct SlotRef //슬롯 주소값
