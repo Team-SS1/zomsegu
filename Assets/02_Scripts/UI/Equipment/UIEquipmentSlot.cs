@@ -235,6 +235,9 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
 
         bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(slotRef);
 
+        if(success && uiInventory != null)
+            uiInventory.Refresh(slotRef.playerType);
+
         if (!success)
         {
             //나중에 장착 해제 팝업 띄울 시 사용

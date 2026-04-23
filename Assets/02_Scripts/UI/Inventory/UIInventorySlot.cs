@@ -148,7 +148,11 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (wasFiltered &&
             from.slotType == SlotType.Equipment)
         {
-            ItemTransferService.TryUnEquipToFirstEmptyInventory(from);
+            bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(from);
+
+            if(success && uiInventory != null)
+                uiInventory.Refresh(slotRef.playerType);  
+
             return;
         }
 
