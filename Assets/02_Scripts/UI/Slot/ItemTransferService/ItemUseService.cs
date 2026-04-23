@@ -31,7 +31,7 @@ public static class ItemUseService
         if(!TryGetTargetEquipSlot(itemType, equipment, out EquipSlotType targetSlot))
             return false;
 
-        return TryTransferInventoryItemToEquip(from, targetSlot);
+        return TryEquipInventoryItem(from, targetSlot);
     }
     internal static bool TryUseConsumableFromInventory(SlotRef from) // 인벤 아이템 사용하기
     {
@@ -93,14 +93,10 @@ public static class ItemUseService
 
         return true;
     }
-    private static bool TryTransferInventoryItemToEquip(SlotRef from, EquipSlotType targetSlot) // 인벤 아이템 장비 슬롯으로 옮기기
+    private static bool TryEquipInventoryItem(SlotRef from, EquipSlotType targetSlot) // 인벤 아이템 장비 슬롯에 장착하기
     {
         SlotRef to = SlotRef.Equip(from.playerType, targetSlot);
-
-        DragPayload payload = new DragPayload(from);
-        payload.to = to;
-
-        return ItemTransferService.TryTransferBetweenSlots(payload);
+        return EquipmentTransferService.TryInventoryToEquipment(from, to, true);
     }
     private static bool TryGetTargetEquipSlot(ItemType itemType, Equipment equipment, out EquipSlotType targetSlot) // 아이템 타입에 맞는 장비 슬롯 찾기
     {

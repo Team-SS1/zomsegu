@@ -151,8 +151,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(from);
 
             if(success && uiInventory != null)
-                uiInventory.Refresh(slotRef.playerType);  
-
+                uiInventory.Refresh(slotRef.playerType);   
             return;
         }
 
