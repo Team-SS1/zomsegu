@@ -50,10 +50,15 @@ public static class EquipmentTransferService
                     inventory.TryRemoveInstance(oldInstance.guid, out _);
                     return false;
                 }
-                bool success = equipment.SwapRangedItem(to.equipSlot, itemId, out _, out _);
+                bool success = equipment.EquipRangedItem(to.equipSlot, itemId);
                 if (success)
                     HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, itemId, null);
-                return success;
+                else
+                {
+                    inventory.TryRemoveInstance(oldInstance.guid, out _);
+                    equipment.EquipInstance(to.equipSlot, oldInstance);
+                }
+                    return success;
             }
             return false;
         }
@@ -77,6 +82,7 @@ public static class EquipmentTransferService
 
         if (equipSlot.HasRangedWeapon) //기존 장착 아이템이 원거리면 인벤쪽 인스턴스형 아이템 제거
         {
+            int oldRangedItemId = equipSlot.rangedWeaponItem;
             if (!inventory.TryRemoveInstance(guid, out ItemStack removed)) return false;
             if (!equipment.UnEquip(to.equipSlot, out _, out _))
             {
@@ -86,6 +92,7 @@ public static class EquipmentTransferService
             if (!equipment.EquipInstance(to.equipSlot, removed))
             {
                 inventory.TryAddInstance(removed.itemId, removed);
+                equipment.EquipRangedItem(to.equipSlot, oldRangedItemId);
                 return false;
             }
             HandleAutoBindOnEquip(autoBindToFirstQuickSlot, from.playerType, removed.itemId, removed);
