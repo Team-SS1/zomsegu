@@ -42,7 +42,7 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
             searchWindow.TryPickupSelected();
     }
 
-    private void OpenMergedGroundScan()
+    private void OpenMergedGroundScan() // 스택형 합쳐서 보이는 탐색창
     {
         LootSource source = new LootSource("바닥", LootSourceType.GroundScan);
         source.mergeStackableForDisplay = true;
@@ -54,7 +54,7 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
         searchWindow.OpenWithSource(source);
     }
 
-    private void OpenSeparatedGroundScan()
+    private void OpenSeparatedGroundScan() // 스택형도 낱개로 보이는 탐색창
     {
         LootSource source = new LootSource("바닥", LootSourceType.GroundScan);
         source.mergeStackableForDisplay = false;
@@ -66,7 +66,7 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
         searchWindow.OpenWithSource(source);
     }
 
-    private void OpenMultiSourceGroundScan()
+    private void OpenMultiSourceGroundScan() // 여러 source를 한 번에 여는 Tab 탐색창 테스트
     {
         LootSource sourceA = new LootSource("바닥", LootSourceType.GroundScan);
         sourceA.mergeStackableForDisplay = true;

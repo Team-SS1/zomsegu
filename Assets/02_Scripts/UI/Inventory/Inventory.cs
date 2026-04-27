@@ -318,7 +318,7 @@ public class Inventory
     }
     public bool TryPlaceInstanceAt(int index, ItemStack instance)
     {
-        if (index < 0 || index > Capacity) return false;
+        if (index < 0 || index >= Capacity) return false;
         if (instance == null) return false;
         if (!ItemDB.UseInstance(instance.itemId)) return false;
 
