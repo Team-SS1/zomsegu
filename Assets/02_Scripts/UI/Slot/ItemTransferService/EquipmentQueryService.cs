@@ -16,6 +16,13 @@ public static class EquipmentQueryService
         return equipmentSlot.GetItemId();
     }
 
+    // SlotRef에서 장착한 아이템 itemId 조회하는 편의 메서드
+    public static int GetEquippedItemId(SlotRef slotRef)
+    {
+        if (slotRef.slotType != SlotType.Equipment) return 0;
+        return GetEquippedItemId(slotRef.playerType, slotRef.equipSlot);
+    }
+
     // 장착한 아이템 ItemStack (인스턴스형 아이템)
     // 장착한 아이템의 변하는 정보(내구도 등)가 필요할 때 조회
     public static ItemStack GetEquippedInstance(PlayerType playerType, EquipSlotType equipSlotType) 
@@ -29,9 +36,23 @@ public static class EquipmentQueryService
         return equipmentSlot.equippedItem;
     }
 
+    // SlotRef에서 장착한 아이템 ItemStack 조회하는 편의 메서드
+    public static ItemStack GetEquippedInstance(SlotRef slotRef)
+    {
+        if (slotRef.slotType != SlotType.Equipment) return null;
+        return GetEquippedInstance(slotRef.playerType, slotRef.equipSlot);
+    }
+
     // 해당 슬롯에 아이템이 장착되어 있는지 확인하는 편의 메서드
     public static bool HasEquippedItem(PlayerType playerType, EquipSlotType equipSlotType)
     {
         return GetEquippedItemId(playerType, equipSlotType) != 0;
+    }
+
+    // SlotRef에서 해당 슬롯에 아이템이 장착되어 있는지 확인하는 편의 메서드
+    public static bool HasEquippedItem(SlotRef slotRef)
+    {
+        if (slotRef.slotType != SlotType.Equipment) return false;
+        return HasEquippedItem(slotRef.playerType, slotRef.equipSlot);
     }
 }
