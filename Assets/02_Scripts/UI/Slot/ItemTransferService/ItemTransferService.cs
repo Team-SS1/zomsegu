@@ -72,8 +72,4 @@ public static class ItemTransferService
     {
         return ItemUseService.TryUseOrEquipFromInventory(from);
     }
-    public static int GetEquippedItemId(SlotRef from) // 장착한 아이템 itemId
-    {
-        return EquipmentTransferService.GetEquippedItemId(from);
-    }
 }
