@@ -154,8 +154,6 @@ public class UISearchWindow : MonoBehaviour
             return false;
         }
 
-        int previousIndex = selectedIndex;
-
         RefreshWindow(false);
         return true;
     }
@@ -255,8 +253,8 @@ public class UISearchWindow : MonoBehaviour
         SearchDisplayEntry entry = entryUI.EntryData;
         ItemStack instance = entry.IsInstanceEntry ? entry.representativeInstance : null;
 
-        int compareItemId = GetCompareItemId(entry.itemId);
-        ItemStack compareInstance = GetCompareInstance(compareItemId);
+        int compareItemId = EquipmentQueryService.GetEquippedItemId(targetPlayerType, EquipSlotType.Weapon);
+        ItemStack compareInstance = EquipmentQueryService.GetEquippedInstance(targetPlayerType, EquipSlotType.Weapon);
 
         tooltipManage.ShowInventoryTooltip(entryUI.Rect, entry.itemId, instance, compareItemId, compareInstance);
     }
@@ -264,56 +262,5 @@ public class UISearchWindow : MonoBehaviour
     {
         if (tooltipManage != null)
             tooltipManage.HideAll();
-    }
-    private int GetCompareItemId(int itemId)
-    {
-        CommonItemData common = ItemDB.GetCommon(itemId);
-        if (common == null) return 0;
-
-        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(targetPlayerType);
-        if (playerData == null || playerData.Equipment == null) return 0;
-
-        ItemType itemType = (ItemType)common.ItemType;
-
-        EquipSlotType targetSlot = itemType switch
-        {
-            ItemType.Weapon => EquipSlotType.Weapon,
-            ItemType.Shoes => EquipSlotType.Shoes,
-            ItemType.Bag => EquipSlotType.Bag,
-            _ => (EquipSlotType) (-1)
-        };
-
-        if ((int)targetSlot < 0) return 0;
-
-        EquipmentSlot equipSlot = playerData.Equipment.GetSlot(targetSlot);
-        if (equipSlot == null || equipSlot.isEmpty) return 0;
-
-        return equipSlot.GetItemId();
-    }
-    private ItemStack GetCompareInstance(int compareItemId)
-    {
-        if(compareItemId == 0)
-            return null;
-
-        PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(targetPlayerType);
-        if (playerData == null || playerData.Equipment == null) return null;
-
-        EquipSlotType[] compareSlots =
-        {
-            EquipSlotType.Weapon,
-            EquipSlotType.Shoes,
-            EquipSlotType.Bag
-        };
-
-        for(int i = 0; i < compareSlots.Length; i++)
-        {
-            EquipmentSlot slot = playerData.Equipment.GetSlot(compareSlots[i]);
-            if (slot == null || slot.isEmpty) continue;
-
-            if (slot.HasInstance && slot.equippedItem != null && slot.equippedItem.itemId == compareItemId)
-                return slot.equippedItem;
-        }
-
-        return null;
     }
 }
