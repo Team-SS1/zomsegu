@@ -48,12 +48,12 @@ public class UICalculateWeightVolume : MonoBehaviour
 
         if(volumeText != null)
         {
-            volumeText.text = $"용량 {inventory.CurrentVolume:0.#}/{inventory.MaxVolume:0.#}";
+            volumeText.text = $"{inventory.CurrentVolume:0.#}/{inventory.MaxVolume:0.#}";
             volumeText.color = normalColor;
         }
         if(weightText != null)
         {
-            weightText.text = $"무게 {inventory.CurrentWeight:0.#}/{inventory.MaxWeight:0.#}";
+            weightText.text = $"{inventory.CurrentWeight:0.#}/{inventory.MaxWeight:0.#}kg";
             weightText.color = inventory.CurrentWeight > inventory.MaxWeight ? overloadColor : normalColor;
         }
     }
