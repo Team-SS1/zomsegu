@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using ItemEnum;
-using UnityEngine.UI;
 
 public class UITooltipManage : MonoBehaviour
 {
@@ -15,15 +12,12 @@ public class UITooltipManage : MonoBehaviour
 
     [Header("Offset")]
     [SerializeField] private Vector2 mainOffset = new Vector2(0f, 0f);
-    [SerializeField] private Vector2 compareOffset = new Vector2(0f, 0f); //툴팁 간격
 
     [Header("Layout")]
     [SerializeField] private float tooltipWidth = 280f;
     [SerializeField] private float singleCenterRatio = 0.42f;
     [SerializeField] private float groupCenterRatio = 0.42f;
 
-    [SerializeField] private RectTransform leftAnchor;
-    [SerializeField] private RectTransform rightAnchor;
     [SerializeField] private float spacing = 0f;
 
     [Header("Fine Tune")]
@@ -78,8 +72,6 @@ public class UITooltipManage : MonoBehaviour
         }
 
         compareTooltip.Hide();
-
-        compareTooltip.Hide();
         mainTooltip.RefreshLayout();
 
         PlaceTooltips(target, false);
@@ -116,13 +108,6 @@ public class UITooltipManage : MonoBehaviour
 
         Vector3 worldCenter = target.TransformPoint(target.rect.center);
         Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(uiCamera, worldCenter);
-
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvasRect,
-            screenPoint,
-            uiCamera,
-            out Vector2 localPoint
-        );
 
         bool isRightSide = screenPoint.x >= Screen.width * 0.5f;
 
@@ -189,7 +174,7 @@ public class UITooltipManage : MonoBehaviour
 
         if (itemId == compareItemId)
         {
-            if (instance != null || compareInstance != null)
+            if (instance != null && compareInstance != null)
             {
                 if (instance.guid == compareInstance.guid)
                     return false;

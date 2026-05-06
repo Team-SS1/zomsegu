@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using PlayerEnum;
 using EventEnum;
@@ -8,7 +6,15 @@ using EventEnum;
 public class UICalculateWeightVolume : MonoBehaviour
 {
     [SerializeField] private UISelectedCharacterContext selectedCharacterContext;
-    [SerializeField] private TextMeshProUGUI text;
+
+    [Header("Text")]
+    [SerializeField] private TextMeshProUGUI volumeText;
+    [SerializeField] private TextMeshProUGUI weightText;
+
+    [Header("Color")]
+    [SerializeField] private Color normalColor = new Color(0x11, 0x11, 0x11, 0xFF);
+    [SerializeField] private Color overloadColor = new Color(0xF4, 0x43, 0x36, 0xFF);
+
     private void OnEnable()
     {
         EventManager.Subscribe<PlayerType>(EventKey.InventoryChanged, OnInventoryChanged);
@@ -33,10 +39,23 @@ public class UICalculateWeightVolume : MonoBehaviour
     private void Refresh(PlayerType playerType)
     {
         Inventory inventory = GetInventory(playerType);
-        if (inventory == null) return;
+        if (inventory == null)
+        {
+            if (volumeText != null) volumeText.text = "";
+            if (weightText != null) weightText.text = "";
+            return;
+        }
 
-        if (text != null)
-            text.text = $"용량 {inventory.CurrentVolume:0.#}/{inventory.MaxVolume} 무게 {inventory.CurrentWeight:0.#}/{inventory.MaxWeight}kg";
+        if(volumeText != null)
+        {
+            volumeText.text = $"{inventory.CurrentVolume:0.#}/{inventory.MaxVolume:0.#}";
+            volumeText.color = normalColor;
+        }
+        if(weightText != null)
+        {
+            weightText.text = $"{inventory.CurrentWeight:0.#}/{inventory.MaxWeight:0.#}kg";
+            weightText.color = inventory.CurrentWeight > inventory.MaxWeight ? overloadColor : normalColor;
+        }
     }
     private Inventory GetInventory(PlayerType playerType)
     {

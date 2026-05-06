@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using PlayerEnum;
 using TMPro;
@@ -141,14 +139,17 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         if (from.slotType == SlotType.Equipment && uiInventory != null)
         {
-            int equippedItemId = ItemTransferService.GetEquippedItemId(from);
+            int equippedItemId = EquipmentQueryService.GetEquippedItemId(from.playerType, from.equipSlot);
             if (equippedItemId != 0)
                 uiInventory.AdjustFilterBeforeUnEquip(equippedItemId);
         }
         if (wasFiltered &&
             from.slotType == SlotType.Equipment)
         {
-            ItemTransferService.TryUnEquipToFirstEmptyInventory(from);
+            bool success = ItemTransferService.TryUnEquipToFirstEmptyInventory(from);
+
+            if(success && uiInventory != null)
+                uiInventory.Refresh(slotRef.playerType);   
             return;
         }
 
@@ -232,38 +233,13 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if(common != null)
         {
             ItemType itemType = (ItemType)common.ItemType;
-            PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(slotRef.playerType);
-
-            if(playerData != null&&playerData.Equipment != null)
+            
+            if(TryGetCompareEquipSlot(itemType, out EquipSlotType equipSlotType))
             {
-                if(itemType == ItemType.Weapon)
-                {
-                    EquipmentSlot equipSlot = playerData.Equipment.GetSlot(EquipSlotType.Weapon);
-                    if(equipSlot != null && !equipSlot.isEmpty)
-                    {
-                        compareItemId = equipSlot.GetItemId();
-                        compareInstance = equipSlot.equippedItem;
-                    }
-                }
-                else if(itemType == ItemType.Shoes)
-                {
-                    EquipmentSlot equipmentSlot = playerData.Equipment.GetSlot(EquipSlotType.Shoes);
-                    if(equipmentSlot != null && !equipmentSlot.isEmpty)
-                    {
-                        compareItemId = equipmentSlot.GetItemId();
-                        compareInstance = equipmentSlot.equippedItem;
-                    }
-                }
-                else if(itemType == ItemType.Bag)
-                {
-                    EquipmentSlot equipmentSlot = playerData.Equipment.GetSlot(EquipSlotType.Bag);
-                    if(equipmentSlot != null && !equipmentSlot.isEmpty)
-                    {
-                        compareItemId = equipmentSlot.GetItemId();
-                        compareInstance = equipmentSlot.equippedItem;
-                    }
-                }
-            }       
+                compareItemId = EquipmentQueryService.GetEquippedItemId(slotRef.playerType, equipSlotType);
+                compareInstance = EquipmentQueryService.GetEquippedInstance(slotRef.playerType, equipSlotType);
+            }
+            
         }
 
         toolTipManage?.ShowInventoryTooltip(
@@ -278,5 +254,24 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnPointerExit(PointerEventData eventData)
     {
         toolTipManage?.HideAll();
+    }
+    private bool TryGetCompareEquipSlot(ItemType itemType, out EquipSlotType equipSlotType)
+    {
+        equipSlotType = EquipSlotType.Weapon;
+
+        switch (itemType)
+        {
+            case ItemType.Weapon:
+                equipSlotType = EquipSlotType.Weapon;
+                return true;
+            case ItemType.Shoes:
+                equipSlotType = EquipSlotType.Shoes;
+                return true;
+            case ItemType.Bag:
+                equipSlotType = EquipSlotType.Bag;
+                return true;
+            default:
+                return false;
+        }
     }
 }

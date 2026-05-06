@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using ItemEnum;
+﻿using ItemEnum;
 using System;
-using PlayerEnum;
 [Serializable]
 public class EquipmentSlot
 {

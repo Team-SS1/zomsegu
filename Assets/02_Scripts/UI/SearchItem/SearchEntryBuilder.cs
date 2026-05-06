@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public static class SearchEntryBuilder // 탐색창 UI에 보일 아이템칸 리스트 생성기
 {

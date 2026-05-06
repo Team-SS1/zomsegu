@@ -8,4 +8,10 @@
         Top_Panel = 30,
         Top_Popup = 40
     }
+    public enum BlinkMode
+    {
+        None,
+        FillAlert,
+        BgAlert
+    }
 }

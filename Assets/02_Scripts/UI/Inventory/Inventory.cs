@@ -1,8 +1,7 @@
-﻿using PlayerEnum;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using EventEnum;
+using PlayerEnum;
 using System.Linq;
 
 public class Inventory
@@ -42,8 +41,8 @@ public class Inventory
     }
     public IReadOnlyList<InventorySlot> GetAllSlots() => System.Array.AsReadOnly(slots);
 
-    private bool CanAddByCapacity(float addWeight, float addVolume) //용량, 무게 체크
-        => (CurrentWeight + addWeight <= MaxWeight) && (CurrentVolume + addVolume <= MaxVolume);
+    private bool CanAddByVolume(float addVolume) //용량 체크
+        => (CurrentVolume + addVolume <= MaxVolume);
     private int FindEmptySlot() // 빈 슬롯 찾기
     {
         for (int i = 0; i< Capacity; i++)if(slots[i].isEmpty) return i;
@@ -58,7 +57,7 @@ public class Inventory
         float addWeight = ItemDB.GetWeight(itemId) * amount;
         float addVolume = ItemDB.GetVolume(itemId) * amount;
 
-        if(!CanAddByCapacity(addWeight, addVolume)) return false;
+        if(!CanAddByVolume(addVolume)) return false;
 
         if(stackToIndex.TryGetValue(itemId, out var index)) //이미 존재하는 스택형 아이템이 있다면
         {
@@ -90,7 +89,7 @@ public class Inventory
         float addWeight = ItemDB.GetWeight(itemId);
         float addVolume = ItemDB.GetVolume(itemId);
 
-        if(!CanAddByCapacity(addWeight, addVolume)) return false;
+        if(!CanAddByVolume(addVolume)) return false;
 
         int emptyIndex = FindEmptySlot();
         if(emptyIndex < 0) return false; //빈 슬롯 없음
@@ -160,7 +159,7 @@ public class Inventory
         float addWeight = ItemDB.GetWeight(itemId);
         float addVolume = ItemDB.GetVolume(itemId);
 
-        if(!CanAddByCapacity(addWeight, addVolume)) return false;
+        if(!CanAddByVolume(addVolume)) return false;
 
         int emptyIndex = FindEmptySlot();
         if(emptyIndex < 0) return false; //빈 슬롯 없음
@@ -319,7 +318,7 @@ public class Inventory
     }
     public bool TryPlaceInstanceAt(int index, ItemStack instance)
     {
-        if (index < 0 || index > Capacity) return false;
+        if (index < 0 || index >= Capacity) return false;
         if (instance == null) return false;
         if (!ItemDB.UseInstance(instance.itemId)) return false;
 
@@ -329,7 +328,7 @@ public class Inventory
         float addWeight = ItemDB.GetWeight(instance.itemId);
         float addVolume = ItemDB.GetVolume(instance.itemId);
 
-        if (!CanAddByCapacity(addWeight, addVolume)) return false;
+        if (!CanAddByVolume(addVolume)) return false;
 
         if (string.IsNullOrEmpty(instance.guid) || guidToIndex.ContainsKey(instance.guid))
         {

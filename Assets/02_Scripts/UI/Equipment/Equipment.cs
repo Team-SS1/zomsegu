@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using InputEnum;
+﻿using System.Collections.Generic;
 using PlayerEnum;
 using EventEnum;
 using ItemEnum;

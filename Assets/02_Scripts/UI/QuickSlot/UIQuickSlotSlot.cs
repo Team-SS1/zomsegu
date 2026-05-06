@@ -1,6 +1,4 @@
 ﻿using PlayerEnum;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -73,7 +71,7 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
         else if (slot.IsInstance)
         {
             PlayerData playerData = PlayerDataManager.Instance.GetPlayerData(playerType);
-            ItemStack instance = FindInstance(playerData, slot.guid);
+            ItemStack instance = ItemTransferCommon.FindInstancePlayer(playerData, slot.guid);
 
             if (instance != null && instance.HasDurability)
                 text.text = $"{instance.durability}/{instance.maxDurability}";
@@ -84,49 +82,6 @@ public class UIQuickSlotSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, I
         {
             text.text = "";
         }
-    }
-    private ItemStack FindInstance(PlayerData playerData, string guid)
-    {
-        if (playerData == null || string.IsNullOrEmpty(guid)) return null;
-
-        if(playerData.Inventory != null)
-        {
-            int index = playerData.Inventory.FindIndexByGuid(guid);
-
-            if (index >= 0)
-            {
-                InventorySlot slot = playerData.Inventory.GetSlot(index);
-                if (slot == null || slot.IsStack) return null;
-
-                return slot.instance;
-            }
-        }
-        
-        if(playerData.Equipment != null)
-        {
-            EquipSlotType[] equipSlotTypes =
-            {
-                EquipSlotType.Head,
-                EquipSlotType.Body,
-                EquipSlotType.Leg,
-                EquipSlotType.Shoes,
-                EquipSlotType.Bag,
-                EquipSlotType.Weapon,
-                EquipSlotType.Accessory1,
-                EquipSlotType.Accessory2
-            };
-
-            for(int i = 0; i < equipSlotTypes.Length; i++)
-            {
-                EquipmentSlot equipSlot = playerData.Equipment.GetSlot(equipSlotTypes[i]);
-                if(equipSlot != null && equipSlot.HasInstance && equipSlot.equippedItem != null)
-                {
-                    if (equipSlot.equippedItem.guid == guid)
-                        return equipSlot.equippedItem;
-                }
-            }
-        }
-        return null;
     }
     private void ClearSlot()
     {
