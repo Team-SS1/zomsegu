@@ -3,6 +3,7 @@ using TMPro;
 using UIEnum;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class UICircleConditionGauge : MonoBehaviour
 {
@@ -20,18 +21,22 @@ public class UICircleConditionGauge : MonoBehaviour
     [SerializeField] private Color alertTextColor = new Color32(0xF4, 0x43, 0x36, 0xFF);
 
     [Header("Blink")]
-    [SerializeField] private float blinkInterval = 0.5f; // 깜빡임 간격 (초)
+    [SerializeField] private float blinkInterval = 0.6f; // 깜빡임 간격 (초)
     [SerializeField] private int dangerThreshold = 3; // 이 수치 이하일 때 깜빡임 시작
 
-    private Coroutine blinkCoroutine;
-    private BlinkMode currentBlinkMode = BlinkMode.None;
+    private Tween blinkTween;
 
     private int currentValue;
     private int maxValue;
 
+    private void Awake()
+    {
+        ResetVisualImmediate();
+    }
     private void OnDisable()
     {
         StopBlink();
+        ResetVisualImmediate();
     }
     public void SetValue(int currentValue, int maxValue)
     {
@@ -57,10 +62,11 @@ public class UICircleConditionGauge : MonoBehaviour
     private void ApplyVisualState()
     {
         StopBlink();
+        ResetVisualImmediate();
 
         if (currentValue <= 0) // 아예 0 이하면 배경 깜빡임
         {
-            AppyZeroState();
+            ApplyZeroState();
             return;
         }
         else if (currentValue <= dangerThreshold) // dangerThreshold 이하면 경고 상태로 깜빡임
@@ -79,66 +85,100 @@ public class UICircleConditionGauge : MonoBehaviour
         SetImageEnabled(fillNormal, true);
         SetImageEnabled(bgAlert, false);
         SetImageEnabled(fillAlert, false);
+
+        SetImageAlpha(bgNormal, 1f);
+        SetImageAlpha(bgAlert, 0f);
+        SetImageAlpha(fillNormal, 1f);
+        SetImageAlpha(fillAlert, 0f);
     }
     private void ApplyAlertState() // 경고 상태
     {
         SetImageEnabled(bgNormal, true);
         SetImageEnabled(fillNormal, true);
         SetImageEnabled(bgAlert, false);
-        SetImageEnabled(fillAlert, false);
+        SetImageEnabled(fillAlert, true);
 
-        currentBlinkMode = BlinkMode.FillAlert;
-        blinkCoroutine = StartCoroutine(BlinkRoutine());
+        SetImageAlpha(bgNormal, 1f);
+        SetImageAlpha(bgAlert, 0f);
+        SetImageAlpha(fillNormal, 1f);
+        SetImageAlpha(fillAlert, 0f);
+
+        if(fillAlert != null)
+        {
+            blinkTween = fillAlert
+                .DOFade(1f, blinkInterval)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetEase(Ease.Linear)
+                .SetUpdate(true);
+        }
     }
-    private void AppyZeroState() // 0 이하면 배경 깜빡임
+    private void ApplyZeroState() // 0 이하면 배경 깜빡임
     {
         SetImageEnabled(bgNormal, true);
-        SetImageEnabled(fillNormal, false);
-        SetImageEnabled(bgAlert, false);
+        SetImageEnabled(fillNormal, true);
+        SetImageEnabled(bgAlert, true);
         SetImageEnabled(fillAlert, false);
 
-        currentBlinkMode = BlinkMode.BgAlert;
-        blinkCoroutine = StartCoroutine(BlinkRoutine());
-    }
-    private IEnumerator BlinkRoutine()
-    {
-        bool showAlert = false;
+        SetImageAlpha(bgNormal, 1f);
+        SetImageAlpha(bgAlert, 0f);
+        SetImageAlpha(fillNormal, 0f);
+        SetImageAlpha(fillAlert, 0f);
 
-        while (true)
+        if(bgAlert != null)
         {
-            showAlert = !showAlert;
-
-            if (currentBlinkMode == BlinkMode.FillAlert)
-            {
-                SetImageEnabled(bgNormal, true);
-                SetImageEnabled(bgAlert, false);
-
-                SetImageEnabled(fillNormal, !showAlert);
-                SetImageEnabled(fillAlert, showAlert);
-            }
-            else if (currentBlinkMode == BlinkMode.BgAlert)
-            {
-                SetImageEnabled(bgNormal, !showAlert);
-                SetImageEnabled(bgAlert, showAlert);
-
-                SetImageEnabled(fillNormal, false);
-                SetImageEnabled(fillAlert, false);
-            }
-            yield return new WaitForSecondsRealtime(blinkInterval);
+            blinkTween = bgAlert
+                .DOFade(1f, blinkInterval)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetEase(Ease.Linear)
+                .SetUpdate(true);
         }
     }
     private void StopBlink()
     {
-        if (blinkCoroutine != null)
+        if(blinkTween != null)
         {
-            StopCoroutine(blinkCoroutine);
-            blinkCoroutine = null;
+            blinkTween.Kill();
+            blinkTween = null;
         }
-        currentBlinkMode = BlinkMode.None;
+    }
+    private void ResetVisualImmediate()
+    {
+        if(bgNormal != null)
+        {
+            bgNormal.DOKill();
+            SetImageEnabled(bgNormal, true);
+            SetImageAlpha(bgNormal, 1f);
+        }
+        if(bgAlert != null)
+        {
+            bgAlert.DOKill();
+            SetImageEnabled(bgAlert, true);
+            SetImageAlpha(bgAlert, 0f);
+        }
+        if (fillNormal != null)
+        {
+            fillNormal.DOKill();
+            SetImageEnabled(fillNormal, true);
+            SetImageAlpha(fillNormal, 1f);
+        }
+        if (fillAlert != null)
+        {
+            fillAlert.DOKill();
+            SetImageEnabled(fillAlert, true);
+            SetImageAlpha(fillAlert, 0f);
+        }
     }
     private void SetImageEnabled(Image image, bool enabled)
     {
         if (image != null)
             image.enabled = enabled;
+    }
+    private void SetImageAlpha(Image image, float alpha)
+    {
+        if(image == null) return;
+
+        Color color = image.color;
+        color.a = alpha;
+        image.color = color;
     }
 }
