@@ -12,8 +12,8 @@ public class UICalculateWeightVolume : MonoBehaviour
     [SerializeField] private TextMeshProUGUI weightText;
 
     [Header("Color")]
-    [SerializeField] private Color normalColor = new Color(0x11, 0x11, 0x11, 0xFF);
-    [SerializeField] private Color overloadColor = new Color(0xF4, 0x43, 0x36, 0xFF);
+    [SerializeField] private Color normalColor = new Color32(0x11, 0x11, 0x11, 0xFF);
+    [SerializeField] private Color overloadColor = new Color32(0xF4, 0x43, 0x36, 0xFF);
 
     private void OnEnable()
     {
