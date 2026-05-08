@@ -24,6 +24,9 @@ public class PlayerConditionTester : MonoBehaviour // 게이지 UI가 제대로 
         else if(Input.GetKeyDown(KeyCode.Keypad1)) SetToMax(AbnormalType.Tired);
         else if(Input.GetKeyDown(KeyCode.Keypad2)) SetToDanger(AbnormalType.Tired);
         else if (Input.GetKeyDown(KeyCode.Keypad3)) SetToZero(AbnormalType.Tired);
+        else if(Input.GetKeyDown(KeyCode.Alpha8)) SetToMax(AbnormalType.Shock);
+        else if(Input.GetKeyDown(KeyCode.Alpha9)) SetToDanger(AbnormalType.Shock);
+        else if (Input.GetKeyDown(KeyCode.Alpha0)) SetToZero(AbnormalType.Shock);
     }
     private void SetToMax(AbnormalType type)
     {
