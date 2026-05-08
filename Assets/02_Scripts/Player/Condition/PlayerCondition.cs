@@ -209,27 +209,47 @@ public class PlayerCondition : MonoBehaviour
         {
             case AbnormalType.Hunger:
                 HungerDebuff(abnormal);
-                EventManager.TriggerEvent(EventKey.OnHungerChanged);
+
+                PlayerManager.Instance.UpdateAttack(player);
+                PlayerManager.Instance.UpdateAttackSpeed(player);
+
+                EventManager.TriggerEvent(EventKey.OnHungerChanged, this);
                 break;
 
             case AbnormalType.Thirst:
                 ThirstDebuff(abnormal);
-                EventManager.TriggerEvent(EventKey.OnThirstChanged);
+
+                PlayerManager.Instance.UpdateAttackSpeed(player);
+                PlayerManager.Instance.UpdateMovement(player);
+
+                EventManager.TriggerEvent(EventKey.OnThirstChanged, this);
                 break;
 
             case AbnormalType.Shock:
                 ShockDebuff(abnormal);
-                EventManager.TriggerEvent(EventKey.OnShockChanged);
+
+                PlayerManager.Instance.UpdateAttack(player);
+                PlayerManager.Instance.UpdateAttackSpeed(player);
+
+                EventManager.TriggerEvent(EventKey.OnShockChanged, this);
                 break;
 
             case AbnormalType.Tired:
                 TiredDebuff(abnormal);
-                EventManager.TriggerEvent(EventKey.OnTiredChanged);
+
+                PlayerManager.Instance.UpdateMovement(player);
+
+                EventManager.TriggerEvent(EventKey.OnTiredChanged, this);
                 break;
 
             case AbnormalType.Injury:
                 InjuryDebuff(abnormal);
-                EventManager.TriggerEvent(EventKey.OnInjuryChanged);
+
+                PlayerManager.Instance.UpdateAttack(player);
+                PlayerManager.Instance.UpdateAttackSpeed(player);
+                PlayerManager.Instance.UpdateMovement(player);
+
+                EventManager.TriggerEvent(EventKey.OnInjuryChanged, this);
                 break;
         }
     }
