@@ -31,14 +31,23 @@ public class UIConditionGaugePanel : MonoBehaviour
     }
     private void OnHungerChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshGauge(AbnormalType.Hunger, hungerGauge);
     }
     private void OnThirstChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshGauge(AbnormalType.Thirst, thirstGauge);
     }
     private void OnTiredChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshGauge(AbnormalType.Tired, tiredGauge);
     }
     private void RefreshAll()
