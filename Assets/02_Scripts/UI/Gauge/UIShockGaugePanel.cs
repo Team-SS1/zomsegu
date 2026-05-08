@@ -21,6 +21,9 @@ public class UIShockGaugePanel : MonoBehaviour
     }
     private void OnShockChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshShock();
     }
     private void RefreshShock()
