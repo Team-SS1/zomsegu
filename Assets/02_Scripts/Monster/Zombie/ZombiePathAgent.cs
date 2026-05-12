@@ -80,10 +80,10 @@ public class ZombiePathAgent : MonoBehaviour
 
         switch (z.stat.ZombieCategory)
         {
-            case 3: return 0.5f; // 특수좀비
-            case 2: return 1f;   // 청년좀비
-            case 1: return 2f;   // 중년좀비
-            case 0: return 999f; // 노인좀비는 길찾기 안 함
+            case 3: return 1f; // 특수좀비
+            case 2: return 2f;   // 청년좀비
+            case 1: return 3f;   // 중년좀비
+            case 0: return 999f;   // 노인좀비
             default: return 999f;
         }
     }
@@ -93,7 +93,7 @@ public class ZombiePathAgent : MonoBehaviour
         if (z == null || z.stat == null)
             return false;
 
-        // 0 = 노인좀비는 길찾기 사용 안 함
+        // 0 = 노인좀비 -> 길찾기 사용 안 함
         return z.stat.ZombieCategory != 0;
     }
 

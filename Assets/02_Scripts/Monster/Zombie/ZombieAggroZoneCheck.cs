@@ -6,18 +6,25 @@ public class ZombieAggroZoneCheck : MonoBehaviour
     private Zombie z;
     private CircleCollider2D col;
 
+    private bool radiusSynced;
+
     private void Awake()
     {
         z = GetComponentInParent<Zombie>();
         col = GetComponent<CircleCollider2D>();
 
         col.isTrigger = true;
-        SyncRadiusFromStat();
     }
 
     private void Start()
     {
-        SyncRadiusFromStat();
+        TrySyncRadiusFromStat();
+    }
+
+    private void Update()
+    {
+        if (!radiusSynced)
+            TrySyncRadiusFromStat();
     }
 
     private void OnValidate()
@@ -26,8 +33,14 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         col.isTrigger = true;
     }
 
-    private void SyncRadiusFromStat()
+    private void TrySyncRadiusFromStat()
     {
+        if (z == null)
+            z = GetComponentInParent<Zombie>();
+
+        if (col == null)
+            col = GetComponent<CircleCollider2D>();
+
         if (z == null || z.stat == null || col == null)
             return;
 
@@ -36,38 +49,55 @@ public class ZombieAggroZoneCheck : MonoBehaviour
             z.stat.VisionBackRadius,
             z.stat.VisionFOVRadius
         );
+
+        radiusSynced = true;
+
+#if UNITY_EDITOR
+        Debug.Log($"[AggroZone] Radius Sync 완료: {col.radius}, Zombie:{z.name}, Stat:{z.stat.Name}");
+#endif
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (z == null || z.IsDead)
-            return;
-
-        Transform targetRoot = ResolveTargetRoot(other);
-        if (targetRoot == null)
-            return;
-
-        if (!z.CanAggroTarget(targetRoot))
-            return;
-
-        if (CanSeeTarget(targetRoot))
-            z.OnTargetSeen(targetRoot);
+        TryDetect(other);
     }
 
     private void OnTriggerStay2D(Collider2D other)
     {
+        TryDetect(other);
+    }
+
+    private void TryDetect(Collider2D other)
+    {
         if (z == null || z.IsDead)
             return;
+
+        if (!radiusSynced)
+            TrySyncRadiusFromStat();
 
         Transform targetRoot = ResolveTargetRoot(other);
         if (targetRoot == null)
             return;
 
         if (!z.CanAggroTarget(targetRoot))
+        {
+#if UNITY_EDITOR
+            Debug.Log($"[AggroZone] LayerMask 불일치: {targetRoot.name}, Layer:{LayerMask.LayerToName(targetRoot.gameObject.layer)}");
+#endif
             return;
+        }
 
         if (!CanSeeTarget(targetRoot))
+        {
+#if UNITY_EDITOR
+            Debug.Log($"[AggroZone] Trigger 안에는 있지만 시야 조건 실패: {targetRoot.name}");
+#endif
             return;
+        }
+
+#if UNITY_EDITOR
+        Debug.Log($"[AggroZone] 타겟 감지 성공: {targetRoot.name}");
+#endif
 
         if (z.Target == targetRoot)
             z.MarkTargetSeen();
@@ -80,14 +110,9 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         if (other == null)
             return null;
 
-        // 플레이어 우선
         Player player = other.GetComponentInParent<Player>();
         if (player != null)
             return player.transform;
-
-        //Zombie otherZombie = other.GetComponentInParent<Zombie>();
-        //if (otherZombie != null && otherZombie != z)
-        //    return otherZombie.transform;
 
         return null;
     }
@@ -112,7 +137,6 @@ public class ZombieAggroZoneCheck : MonoBehaviour
         Vector2 dir = toTarget / dist;
         float dot = Vector2.Dot(forward, dir);
 
-        // 정면 부채꼴
         if (dist <= z.stat.VisionFOVRadius)
         {
             float angle = Vector2.Angle(forward, dir);
@@ -120,11 +144,9 @@ public class ZombieAggroZoneCheck : MonoBehaviour
                 return true;
         }
 
-        // 전면 180도
         if (dot >= 0f && dist <= z.stat.VisionFrontRadius)
             return true;
 
-        // 후면 180도
         if (dot < 0f && dist <= z.stat.VisionBackRadius)
             return true;
 
@@ -142,5 +164,13 @@ public class ZombieAggroZoneCheck : MonoBehaviour
             return sr.bounds.center;
 
         return t.position;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (col == null)
+            col = GetComponent<CircleCollider2D>();
+
+        Gizmos.DrawWireSphere(transform.position, col.radius);
     }
 }

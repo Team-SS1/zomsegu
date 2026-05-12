@@ -11,9 +11,12 @@ public sealed class ZombieScratchAttack : IZombieAttack
 
     public void Execute(Zombie zombie, IDamageable target)
     {
+        if (zombie == null || zombie.stat == null || target == null)
+            return;
+
         int damage = zombie.stat.AttackDamage;
         ArmorType hitPart = ZombieHitBodyPartUtility.GetRandomPart();
 
-        target.TakeDamage(damage, hitPart);
+        target.TakeDamage(damage, hitPart, AttackType.Scratch);
     }
 }
