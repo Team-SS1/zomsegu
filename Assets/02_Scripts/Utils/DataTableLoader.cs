@@ -13,7 +13,7 @@ public static class DataTableLoader
     private static readonly List<Action<Action<string>>> _loadActions = new()
     {
         log => LoadTable<PlayerStat, int>("JsonFiles/PlayerStat", PlayerStat.tableDic, x => x.PlayerID, log),
-        //log => LoadTable<MonsterStat, int>("JsonFiles/MonsterStat", MonsterStat.tableDic, x => x.MonsterID, log),
+        log => LoadTable<MonsterStat, int>("JsonFiles/MonsterStat", MonsterStat.tableDic, x => x.MonsterID, log),
         log => LoadTable<CommonItemData, int>("JsonFiles/CommonItemData", CommonItemData.tableDic, x => x.ItemID, log),
         log => LoadTable<WeaponStat, int>("JsonFiles/WeaponStat", WeaponStat.tableDic, x => x.ItemID, log),
         log => LoadTable<ArmorStat, int>("JsonFiles/ArmorStat", ArmorStat.tableDic, x => x.ItemID, log),
