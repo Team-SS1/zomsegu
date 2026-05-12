@@ -13,6 +13,16 @@ public class Player : MonoBehaviour
 
     public bool IsDead { get; private set; } = false;
 
+    private float currentAttack;
+    private float currentAttackSpeed;
+    private float currentMovement;
+    private float currentRunMovement;
+
+    public float CurrentAttack => currentAttack;
+    public float CurrentAttackSpeed => currentAttackSpeed;
+    public float CurrentMovement => currentMovement;
+    public float CurrentRunMovement => currentRunMovement;
+
     public PlayerType playerType;
 
     public PlayerData data;
@@ -41,5 +51,25 @@ public class Player : MonoBehaviour
     {
         MaxStamina += value;
         CurrentStamina = Mathf.Clamp(CurrentStamina, 0f, MaxStamina);
+    }
+
+    public void SetAttack(float value)
+    {
+        currentAttack = value;
+    }
+
+    public void SetAttackSpeed(float value)
+    {
+        currentAttackSpeed = value;
+    }
+
+    public void SetMovement(float value)
+    {
+        currentMovement = value;
+    }
+
+    public void SetRunMovement(float value)
+    {
+        currentRunMovement = value;
     }
 }

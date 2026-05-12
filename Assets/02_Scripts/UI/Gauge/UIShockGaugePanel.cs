@@ -12,15 +12,18 @@ public class UIShockGaugePanel : MonoBehaviour
 
     private void OnEnable()
     {
-        EventManager.Subscribe(EventKey.OnShockChanged, OnShockChanged);
+        EventManager.Subscribe<PlayerCondition>(EventKey.OnShockChanged, OnShockChanged);
         RefreshShock();
     }
     private void OnDisable()
     {
-        EventManager.UnSubscribe(EventKey.OnShockChanged, OnShockChanged);
+        EventManager.UnSubscribe<PlayerCondition>(EventKey.OnShockChanged, OnShockChanged);
     }
-    private void OnShockChanged()
+    private void OnShockChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshShock();
     }
     private void RefreshShock()

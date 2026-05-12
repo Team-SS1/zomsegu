@@ -17,28 +17,37 @@ public class UIConditionGaugePanel : MonoBehaviour
 
     private void OnEnable()
     {
-        EventManager.Subscribe(EventKey.OnHungerChanged, OnHungerChanged);
-        EventManager.Subscribe(EventKey.OnThirstChanged, OnThirstChanged);
-        EventManager.Subscribe(EventKey.OnTiredChanged, OnTiredChanged);
+        EventManager.Subscribe<PlayerCondition>(EventKey.OnHungerChanged, OnHungerChanged);
+        EventManager.Subscribe<PlayerCondition>(EventKey.OnThirstChanged, OnThirstChanged);
+        EventManager.Subscribe<PlayerCondition>(EventKey.OnTiredChanged, OnTiredChanged);
 
         RefreshAll();
     }
     private void OnDisable()
     {
-        EventManager.UnSubscribe(EventKey.OnHungerChanged, OnHungerChanged);
-        EventManager.UnSubscribe(EventKey.OnThirstChanged, OnThirstChanged);
-        EventManager.UnSubscribe(EventKey.OnTiredChanged, OnTiredChanged);
+        EventManager.UnSubscribe<PlayerCondition>(EventKey.OnHungerChanged, OnHungerChanged);
+        EventManager.UnSubscribe<PlayerCondition>(EventKey.OnThirstChanged, OnThirstChanged);
+        EventManager.UnSubscribe<PlayerCondition>(EventKey.OnTiredChanged, OnTiredChanged);
     }
-    private void OnHungerChanged()
+    private void OnHungerChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshGauge(AbnormalType.Hunger, hungerGauge);
     }
-    private void OnThirstChanged()
+    private void OnThirstChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshGauge(AbnormalType.Thirst, thirstGauge);
     }
-    private void OnTiredChanged()
+    private void OnTiredChanged(PlayerCondition condition)
     {
+        if (condition != playerCondition)
+            return;
+
         RefreshGauge(AbnormalType.Tired, tiredGauge);
     }
     private void RefreshAll()

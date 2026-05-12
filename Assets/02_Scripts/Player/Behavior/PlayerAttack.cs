@@ -8,6 +8,7 @@ using static UnityEngine.UI.Image;
 
 public class PlayerAttack : MonoBehaviour
 {
+    public Player Player {  get; private set; }
     public PlayerAim Aim {  get; private set; }
     public bool IsAttacking {  get; private set; }
     public Vector2 AttackDirection { get; private set; }
@@ -18,6 +19,7 @@ public class PlayerAttack : MonoBehaviour
     private void Awake()
     {
         Aim = GetComponent<PlayerAim>();
+        Player = GetComponent<Player>();
     }
 
     private void Start()
@@ -130,7 +132,7 @@ public class PlayerAttack : MonoBehaviour
 
     public float HalfAttackDuration()
     {
-        float attackSpeed = 1f;
+        float attackSpeed = Player.CurrentAttackSpeed;
         float halfAttackSpeed = attackSpeed / 2;
         return halfAttackSpeed;
     }
