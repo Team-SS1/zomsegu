@@ -76,7 +76,7 @@ public class PlayerAttack : MonoBehaviour
         {
             if (col.isTrigger)
                 return;
-            if (col.TryGetComponent<Monster>(out var monster))
+            if (col.TryGetComponent<Zombie>(out var monster))
             {
 #if UNITY_EDITOR
                 Debug.Log("Monster Hit");
