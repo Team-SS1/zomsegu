@@ -248,5 +248,71 @@
     "VisionFOVAngle": 90,
     "LoseAggroDistance": 15,
     "LoseAggroTimeSec": 8
+  },
+  {
+    "MonsterID": 20400,
+    "MonsterCategory": 2,
+    "AnimalCategory": 0,
+    "Name": "대장 들개",
+    "Description": "들개 무리의 대장. 끈질기다.",
+    "ScratchChance": 0,
+    "BiteChance": 1,
+    "MaxHP": 250.0,
+    "MoveSpeed": 100.0,
+    "RunSpeed": 1.5,
+    "RunSec": 30,
+    "StaggerResistance": 0.5,
+    "AttackDamage": 5,
+    "AttackSpeed": 0.8,
+    "Defense": 10.0,
+    "DropGroupID": 0,
+    "VisionFrontRadius": 10.0,
+    "VisionBackRadius": 10.0,
+    "VisionFOVRadius": 20.0,
+    "VisionFOVAngle": 150,
+    "LoseAggroDistance": 30,
+    "LoseAggroTimeSec": 30
+  },
+  {
+    "MonsterID": 20401,
+    "MonsterCategory": 2,
+    "AnimalCategory": 1,
+    "Name": "졸병 들개",
+    "Description": "들개 무리의 졸병. 대장의 말을 따른다.",
+    "ScratchChance": 0,
+    "BiteChance": 1,
+    "MaxHP": 160.0,
+    "MoveSpeed": 90.0,
+    "RunSpeed": 1.5,
+    "RunSec": 30,
+    "StaggerResistance": 0.2,
+    "AttackDamage": 3,
+    "AttackSpeed": 0.9,
+    "Defense": 0.0,
+    "DropGroupID": 0,
+    "VisionFrontRadius": 8.0,
+    "VisionBackRadius": 8.0,
+    "VisionFOVRadius": 15.0,
+    "VisionFOVAngle": 135,
+    "LoseAggroDistance": 20,
+    "LoseAggroTimeSec": 20
+  },
+  {
+    "MonsterID": 20500,
+    "MonsterCategory": 2,
+    "AnimalCategory": 2,
+    "Name": "멧돼지"
+  },
+  {
+    "MonsterID": 20600,
+    "MonsterCategory": 1,
+    "BanditCategory": 0,
+    "Name": "근접 도적"
+  },
+  {
+    "MonsterID": 20601,
+    "MonsterCategory": 1,
+    "BanditCategory": 1,
+    "Name": "원거리 도적"
   }
 ]

@@ -6,6 +6,8 @@ public class MonsterStat
 	public int MonsterCategory;
 	public int ZombieCategory;
 	public int ZombieType;
+	public int BanditCategory;
+	public int AnimalCategory;
 	public string Name;
 	public string Description;
 	public int ScratchChance;

@@ -82,11 +82,8 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         Movement = GetComponent<ZombieMovement>();
         PathAgent = GetComponent<ZombiePathAgent>();
 
-        // ===== 여기 중요 =====
+        //  여기 중요
         if (knockback == null) knockback = GetComponent<MonsterKnockback>();
-        // ====================
-
-        InitStat();
 
         _idle = new ZombieIdleState(this);
         _aggro = new ZombieAggroState(this);
@@ -125,6 +122,9 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
     // 스폰 시 초기화
     public void OnSpawn()
     {
+        if (!EnsureStat())
+            return;
+
         target = null;
         MoveDirection = Vector2.zero;
         FacingDirection = Vector2.down;
@@ -179,17 +179,43 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         UpdateRunTimer();
     }
 
-    private void InitStat()
+    private bool EnsureStat()
     {
+        if (stat != null)
+            return true;
+
+        if (MonsterStat.tableDic == null || MonsterStat.tableDic.Count == 0)
+        {
+#if UNITY_EDITOR
+            Debug.LogError($"[Zombie] MonsterStat.tableDic is empty. Data load order problem. zombieID:{zombieID}");
+#endif
+            enabled = false;
+            return false;
+        }
+
         if (!MonsterStat.tableDic.TryGetValue(zombieID, out stat))
         {
 #if UNITY_EDITOR
-            Debug.LogError($"[Zombie] ID {zombieID} not found in MonsterStat.tableDic");
+            Debug.LogError($"[Zombie] ID {zombieID} not found. tableDic count:{MonsterStat.tableDic.Count}");
 #endif
             enabled = false;
-            return;
+            return false;
         }
+
+        return true;
     }
+
+//    private void InitStat()
+//    {
+//        if (!MonsterStat.tableDic.TryGetValue(zombieID, out stat))
+//        {
+//#if UNITY_EDITOR
+//            Debug.LogError($"[Zombie] ID {zombieID} not found in MonsterStat.tableDic");
+//#endif
+//            enabled = false;
+//            return;
+//        }
+//    }
 
     public bool IsInLayerMask(GameObject obj, LayerMask mask)
     {
