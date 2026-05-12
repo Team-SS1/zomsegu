@@ -235,6 +235,8 @@ MonoBehaviour:
     MonsterCategory: 0
     ZombieCategory: 0
     ZombieType: 0
+    BanditCategory: 0
+    AnimalCategory: 0
     Name: 
     Description: 
     ScratchChance: 0
@@ -255,7 +257,7 @@ MonoBehaviour:
     LoseAggroDistance: 0
     LoseAggroTimeSec: 0
   zombieType: 0
-  target: {fileID: 0}
+  target: {fileID: 826630714547771683, guid: 884ab13af91f7f349bca6a562ea87152, type: 3}
   lastHeardSoundPos: {x: 0, y: 0}
   lastSoundSource: {fileID: 0}
   hasSoundTarget: 0
@@ -263,10 +265,10 @@ MonoBehaviour:
   seenMemorySeconds: 0.2
   aggroTargetLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   attackTargetLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   knockback: {fileID: 0}
 --- !u!114 &8943402241155627280
 MonoBehaviour:
