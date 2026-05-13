@@ -49,6 +49,6 @@ MonoBehaviour:
   cellSize: 0.2
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   agentSize: {x: 0.45, y: 0.85}
   extraClearance: 0.04

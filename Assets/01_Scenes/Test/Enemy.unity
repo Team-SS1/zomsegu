@@ -239,6 +239,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4943020797804942167, guid: 86f693f017c12e746861b0c37ff0d95a, type: 3}
+      propertyPath: gridProviderBehaviour
+      value: 
+      objectReference: {fileID: 8123149718946804489, guid: 93997b2e7ea4b5e4989c8eeca61d5a86, type: 3}
     - target: {fileID: 286670953049713548, guid: 86f693f017c12e746861b0c37ff0d95a, type: 3}
       propertyPath: m_Name
       value: YoungAdultFemaleZombie
@@ -304,6 +308,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4943020797804942167, guid: 9fd7f162e2bd3c143bbbb6fb1fdbef99, type: 3}
+      propertyPath: gridProviderBehaviour
+      value: 
+      objectReference: {fileID: 8123149718946804489, guid: 93997b2e7ea4b5e4989c8eeca61d5a86, type: 3}
     - target: {fileID: 286670953049713548, guid: 9fd7f162e2bd3c143bbbb6fb1fdbef99, type: 3}
       propertyPath: m_Name
       value: PoliceZombie
@@ -369,6 +377,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4943020797804942167, guid: d2d3f7e8c404daa4f8c9a7190ba360fb, type: 3}
+      propertyPath: gridProviderBehaviour
+      value: 
+      objectReference: {fileID: 8123149718946804489, guid: 93997b2e7ea4b5e4989c8eeca61d5a86, type: 3}
     - target: {fileID: 286670953049713548, guid: d2d3f7e8c404daa4f8c9a7190ba360fb, type: 3}
       propertyPath: m_Name
       value: ElderFemaleZombie
@@ -417,6 +429,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4435935830520783396, guid: d2d3f7e8c404daa4f8c9a7190ba360fb, type: 3}
+      propertyPath: reattackBlockDuration
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 8779848590196251543, guid: d2d3f7e8c404daa4f8c9a7190ba360fb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -434,6 +450,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4943020797804942167, guid: 419260de87f731e47823031c271573e7, type: 3}
+      propertyPath: gridProviderBehaviour
+      value: 
+      objectReference: {fileID: 8123149718946804489, guid: 93997b2e7ea4b5e4989c8eeca61d5a86, type: 3}
     - target: {fileID: 286670953049713548, guid: 419260de87f731e47823031c271573e7, type: 3}
       propertyPath: m_Name
       value: AdultMaleZombie
