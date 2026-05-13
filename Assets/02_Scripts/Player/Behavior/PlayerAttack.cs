@@ -81,7 +81,7 @@ public class PlayerAttack : MonoBehaviour
 #if UNITY_EDITOR
                 Debug.Log("Monster Hit");
 #endif
-                //monster.TakeDamage(damage);
+                monster.TakeDamage(Player.CurrentAttack);
             }
         }
     }
