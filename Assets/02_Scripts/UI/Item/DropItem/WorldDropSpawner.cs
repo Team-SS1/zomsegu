@@ -32,24 +32,24 @@ public class WorldDropSpawner : MonoBehaviour // 월드에 아이템 드롭을 �
         {
 #if UNITY_EDITOR
             Debug.LogWarning("WorldDropSpawner: LootSource is null. Cannot spawn drop.");
-            return false;
 #endif
+            return false;
         }
 
         if(worldLootPrefab == null)
         {
 #if UNITY_EDITOR
             Debug.LogError("WorldDropSpawner: WorldLootObject prefab is not assigned!");
-            return false;
 #endif
+            return false;
         }
 
         if(dropOrigin == null)
         {
 #if UNITY_EDITOR
             Debug.LogError("WorldDropSpawner: Drop origin is not assigned!");
-            return false;
 #endif
+            return false;
         }
 
         Vector3 spawnPosition = CalculateDropPosition();

@@ -3,10 +3,10 @@ using UnityEngine;
 
 public static class DropTransferService
 {
-    internal static bool TryDropOutside(SlotRef from, int amount) // 인벤 아이템 밖으로 버리기
+    internal static bool TryDropOutside(SlotRef from, int amount, WorldDropSpawner worldDropSpawner) // 인벤 아이템 밖으로 버리기
     {
         if (from.slotType == SlotType.Inventory)
-            return TryInventoryToWorldDrop(from, amount);
+            return TryInventoryToWorldDrop(from, amount, worldDropSpawner);
 
         if (from.slotType == SlotType.QuickSlot)
             return QuickSlotService.TryClearQuickSlot(from);
@@ -19,8 +19,22 @@ public static class DropTransferService
         Debug.Log("드롭 -> 인벤");
         return false;
     }
-    private static bool TryInventoryToWorldDrop(SlotRef from, int amount)
+    private static bool TryInventoryToWorldDrop(SlotRef from, int amount, WorldDropSpawner worldDropSpawner)
     {
+        if(worldDropSpawner == null)
+        {
+#if UNITY_EDITOR
+            Debug.LogError("DropTransferService : WorldDropSpawner 참조 없음");
+#endif
+            return false;
+        }
+        if (!worldDropSpawner.CanSpawn())
+        {
+#if UNITY_EDITOR
+            Debug.LogError("DropTransferService : WorldDropSpawner가 드롭 생성 가능한 상태가 아닙니다.");
+#endif
+            return false;
+        }
         PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null || data.Inventory == null) return false;
 
@@ -31,17 +45,7 @@ public static class DropTransferService
 
         if (slot.IsStack)
         {
-            int removeAmount = amount <= 0 ? slot.amount : amount;
-            removeAmount = Mathf.Clamp(removeAmount, 1, slot.amount);
-
-            int itemId = slot.itemId;
-
-            bool removed = inventory.TryRemoveStack(from.index, removeAmount);
-            if (!removed) return false;
-
-            Debug.Log($"스택 아이템 {itemId} 버리기 {removeAmount}개"); //아직 구현 다 안끝남
-
-            return true;
+            
         }
 
         if (slot.IsInstance && slot.instance != null)
@@ -59,5 +63,21 @@ public static class DropTransferService
         }
 
         return false;
+    }
+    private static bool TryDropStackItem(SlotRef from, Inventory inventory, InventorySlot slot, int amount, WorldDropSpawner worldDropSpawner)
+    {
+        int removeAmount = amount <= 0 ? slot.amount : amount;
+        removeAmount = Mathf.Clamp(removeAmount, 1, slot.amount);
+
+        int itemId = slot.itemId;
+
+        LootSource lootSource = CreateDropLootSource(itemId);
+        lootSource.AddItem(new LootItem(itemId, removeAmount));
+        bool removed = inventory.TryRemoveStack(from.index, removeAmount);
+        if (!removed) return false;
+
+        Debug.Log($"스택 아이템 {itemId} 버리기 {removeAmount}개"); //아직 구현 다 안끝남
+
+        return true;
     }
 }
