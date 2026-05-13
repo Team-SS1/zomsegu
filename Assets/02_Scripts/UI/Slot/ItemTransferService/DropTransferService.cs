@@ -71,8 +71,8 @@ public static class DropTransferService
 
         int itemId = slot.itemId;
 
-        LootSource lootSource = CreateDropLootSource(itemId);
-        lootSource.AddItem(new LootItem(itemId, removeAmount));
+        //LootSource lootSource = CreateDropLootSource(itemId);
+        //lootSource.AddItem(new LootItem(itemId, removeAmount));
         bool removed = inventory.TryRemoveStack(from.index, removeAmount);
         if (!removed) return false;
 
