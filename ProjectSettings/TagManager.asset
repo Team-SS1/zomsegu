@@ -41,10 +41,13 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BackGround
+    uniqueID: 4274387073
+    locked: 0
   - name: Ground
     uniqueID: 3193483643
     locked: 0
-  - name: GroundDeco
+  - name: OnTileDeco
     uniqueID: 3908414125
     locked: 0
   - name: WorldObject
@@ -52,6 +55,15 @@ TagManager:
     locked: 0
   - name: Character
     uniqueID: 4221471519
+    locked: 0
+  - name: Collider
+    uniqueID: 960706643
+    locked: 0
+  - name: BehindDeco
+    uniqueID: 3143530711
+    locked: 0
+  - name: BuildingExterior
+    uniqueID: 3361706867
     locked: 0
   - name: Roof_(Behind)
     uniqueID: 546995315
