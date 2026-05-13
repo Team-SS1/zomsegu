@@ -144,6 +144,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestMap
       objectReference: {fileID: 0}
+    - target: {fileID: 407038585336186179, guid: 8f532e9e4d03ab74288d09f2bbdd0bb1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1155419719364487726, guid: 8f532e9e4d03ab74288d09f2bbdd0bb1, type: 3}
       propertyPath: m_Size.x
       value: 1
@@ -24494,6 +24498,10 @@ PrefabInstance:
     - target: {fileID: 8610103722856529092, guid: add68eb9301beea42a303360bb2cb897, type: 3}
       propertyPath: m_Name
       value: TutorialMap
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610103722856529092, guid: add68eb9301beea42a303360bb2cb897, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

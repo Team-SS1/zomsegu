@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Monster_1_1
   m_EditorClassIdentifier: 
   spawnType: 1
-  spawnId: 02000000
-  spawnCount: 5
+  spawnId: 02000000040000000500000009000000
+  spawnCount: 10
   triggerSpawn: 1
   spawnRandom: 0
-  spawnRadius: 3
-  spawnTriggerRadius: 1.5
+  spawnRadius: 7
+  spawnTriggerRadius: 25
   respawn: 0
   respawnDelay: 0
