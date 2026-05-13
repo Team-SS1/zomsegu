@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using SpawnEnum;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class FixedSpawnPointEntry
 public class FixedSpawnPoint : MonoBehaviour
 {
     [SerializeField] private FixedSpawnPointEntry[] fixedSpawnPoints;
+    public CinemachineVirtualCamera cinemachine;
 
     public Transform GetPoint(FixedSpawnPointKey key)
     {
@@ -28,6 +30,7 @@ public class FixedSpawnPoint : MonoBehaviour
     private void Awake()
     {
         Transform point = GetPoint(FixedSpawnPointKey.Chapcter1PlayerSpawnPoint);
-        SpawnManager.Instance.Spawn(SpawnID.Player, point);
+        GameObject player = SpawnManager.Instance.Spawn(SpawnID.Player, point);
+        cinemachine.Follow = player.transform;
     }
 }
