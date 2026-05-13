@@ -64,7 +64,6 @@ public class ZombieCombat : MonoBehaviour
 #if UNITY_EDITOR
         Debug.Log($"[ZombieCombat] StartAttack: {type}, timeout={attackTimeoutTimer:F2}");
 #endif
-
     }
 
     public void OnAttackHit()
@@ -101,6 +100,7 @@ public class ZombieCombat : MonoBehaviour
         }
 
         hasHitThisAttack = true;
+
 
         z.CurrentAttack.Execute(z, damageable);
     }

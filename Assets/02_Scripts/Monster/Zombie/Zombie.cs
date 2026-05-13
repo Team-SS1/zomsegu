@@ -82,8 +82,9 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         Movement = GetComponent<ZombieMovement>();
         PathAgent = GetComponent<ZombiePathAgent>();
 
-        //  여기 중요
+        // ===== 여기 중요 =====
         if (knockback == null) knockback = GetComponent<MonsterKnockback>();
+        // ====================
 
         _idle = new ZombieIdleState(this);
         _aggro = new ZombieAggroState(this);
@@ -100,8 +101,6 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
     {
         if (WorldEventManager.Instance != null)
             WorldEventManager.Instance.OnSoundEvent += OnSoundEventReceived;
-
-        BootstrapIfNeeded();
     }
 
     private void BootstrapIfNeeded()
@@ -170,6 +169,9 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
 
     private void Update()
     {
+        //if (TimeManager.Instance.IsStopped(StopType.Monster))
+        //    return;
+
         if (IsDead)
             return;
 
@@ -179,15 +181,37 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         UpdateRunTimer();
     }
 
+    //    private bool InitStat()
+    //    {
+    //        if (MonsterStat.tableDic == null || MonsterStat.tableDic.Count == 0)
+    //        {
+    //#if UNITY_EDITOR
+    //            Debug.LogError($"[Zombie] MonsterStat.tableDic is empty. zombieID:{zombieID}");
+    //#endif
+    //            return false;
+    //        }
+
+    //        if (!MonsterStat.tableDic.TryGetValue(zombieID, out stat))
+    //        {
+    //#if UNITY_EDITOR
+    //            Debug.LogError($"[Zombie] ID {zombieID} not found in MonsterStat.tableDic. Count:{MonsterStat.tableDic.Count}");
+    //#endif
+    //            return false;
+    //        }
+
+    //#if UNITY_EDITOR
+    //        Debug.Log($"[Zombie Stat Loaded] ID:{zombieID}, Name:{stat.Name}, Move:{stat.MoveSpeed}, Run:{stat.RunSpeed}");
+    //#endif
+
+    //        return true;
+    //    }
+
     private bool EnsureStat()
     {
-        if (stat != null)
-            return true;
-
         if (MonsterStat.tableDic == null || MonsterStat.tableDic.Count == 0)
         {
 #if UNITY_EDITOR
-            Debug.LogError($"[Zombie] MonsterStat.tableDic is empty. Data load order problem. zombieID:{zombieID}");
+            Debug.LogError($"[Zombie] MonsterStat.tableDic is empty. zombieID:{zombieID}");
 #endif
             enabled = false;
             return false;
@@ -202,20 +226,12 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
             return false;
         }
 
+#if UNITY_EDITOR
+        Debug.Log($"[Zombie] Stat 연결 성공 ID:{zombieID}, Name:{stat.Name}, Move:{stat.MoveSpeed}, Run:{stat.RunSpeed}");
+#endif
+
         return true;
     }
-
-//    private void InitStat()
-//    {
-//        if (!MonsterStat.tableDic.TryGetValue(zombieID, out stat))
-//        {
-//#if UNITY_EDITOR
-//            Debug.LogError($"[Zombie] ID {zombieID} not found in MonsterStat.tableDic");
-//#endif
-//            enabled = false;
-//            return;
-//        }
-//    }
 
     public bool IsInLayerMask(GameObject obj, LayerMask mask)
     {
@@ -239,6 +255,7 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         _lastSeenTime = Time.time;
     }
 
+    //public bool WasSeenThisFrame => _seenThisFrame;
 
     public void OnTargetSeen(Transform seenTarget)
     {
@@ -471,6 +488,11 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
 
         if (HasValidTarget() && StateMachine.CurrentType != ZombieStateType.Aggro && !IsWakeUp)
             EnterAggro();
+    }
+
+    public void TakeDamage(float damage, ArmorType hitPart, AttackType attackType)
+    {
+        TakeDamage(damage, hitPart);
     }
 
     public void EndTakeDamage()
