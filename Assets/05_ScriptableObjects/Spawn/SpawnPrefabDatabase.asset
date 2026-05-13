@@ -22,17 +22,17 @@ MonoBehaviour:
   - id: 3
     prefab: {fileID: 0}
   - id: 4
-    prefab: {fileID: 0}
+    prefab: {fileID: 286670953049713548, guid: 55605d73c46dd0d44a10309969db0f69, type: 3}
   - id: 5
-    prefab: {fileID: 0}
+    prefab: {fileID: 286670953049713548, guid: 419260de87f731e47823031c271573e7, type: 3}
   - id: 6
-    prefab: {fileID: 0}
+    prefab: {fileID: 286670953049713548, guid: 86f693f017c12e746861b0c37ff0d95a, type: 3}
   - id: 7
     prefab: {fileID: 0}
   - id: 8
     prefab: {fileID: 0}
   - id: 9
-    prefab: {fileID: 0}
+    prefab: {fileID: 286670953049713548, guid: 9fd7f162e2bd3c143bbbb6fb1fdbef99, type: 3}
   - id: 10
     prefab: {fileID: 0}
   - id: 11
