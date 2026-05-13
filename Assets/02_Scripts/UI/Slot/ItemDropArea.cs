@@ -5,6 +5,7 @@ using ItemEnum;
 public class ItemDropArea : MonoBehaviour, IDropHandler
 {
     [SerializeField] private UIItemAmountPopup amountPopup;
+    [SerializeField] private WorldDropSpawner worldDropSpawner;
     public void OnDrop(PointerEventData eventData)
     {
         if (DragContext.payload == null) return;
@@ -13,7 +14,7 @@ public class ItemDropArea : MonoBehaviour, IDropHandler
 
         if(from.slotType != SlotType.Inventory)
         {
-            ItemTransferService.TryDropOutside(from);
+            ItemTransferService.TryDropOutside(from, worldDropSpawner);
             return;
         }
 
@@ -31,6 +32,6 @@ public class ItemDropArea : MonoBehaviour, IDropHandler
             return;
         }
 
-        ItemTransferService.TryDropOutside(from);
+        ItemTransferService.TryDropOutside(from, worldDropSpawner);
     }
 }

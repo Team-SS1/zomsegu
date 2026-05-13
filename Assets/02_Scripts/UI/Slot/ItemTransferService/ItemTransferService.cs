@@ -43,13 +43,13 @@ public static class ItemTransferService
     }
 
     // 슬롯에서 외부로 드롭
-    public static bool TryDropOutside(SlotRef from) // 인스턴스형 아이템
+    public static bool TryDropOutside(SlotRef from, WorldDropSpawner worldDropSpawner) // 인스턴스형 아이템
     {
-        return DropTransferService.TryDropOutside(from, -1);
+        return DropTransferService.TryDropOutside(from, -1, worldDropSpawner);
     }
-    public static bool TryDropOutside(SlotRef from, int amount) // 스택형 아이템
+    public static bool TryDropOutside(SlotRef from, int amount, WorldDropSpawner worldDropSpawner) // 스택형 아이템
     {
-        return DropTransferService.TryDropOutside(from, amount);
+        return DropTransferService.TryDropOutside(from, amount, worldDropSpawner);
     }
 
     public static bool TryUnEquipToFirstEmptyInventory(SlotRef from) // 아이템 장착 해제 (인벤 맨 앞 빈칸으로)
