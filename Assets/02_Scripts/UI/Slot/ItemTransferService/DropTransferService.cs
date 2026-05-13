@@ -45,21 +45,12 @@ public static class DropTransferService
 
         if (slot.IsStack)
         {
-            
+            return TryDropStackItem(from, inventory, slot, amount, worldDropSpawner);
         }
 
         if (slot.IsInstance && slot.instance != null)
         {
-            string guid = slot.instance.guid;
-            int itemId = slot.instance.itemId;
-
-            bool removed = inventory.TryRemoveInstance(guid, out ItemStack removedItem);
-            if (!removed) return false;
-
-            QuickSlotService.ValidateQuickSlots(from.playerType);
-
-            Debug.Log($"인스턴스 아이템 {itemId} 버리기");
-            return true;
+            return TryDropInstanceItem(from, inventory, slot, worldDropSpawner);
         }
 
         return false;
@@ -71,13 +62,63 @@ public static class DropTransferService
 
         int itemId = slot.itemId;
 
-        //LootSource lootSource = CreateDropLootSource(itemId);
-        //lootSource.AddItem(new LootItem(itemId, removeAmount));
+        LootSource lootSource = CreateDropLootSource(itemId);
+        lootSource.AddItem(new LootItem(itemId, removeAmount));
+
         bool removed = inventory.TryRemoveStack(from.index, removeAmount);
         if (!removed) return false;
 
-        Debug.Log($"스택 아이템 {itemId} 버리기 {removeAmount}개"); //아직 구현 다 안끝남
+        bool spawned = worldDropSpawner.TrySpawnDrop(lootSource, itemId, out WorldLootObject spawnedObject);
+
+        if (!spawned)
+        {
+#if UNITY_EDITOR
+            Debug.LogError($"DropTransferService : 월드 드롭 생성 실패, itemId = {itemId}, amount = {removeAmount}");
+#endif
+            inventory.TryAddStack(itemId, removeAmount);
+            return false;
+        }
+        QuickSlotService.ValidateQuickSlots(from.playerType);
 
         return true;
+    }
+    private static bool TryDropInstanceItem(SlotRef from, Inventory inventory, InventorySlot inventorySlot, WorldDropSpawner worldDropSpawner)
+    {
+        string guid = inventorySlot.instance.guid;
+        int itemId = inventorySlot.instance.itemId;
+
+        bool removed = inventory.TryRemoveInstance(guid, out ItemStack removedItem);
+        if(!removed || removedItem == null) return false;
+
+        LootSource lootSource = CreateDropLootSource(itemId);
+        lootSource.AddItem(new LootItem(removedItem));
+
+        bool spawned = worldDropSpawner.TrySpawnDrop(lootSource, itemId, out WorldLootObject spawnedObject);
+        if (!spawned)
+        {
+#if UNITY_EDITOR
+            Debug.LogError($"DropTransferService : 월드 드롭 생성 실패 itemId = {itemId}, guid = {guid}");
+#endif
+            inventory.TryAddInstance(itemId, removedItem);
+            return false;
+        }
+
+        QuickSlotService.ValidateQuickSlots(from.playerType);
+
+        return true;
+    }
+    private static LootSource CreateDropLootSource(int itemId)
+    {
+        string itemName = ItemDB.GetItemName(itemId);
+
+        if (string.IsNullOrEmpty(itemName))
+            itemName = $"Item {itemId}";
+
+        LootSource lootSource = new LootSource(itemName, LootSourceType.GroundScan);
+        lootSource.mergeStackableForDisplay = true;
+        lootSource.requiredInvestigation = false;
+        lootSource.baseInvestigationTime = 0f;
+
+        return lootSource;
     }
 }
