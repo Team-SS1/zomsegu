@@ -10,7 +10,7 @@ public class EventManager : GlobalSingleton<EventManager>
     protected override void Awake()
     {
         base.Awake();
-        
+        Init();
     }
     public void Init()
     {

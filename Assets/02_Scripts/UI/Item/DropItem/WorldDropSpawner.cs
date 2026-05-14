@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using EventEnum;
 
 public class WorldDropSpawner : MonoBehaviour // 월드에 아이템 드롭을 생성하는 스크립트
 {
@@ -16,6 +17,23 @@ public class WorldDropSpawner : MonoBehaviour // 월드에 아이템 드롭을 �
     [Header("Direction")]
     [SerializeField] private Vector2 defaultDropDirection = Vector2.down;
 
+    private void OnEnable()
+    {
+        EventManager.Subscribe<Transform>(EventKey.PlayerSpawned, OnPlayerSpawned);
+    }
+    private void OnDisable()
+    {
+        EventManager.UnSubscribe<Transform>(EventKey.PlayerSpawned, OnPlayerSpawned);
+    }
+    private void OnPlayerSpawned(Transform playerTransform)
+    {
+        if (playerTransform == null) return;
+
+        SetDropOrigin(playerTransform);
+#if UNITY_EDITOR
+        Debug.Log("WorldDropSpawner: Player Transform 연결 완료");
+#endif
+    }
     public bool CanSpawn() // 드롭을 생성할 수 있는지 여부
     {
         return worldLootPrefab != null && dropOrigin != null;

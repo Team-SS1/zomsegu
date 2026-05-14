@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using SpawnEnum;
 using UnityEngine;
+using EventEnum;
 
 [System.Serializable]
 public class FixedSpawnPointEntry
@@ -27,10 +28,12 @@ public class FixedSpawnPoint : MonoBehaviour
         Debug.LogWarning($"Key 값 null: {key}");
         return null;
     }
-    private void Awake()
+    private void Start()
     {
         Transform point = GetPoint(FixedSpawnPointKey.Chapcter1PlayerSpawnPoint);
         GameObject player = SpawnManager.Instance.Spawn(SpawnID.Player, point);
         cinemachine.Follow = player.transform;
+
+        EventManager.TriggerEvent<Transform>(EventKey.PlayerSpawned, player.transform);
     }
 }
