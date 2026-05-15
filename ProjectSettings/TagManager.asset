@@ -68,6 +68,3 @@ TagManager:
   - name: Roof_(Behind)
     uniqueID: 546995315
     locked: 0
-  - name: Item
-    uniqueID: 412920709
-    locked: 0

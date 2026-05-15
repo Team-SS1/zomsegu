@@ -24737,6 +24737,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4990678059842410524, guid: 4994df3b8fda52f459d5e2a81278a8b2, type: 3}
+      propertyPath: maxDropRadius
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990678059842410524, guid: 4994df3b8fda52f459d5e2a81278a8b2, type: 3}
+      propertyPath: minDropRadius
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990678059842410524, guid: 4994df3b8fda52f459d5e2a81278a8b2, type: 3}
       propertyPath: worldLootPrefab
       value: 
       objectReference: {fileID: 5535229808885187004, guid: e3cd3a77b19735a48b4cb5b98fafaa7e, type: 3}

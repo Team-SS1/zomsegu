@@ -11,19 +11,18 @@ public class WorldDropSpawner : MonoBehaviour // 월드에 아이템 드롭을 �
 
     [Header("Drop Position")] 
     [SerializeField] private Transform dropOrigin; // 드롭이 시작되는 위치 (예: 적이 죽은 위치)
-    [SerializeField] private float dropDistance = 1f;
-    [SerializeField] private float randomRadius = 0.25f;
-
-    [Header("Direction")]
-    [SerializeField] private Vector2 defaultDropDirection = Vector2.down;
+    [SerializeField] private float minDropRadius = 0.4f;
+    [SerializeField] private float maxDropRadius = 0.8f;
 
     private void OnEnable()
     {
         EventManager.Subscribe<Transform>(EventKey.PlayerSpawned, OnPlayerSpawned);
+        EventManager.Subscribe<WorldDropRequest>(EventKey.WorldDropRequested, OnWorldDropRequested);
     }
     private void OnDisable()
     {
         EventManager.UnSubscribe<Transform>(EventKey.PlayerSpawned, OnPlayerSpawned);
+        EventManager.UnSubscribe<WorldDropRequest>(EventKey.WorldDropRequested, OnWorldDropRequested);
     }
     private void OnPlayerSpawned(Transform playerTransform)
     {
@@ -87,17 +86,17 @@ public class WorldDropSpawner : MonoBehaviour // 월드에 아이템 드롭을 �
 
     private Vector3 CalculateDropPosition()
     {
-        Vector2 direction = defaultDropDirection;
+        if(dropOrigin == null)
+            return Vector3.zero;
 
-        if (direction.sqrMagnitude <= 0.001f) // 별 차이 없으면 그냥 그대로
-            direction = Vector2.down;
+        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+        float distance = Random.Range(minDropRadius, maxDropRadius);
 
-        direction.Normalize();
+        Vector2 dropPosition = new Vector2(
+            Mathf.Cos(angle),
+            Mathf.Sin(angle))*distance;
 
-        Vector3 basePosition = dropOrigin.position + (Vector3)(direction * dropDistance);
-        Vector2 randomOffset = Random.insideUnitCircle * randomRadius;
-
-        Vector3 finalPosition = basePosition + (Vector3)randomOffset;
+        Vector3 finalPosition = dropOrigin.position + (Vector3)dropPosition;
         finalPosition.z = 0f;
 
         return finalPosition;
@@ -113,5 +112,13 @@ public class WorldDropSpawner : MonoBehaviour // 월드에 아이템 드롭을 �
             return null;
 
         return Resources.Load<Sprite>(iconPath);
+    }
+    private void OnWorldDropRequested(WorldDropRequest request)
+    {
+        if (request == null) return;
+        if (request.success) return;
+
+        bool spawned = TrySpawnDrop(request.lootSource, request.iconItemId, out WorldLootObject spawnedObject);
+        request.Complete(spawned, spawnedObject);
     }
 }
