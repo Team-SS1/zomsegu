@@ -12,7 +12,8 @@
         InspectCharacterChanged, // 그냥 캐릭터 정보창 변경
 
         /* ----- Spawn ----- */
-        PlayerSpawned,
+        PlayerSpawned, // 플레이어 스폰시 위치 전달용(월드 드롭)
+        WorldDropRequested,
 
         /* ----- Player Condition ----- */
         OnHungerChanged,

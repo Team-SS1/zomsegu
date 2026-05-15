@@ -1,12 +1,13 @@
 ﻿using ItemEnum;
 using UnityEngine;
+using EventEnum;
 
 public static class DropTransferService
 {
-    internal static bool TryDropOutside(SlotRef from, int amount, WorldDropSpawner worldDropSpawner) // 인벤 아이템 밖으로 버리기
+    internal static bool TryDropOutside(SlotRef from, int amount) // 인벤 아이템 밖으로 버리기
     {
         if (from.slotType == SlotType.Inventory)
-            return TryInventoryToWorldDrop(from, amount, worldDropSpawner);
+            return TryInventoryToWorldDrop(from, amount);
 
         if (from.slotType == SlotType.QuickSlot)
             return QuickSlotService.TryClearQuickSlot(from);
@@ -19,22 +20,15 @@ public static class DropTransferService
         Debug.Log("드롭 -> 인벤");
         return false;
     }
-    private static bool TryInventoryToWorldDrop(SlotRef from, int amount, WorldDropSpawner worldDropSpawner)
+    private static bool TryRequestWorldDropSpawn(LootSource lootSource, int itemId)
     {
-        if(worldDropSpawner == null)
-        {
-#if UNITY_EDITOR
-            Debug.LogError("DropTransferService : WorldDropSpawner 참조 없음");
-#endif
-            return false;
-        }
-        if (!worldDropSpawner.CanSpawn())
-        {
-#if UNITY_EDITOR
-            Debug.LogError("DropTransferService : WorldDropSpawner가 드롭 생성 가능한 상태가 아닙니다.");
-#endif
-            return false;
-        }
+        WorldDropRequest request = new WorldDropRequest(lootSource, itemId);
+        EventManager.TriggerEvent(EventKey.WorldDropRequested, request);
+
+        return request.success;
+    }
+    private static bool TryInventoryToWorldDrop(SlotRef from, int amount)
+    {
         PlayerData data = PlayerDataManager.Instance.GetPlayerData(from.playerType);
         if (data == null || data.Inventory == null) return false;
 
@@ -45,17 +39,17 @@ public static class DropTransferService
 
         if (slot.IsStack)
         {
-            return TryDropStackItem(from, inventory, slot, amount, worldDropSpawner);
+            return TryDropStackItem(from, inventory, slot, amount);
         }
 
         if (slot.IsInstance && slot.instance != null)
         {
-            return TryDropInstanceItem(from, inventory, slot, worldDropSpawner);
+            return TryDropInstanceItem(from, inventory, slot);
         }
 
         return false;
     }
-    private static bool TryDropStackItem(SlotRef from, Inventory inventory, InventorySlot slot, int amount, WorldDropSpawner worldDropSpawner)
+    private static bool TryDropStackItem(SlotRef from, Inventory inventory, InventorySlot slot, int amount)
     {
         int removeAmount = amount <= 0 ? slot.amount : amount;
         removeAmount = Mathf.Clamp(removeAmount, 1, slot.amount);
@@ -68,7 +62,7 @@ public static class DropTransferService
         bool removed = inventory.TryRemoveStack(from.index, removeAmount);
         if (!removed) return false;
 
-        bool spawned = worldDropSpawner.TrySpawnDrop(lootSource, itemId, out WorldLootObject spawnedObject);
+        bool spawned = TryRequestWorldDropSpawn(lootSource, itemId);
 
         if (!spawned)
         {
@@ -82,7 +76,7 @@ public static class DropTransferService
 
         return true;
     }
-    private static bool TryDropInstanceItem(SlotRef from, Inventory inventory, InventorySlot inventorySlot, WorldDropSpawner worldDropSpawner)
+    private static bool TryDropInstanceItem(SlotRef from, Inventory inventory, InventorySlot inventorySlot)
     {
         string guid = inventorySlot.instance.guid;
         int itemId = inventorySlot.instance.itemId;
@@ -93,7 +87,7 @@ public static class DropTransferService
         LootSource lootSource = CreateDropLootSource(itemId);
         lootSource.AddItem(new LootItem(removedItem));
 
-        bool spawned = worldDropSpawner.TrySpawnDrop(lootSource, itemId, out WorldLootObject spawnedObject);
+        bool spawned = TryRequestWorldDropSpawn(lootSource, itemId);
         if (!spawned)
         {
 #if UNITY_EDITOR

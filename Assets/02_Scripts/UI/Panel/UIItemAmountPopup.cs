@@ -20,9 +20,6 @@ public class UIItemAmountPopup : MonoBehaviour
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
 
-    [Header("WorldDrop")]
-    [SerializeField] private WorldDropSpawner worldDropSpawner;
-
     private ItemAmountPopupMode currentMode = ItemAmountPopupMode.None;
     private SlotRef currentSlot;
     private PlayerType currentPlayerType;
@@ -130,7 +127,7 @@ public class UIItemAmountPopup : MonoBehaviour
                 break;
 
             case ItemAmountPopupMode.DropToWorld:
-                ItemTransferService.TryDropOutside(currentSlot,amount, worldDropSpawner);
+                ItemTransferService.TryDropOutside(currentSlot,amount);
                 break;
         }
         Close();

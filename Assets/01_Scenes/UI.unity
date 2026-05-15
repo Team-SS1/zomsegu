@@ -5357,7 +5357,6 @@ MonoBehaviour:
   amountInputField: {fileID: 910912906}
   confirmButton: {fileID: 975562891}
   cancelButton: {fileID: 1981079122}
-  worldDropSpawner: {fileID: 0}
 --- !u!224 &436293487 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 9121045176253953892, guid: 9b14e9c109d05344fb9913015e8b3a99, type: 3}
@@ -21337,7 +21336,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountPopup: {fileID: 428402379}
-  worldDropSpawner: {fileID: 0}
 --- !u!1 &1970514077
 GameObject:
   m_ObjectHideFlags: 0
