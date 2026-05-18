@@ -4,7 +4,6 @@ using ItemEnum;
 
 public class ItemDropArea : MonoBehaviour, IDropHandler
 {
-    [SerializeField] private UIItemAmountPopup amountPopup;
     public void OnDrop(PointerEventData eventData)
     {
         if (DragContext.payload == null) return;
@@ -25,8 +24,10 @@ public class ItemDropArea : MonoBehaviour, IDropHandler
 
         if (fromSlot.IsStack)
         {
-            if (amountPopup != null)
-                amountPopup.OpenForDrop(from, fromSlot.amount);
+            Debug.Log($"[ItemDropArea] AmountPopup 열기 시도 amount={fromSlot.amount}");
+            UIItemAmountPopup popup = UIManager.Instance.OpenUI<UIItemAmountPopup>();
+            Debug.Log($"[ItemDropArea] popup null 여부 = {popup == null}");
+            popup.OpenForDrop(from, fromSlot.amount);
 
             return;
         }
