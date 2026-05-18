@@ -3,13 +3,15 @@ using PlayerEnum;
 using EventEnum;
 
 
-public class UIQuickSlot : MonoBehaviour
+public class UIQuickSlot : BaseUI
 {
     [SerializeField] private UIActiveCharacterContext activeCharacterContext;
     [SerializeField] private UIQuickSlotSlot[] slotUIs;
 
-    private void OnEnable()
+    protected override void EnableInternal()
     {
+        base.EnableInternal();
+
         EventManager.Subscribe<PlayerType>(EventKey.QuickSlotChanged, OnQuickSlotChanged);
         EventManager.Subscribe<PlayerType>(EventKey.ActiveCharacterChanged, OnActiveCharacterChanged);
         EventManager.Subscribe<PlayerType>(EventKey.EquipmentChanged, OnEquipmentChanged);
@@ -17,12 +19,14 @@ public class UIQuickSlot : MonoBehaviour
 
         Refresh(activeCharacterContext.CurrentActivePlayer);
     }
-    private void OnDisable()
+    protected override void DisableInternal()
     {
         EventManager.UnSubscribe<PlayerType>(EventKey.QuickSlotChanged, OnQuickSlotChanged);
         EventManager.UnSubscribe<PlayerType>(EventKey.ActiveCharacterChanged, OnActiveCharacterChanged);
         EventManager.UnSubscribe<PlayerType>(EventKey.EquipmentChanged, OnEquipmentChanged);
         EventManager.UnSubscribe<PlayerType>(EventKey.InventoryChanged, OnInventoryChanged);
+        
+        base.DisableInternal();
     }
     private void OnQuickSlotChanged(PlayerType playerType)
     {
