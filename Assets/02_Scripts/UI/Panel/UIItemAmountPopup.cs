@@ -71,8 +71,6 @@ public class UIItemAmountPopup : UIPopup
 
     public void OpenForDrop(SlotRef from, int currentAmount)
     {
-        Debug.Log($"[UIItemAmountPopup] OpenForDrop 실행 currentAmount={currentAmount}");
-
         if (currentAmount <= 0) return;
 
         currentMode = ItemAmountPopupMode.DropToWorld;
@@ -116,8 +114,6 @@ public class UIItemAmountPopup : UIPopup
 
     private void OnClickConfirm()
     {
-        Debug.Log($"[UIItemAmountPopup] 확인 버튼 클릭 mode={currentMode}, maxAmount={maxAmount}, input={amountInputField?.text}");
-
         int amount = GetValidAmount();
 
         if (amount <= 0||amount > maxAmount)

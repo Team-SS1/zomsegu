@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UISearchWindow : MonoBehaviour
+public class UISearchWindow : UIPopup
 {
     [Header("Header")]
     [SerializeField] private TextMeshProUGUI titleTXT;
@@ -41,12 +41,18 @@ public class UISearchWindow : MonoBehaviour
         }
     }
 
-    private void Awake()
+    protected override void AwakeInternal()
     {
+        base.AwakeInternal();
         if (closeButton != null)
             closeButton.onClick.AddListener(CloseWindow);
+    }
+    protected override void DestroyInternal()
+    {
+        if (closeButton != null)
+            closeButton.onClick.RemoveListener(CloseWindow);
 
-        gameObject.SetActive(false);
+        base.DestroyInternal();
     }
     public void OpenWithSource(LootSource source)
     {
@@ -57,7 +63,6 @@ public class UISearchWindow : MonoBehaviour
 
         currentTitle = source != null ? source.displayName : "바닥"; 
 
-        gameObject.SetActive(true);
         RefreshWindow(true);
     }
     public void OpenWithSources(List<LootSource> sources, string title = "바닥")
@@ -75,7 +80,6 @@ public class UISearchWindow : MonoBehaviour
 
         currentTitle = string.IsNullOrEmpty(title) ? "바닥" : title;
 
-        gameObject.SetActive(true);
         RefreshWindow(true);
     }
     public void RefreshFromCurrentSources()
@@ -91,7 +95,8 @@ public class UISearchWindow : MonoBehaviour
         currentSources.Clear();
         selectedIndex = -1;
         currentTitle = "바닥";
-        gameObject.SetActive(false);
+
+        Close();
     }
     public void OnClickEntry(UISearchItemEntry entryUI) //한번 클릭시
     {

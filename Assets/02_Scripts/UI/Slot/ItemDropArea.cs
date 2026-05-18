@@ -24,9 +24,7 @@ public class ItemDropArea : MonoBehaviour, IDropHandler
 
         if (fromSlot.IsStack)
         {
-            Debug.Log($"[ItemDropArea] AmountPopup 열기 시도 amount={fromSlot.amount}");
             UIItemAmountPopup popup = UIManager.Instance.OpenUI<UIItemAmountPopup>();
-            Debug.Log($"[ItemDropArea] popup null 여부 = {popup == null}");
             popup.OpenForDrop(from, fromSlot.amount);
 
             return;
