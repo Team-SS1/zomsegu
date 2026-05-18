@@ -168,13 +168,25 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         DestroyDragIcon();
 
-        if (rootCanvas == null || icon == null || icon.sprite == null) return;
+        if (icon == null || icon.sprite == null) return;
 
-        dragIcon = new GameObject("DragIcon");
-        dragIcon.transform.SetParent(rootCanvas.transform, false);
+        Transform parent = UIDragIconRoot.Root;
+
+        if(parent == null)
+        {
+            if(rootCanvas == null)
+                rootCanvas = GetComponentInParent<Canvas>();
+            if (rootCanvas == null)
+                return;
+            parent = rootCanvas.transform;
+        }
+
+
+        dragIcon = new GameObject("DragIcon", typeof(RectTransform), typeof(CanvasRenderer),typeof(Image));
+        dragIcon.transform.SetParent(parent, false);
         dragIcon.transform.SetAsLastSibling();
 
-        Image dragImage = dragIcon.AddComponent<Image>();
+        Image dragImage = dragIcon.GetComponent<Image>();
         dragImage.sprite = icon.sprite;
         dragImage.raycastTarget = false;
         dragImage.preserveAspect = true;
