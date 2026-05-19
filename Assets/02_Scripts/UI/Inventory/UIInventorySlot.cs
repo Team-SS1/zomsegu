@@ -18,8 +18,6 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [Header("Click")]
     [SerializeField] private float doubleClick = 0.25f;
 
-    [SerializeField] private UITooltipManage toolTipManage;
-
     private float lastClickTime = -1f;
 
     private GameObject dragIcon;
@@ -253,7 +251,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             }
             
         }
-
+        UITooltipManage toolTipManage = UIManager.Instance.GetUI<UITooltipManage>();
         toolTipManage?.ShowInventoryTooltip(
             transform as RectTransform,
             slot.itemId,
@@ -265,7 +263,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        toolTipManage?.HideAll();
+        UIManager.Instance.GetUI<UITooltipManage>()?.HideAll();
     }
     private bool TryGetCompareEquipSlot(ItemType itemType, out EquipSlotType equipSlotType)
     {

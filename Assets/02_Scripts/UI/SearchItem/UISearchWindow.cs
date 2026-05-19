@@ -18,9 +18,6 @@ public class UISearchWindow : UIPopup
     [Header("Player")]
     [SerializeField] private PlayerType targetPlayerType = PlayerType.Player_SHIN;
 
-    [Header("Tooltip")]
-    [SerializeField] private UITooltipManage tooltipManage;
-
     private readonly List<LootSource> currentSources = new();
     private readonly List<SearchDisplayEntry> currentEntries = new();
     private readonly List<UISearchItemEntry> spawnedEntries = new();
@@ -252,7 +249,7 @@ public class UISearchWindow : UIPopup
     }
     private void ShowTooltip(UISearchItemEntry entryUI)
     {
-        if (tooltipManage == null || entryUI == null || entryUI.EntryData == null)
+        if (entryUI == null || entryUI.EntryData == null)
             return;
 
         SearchDisplayEntry entry = entryUI.EntryData;
@@ -261,11 +258,11 @@ public class UISearchWindow : UIPopup
         int compareItemId = EquipmentQueryService.GetEquippedItemId(targetPlayerType, EquipSlotType.Weapon);
         ItemStack compareInstance = EquipmentQueryService.GetEquippedInstance(targetPlayerType, EquipSlotType.Weapon);
 
+        UITooltipManage tooltipManage = UIManager.Instance.GetUI<UITooltipManage>();
         tooltipManage.ShowInventoryTooltip(entryUI.Rect, entry.itemId, instance, compareItemId, compareInstance);
     }
     private void HideTooltip()
     {
-        if (tooltipManage != null)
-            tooltipManage.HideAll();
+        UIManager.Instance.GetUI<UITooltipManage>()?.HideAll();
     }
 }

@@ -8,5 +8,7 @@ public class UIBootstrap : MonoBehaviour
     {
         UIManager.Instance.OpenUI<UIQuickSlot>();
         UIManager.Instance.OpenUI<ItemDropArea>();
+        UIManager.Instance.OpenUI<UIMainPanel>();
+        UIManager.Instance.OpenUI<UITooltipManage>();
     }
 }

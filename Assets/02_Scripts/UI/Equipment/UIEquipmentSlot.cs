@@ -22,8 +22,6 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
     [Header("Click")]
     [SerializeField] private float doubleClick = 0.25f;
 
-    [SerializeField] private UITooltipManage toolTipManage;
-
     private float lastClickTime = -1f;
 
     private GameObject dragIcon;
@@ -257,11 +255,12 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
 
         ItemStack instance = EquipmentQueryService.GetEquippedInstance(slotRef.playerType, slotRef.equipSlot);
 
+        UITooltipManage toolTipManage = UIManager.Instance.GetUI<UITooltipManage>();
         toolTipManage?.ShowEquipmentTooltip(transform as RectTransform, itemId, instance, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        toolTipManage?.HideAll();
+        UIManager.Instance.GetUI<UITooltipManage>()?.HideAll();
     }
 }
