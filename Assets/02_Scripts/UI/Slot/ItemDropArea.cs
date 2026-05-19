@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using ItemEnum;
 
-public class ItemDropArea : MonoBehaviour, IDropHandler
+public class ItemDropArea : BaseUI, IDropHandler
 {
     public void OnDrop(PointerEventData eventData)
     {

@@ -7,5 +7,6 @@ public class UIBootstrap : MonoBehaviour
     void Start()
     {
         UIManager.Instance.OpenUI<UIQuickSlot>();
+        UIManager.Instance.OpenUI<ItemDropArea>();
     }
 }
