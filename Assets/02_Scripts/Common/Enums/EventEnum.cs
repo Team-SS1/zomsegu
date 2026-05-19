@@ -4,7 +4,8 @@
     {
         /* ----- Item, Inventory, Stat ----- */
         InventoryChanged,
-        EquipmentChanged,
+        EquipmentChanged, // 장착, 해제, 교체
+        EquipmentDurabilityChanged, // 내구도 수치 변경
         QuickSlotChanged,
         DropItemChanged,
         StatChanged,
