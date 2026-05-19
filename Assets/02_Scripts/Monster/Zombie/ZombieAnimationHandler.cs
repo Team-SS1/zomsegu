@@ -6,7 +6,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Zombie))]
-public class ZombieAnimationHandlerCheck : MonoBehaviour
+public class ZombieAnimationHandler : MonoBehaviour
 {
     private Animator animator;
     private Zombie zombie;

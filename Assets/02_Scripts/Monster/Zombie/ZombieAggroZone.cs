@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
-public class ZombieAggroZoneCheck : MonoBehaviour
+public class ZombieAggroZone : MonoBehaviour
 {
     private Zombie z;
     private CircleCollider2D col;
