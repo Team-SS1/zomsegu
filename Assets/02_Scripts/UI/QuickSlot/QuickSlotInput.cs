@@ -5,8 +5,6 @@ using UnityEngine.InputSystem;
 
 public class QuickSlotInput : MonoBehaviour
 {
-    [SerializeField] private UIActiveCharacterContext activeCharacterContext;
-
     private InputManager mg;
 
     private void Awake()
@@ -57,7 +55,7 @@ public class QuickSlotInput : MonoBehaviour
     }
     private void SelectQuickSlot(int index)
     {
-        PlayerType playerType = activeCharacterContext.CurrentActivePlayer;
+        PlayerType playerType = PlayerManager.Instance.CurrentActivePlayer;
         ItemTransferService.TrySelectQuickSlot(playerType, index);
     }
 }
