@@ -214,6 +214,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5941956926351192279, guid: 884ab13af91f7f349bca6a562ea87152, type: 3}
+      propertyPath: m_SleepingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5941956926351192279, guid: 884ab13af91f7f349bca6a562ea87152, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6187268437986593093, guid: 884ab13af91f7f349bca6a562ea87152, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -246,6 +254,10 @@ PrefabInstance:
     - target: {fileID: 286670953049713548, guid: 86f693f017c12e746861b0c37ff0d95a, type: 3}
       propertyPath: m_Name
       value: YoungAdultFemaleZombie
+      objectReference: {fileID: 0}
+    - target: {fileID: 286670953049713548, guid: 86f693f017c12e746861b0c37ff0d95a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2290869692745434224, guid: 86f693f017c12e746861b0c37ff0d95a, type: 3}
       propertyPath: m_Radius
@@ -316,6 +328,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PoliceZombie
       objectReference: {fileID: 0}
+    - target: {fileID: 286670953049713548, guid: 9fd7f162e2bd3c143bbbb6fb1fdbef99, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 446394781696467214, guid: 9fd7f162e2bd3c143bbbb6fb1fdbef99, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -384,6 +400,10 @@ PrefabInstance:
     - target: {fileID: 286670953049713548, guid: d2d3f7e8c404daa4f8c9a7190ba360fb, type: 3}
       propertyPath: m_Name
       value: ElderFemaleZombie
+      objectReference: {fileID: 0}
+    - target: {fileID: 286670953049713548, guid: d2d3f7e8c404daa4f8c9a7190ba360fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1384477595067760053, guid: d2d3f7e8c404daa4f8c9a7190ba360fb, type: 3}
       propertyPath: m_Radius
@@ -457,6 +477,10 @@ PrefabInstance:
     - target: {fileID: 286670953049713548, guid: 419260de87f731e47823031c271573e7, type: 3}
       propertyPath: m_Name
       value: AdultMaleZombie
+      objectReference: {fileID: 0}
+    - target: {fileID: 286670953049713548, guid: 419260de87f731e47823031c271573e7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2770733038921856778, guid: 419260de87f731e47823031c271573e7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -566,6 +590,10 @@ PrefabInstance:
     - target: {fileID: 3333837420155379708, guid: 55605d73c46dd0d44a10309969db0f69, type: 3}
       propertyPath: m_Radius
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7668095243607864465, guid: 55605d73c46dd0d44a10309969db0f69, type: 3}
+      propertyPath: zombieID
+      value: 20101
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
