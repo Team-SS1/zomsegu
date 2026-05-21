@@ -86,6 +86,8 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         if (knockback == null) knockback = GetComponent<MonsterKnockback>();
         // ====================
 
+        InitStat();
+
         _idle = new ZombieIdleState(this);
         _aggro = new ZombieAggroState(this);
         _investigate = new ZombieInvestigateState(this);
@@ -121,8 +123,8 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
     // 스폰 시 초기화
     public void OnSpawn()
     {
-        if (!EnsureStat())
-            return;
+        //if (!EnsureStat())
+        //    return;
 
         target = null;
         MoveDirection = Vector2.zero;
@@ -181,57 +183,44 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         UpdateRunTimer();
     }
 
-    //    private bool InitStat()
-    //    {
-    //        if (MonsterStat.tableDic == null || MonsterStat.tableDic.Count == 0)
-    //        {
-    //#if UNITY_EDITOR
-    //            Debug.LogError($"[Zombie] MonsterStat.tableDic is empty. zombieID:{zombieID}");
-    //#endif
-    //            return false;
-    //        }
-
-    //        if (!MonsterStat.tableDic.TryGetValue(zombieID, out stat))
-    //        {
-    //#if UNITY_EDITOR
-    //            Debug.LogError($"[Zombie] ID {zombieID} not found in MonsterStat.tableDic. Count:{MonsterStat.tableDic.Count}");
-    //#endif
-    //            return false;
-    //        }
-
-    //#if UNITY_EDITOR
-    //        Debug.Log($"[Zombie Stat Loaded] ID:{zombieID}, Name:{stat.Name}, Move:{stat.MoveSpeed}, Run:{stat.RunSpeed}");
-    //#endif
-
-    //        return true;
-    //    }
-
-    private bool EnsureStat()
+    private void InitStat()
     {
-        if (MonsterStat.tableDic == null || MonsterStat.tableDic.Count == 0)
-        {
-#if UNITY_EDITOR
-            Debug.LogError($"[Zombie] MonsterStat.tableDic is empty. zombieID:{zombieID}");
-#endif
-            enabled = false;
-            return false;
-        }
-
         if (!MonsterStat.tableDic.TryGetValue(zombieID, out stat))
         {
 #if UNITY_EDITOR
-            Debug.LogError($"[Zombie] ID {zombieID} not found. tableDic count:{MonsterStat.tableDic.Count}");
+            Debug.LogError($"[Zombie] ID {zombieID} not found in MonsterStat.tableDic");
 #endif
             enabled = false;
-            return false;
+            return;
         }
-
-#if UNITY_EDITOR
-        Debug.Log($"[Zombie] Stat 연결 성공 ID:{zombieID}, Name:{stat.Name}, Move:{stat.MoveSpeed}, Run:{stat.RunSpeed}");
-#endif
-
-        return true;
     }
+
+//    private bool EnsureStat()
+//    {
+//        if (MonsterStat.tableDic == null || MonsterStat.tableDic.Count == 0)
+//        {
+//#if UNITY_EDITOR
+//            Debug.LogError($"[Zombie] MonsterStat.tableDic is empty. zombieID:{zombieID}");
+//#endif
+//            enabled = false;
+//            return false;
+//        }
+
+//        if (!MonsterStat.tableDic.TryGetValue(zombieID, out stat))
+//        {
+//#if UNITY_EDITOR
+//            Debug.LogError($"[Zombie] ID {zombieID} not found. tableDic count:{MonsterStat.tableDic.Count}");
+//#endif
+//            enabled = false;
+//            return false;
+//        }
+
+//#if UNITY_EDITOR
+//        Debug.Log($"[Zombie] Stat 연결 성공 ID:{zombieID}, Name:{stat.Name}, Move:{stat.MoveSpeed}, Run:{stat.RunSpeed}");
+//#endif
+
+//        return true;
+//    }
 
     public bool IsInLayerMask(GameObject obj, LayerMask mask)
     {
