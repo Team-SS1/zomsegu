@@ -7,7 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class MonsterKnockback : MonoBehaviour
 {
-    private Monster monster;
     private Zombie zombie;
 
     [Header("Knockback")]
@@ -23,8 +22,6 @@ public class MonsterKnockback : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        // 둘 다 받아두기
-        monster = GetComponent<Monster>();
         zombie = GetComponent<Zombie>();
     }
 
