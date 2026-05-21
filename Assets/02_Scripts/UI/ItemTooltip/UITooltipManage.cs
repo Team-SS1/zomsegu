@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using ItemEnum;
 
-public class UITooltipManage : MonoBehaviour
+public class UITooltipManage : BaseUI
 {
     [Header("Tooltip UI")]
     [SerializeField] private UIItemTooltip mainTooltip;
@@ -21,16 +21,20 @@ public class UITooltipManage : MonoBehaviour
     [SerializeField] private float spacing = 0f;
 
     [Header("Fine Tune")]
-    [SerializeField] private float singleLeftNudge = 60f;   // 커서가 오른쪽 -> 툴팁은 왼쪽
-    [SerializeField] private float singleRightNudge = 0f;  // 커서가 왼쪽 -> 툴팁은 오른쪽
-    [SerializeField] private float groupLeftNudge = 0f;
-    [SerializeField] private float groupRightNudge = 0f;
+    [SerializeField] private float singleLeftNudge = 130f;   // 커서가 오른쪽 -> 툴팁은 왼쪽
+    [SerializeField] private float singleRightNudge = 50f;  // 커서가 왼쪽 -> 툴팁은 오른쪽
+    [SerializeField] private float groupLeftNudge = 100f;
+    [SerializeField] private float groupRightNudge = 120f;
 
     private RectTransform canvasRect;
     private Camera uiCamera;
 
-    private void Awake()
+    protected override void AwakeInternal()
     {
+        base.AwakeInternal();
+        if(rootCanvas == null)
+            rootCanvas = GetComponentInParent<Canvas>();
+
         if (rootCanvas != null)
         {
             canvasRect = rootCanvas.GetComponent<RectTransform>();

@@ -11,9 +11,6 @@ using UnityEngine.InputSystem;
 // F : 현재 선택 아이템 획득
 public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 그냥 막 집어넣음
 {
-    [Header("Reference")]
-    [SerializeField] private UISearchWindow searchWindow;
-
     [Header("Test Item Id")]
     [SerializeField] private int stackItemId;
     [SerializeField] private int secondStackItemId;
@@ -23,10 +20,11 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
     [SerializeField] private int stackCount = 3;
     [SerializeField] private int secondStackCount = 2;
 
+    private UISearchWindow searchWindow;
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard == null || searchWindow == null)
+        if (keyboard == null)
             return;
         else if (keyboard.f1Key.wasPressedThisFrame)
             OpenMergedGroundScan();
@@ -51,6 +49,7 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
         AddStackItems(source, secondStackItemId, secondStackCount);
         AddInstanceItem(source, instanceItemId);
 
+        searchWindow = UIManager.Instance.OpenUI<UISearchWindow>();
         searchWindow.OpenWithSource(source);
     }
 
@@ -63,6 +62,7 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
         AddStackItems(source, secondStackItemId, secondStackCount);
         AddInstanceItem(source, instanceItemId);
 
+        searchWindow = UIManager.Instance.OpenUI<UISearchWindow>();
         searchWindow.OpenWithSource(source);
     }
 
@@ -78,6 +78,7 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
         AddInstanceItem(sourceB, instanceItemId);
 
         List<LootSource> sources = new List<LootSource> { sourceA, sourceB };
+        searchWindow = UIManager.Instance.OpenUI<UISearchWindow>();
         searchWindow.OpenWithSources(sources, "바닥");
     }
 
@@ -90,6 +91,7 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
         AddStackItems(source, stackItemId, stackCount);
         AddInstanceItem(source, instanceItemId);
 
+        searchWindow = UIManager.Instance.OpenUI<UISearchWindow>();
         searchWindow.OpenWithSource(source);
     }
 

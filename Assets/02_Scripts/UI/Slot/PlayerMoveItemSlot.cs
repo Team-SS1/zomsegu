@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 public class PlayerMoveItemSlot : MonoBehaviour, IDropHandler
 {
     [SerializeField] private UISelectedCharacterContext selectedCharacterContext;
-    [SerializeField] private UIItemAmountPopup amountPopup;
     public void OnDrop(PointerEventData eventData)
     {
         if(DragContext.payload == null) return;
@@ -23,8 +22,8 @@ public class PlayerMoveItemSlot : MonoBehaviour, IDropHandler
 
         if (fromSlot.IsStack)
         {
-            if (amountPopup != null)
-                amountPopup.OpenForGive(from, target, fromSlot.amount);
+            UIItemAmountPopup popup = UIManager.Instance.OpenUI<UIItemAmountPopup>();
+            popup.OpenForGive(from, target, fromSlot.amount);
 
             return;
         }

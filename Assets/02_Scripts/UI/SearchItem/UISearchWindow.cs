@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UISearchWindow : MonoBehaviour
+public class UISearchWindow : UIPopup
 {
     [Header("Header")]
     [SerializeField] private TextMeshProUGUI titleTXT;
@@ -17,9 +17,6 @@ public class UISearchWindow : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] private PlayerType targetPlayerType = PlayerType.Player_SHIN;
-
-    [Header("Tooltip")]
-    [SerializeField] private UITooltipManage tooltipManage;
 
     private readonly List<LootSource> currentSources = new();
     private readonly List<SearchDisplayEntry> currentEntries = new();
@@ -41,12 +38,18 @@ public class UISearchWindow : MonoBehaviour
         }
     }
 
-    private void Awake()
+    protected override void AwakeInternal()
     {
+        base.AwakeInternal();
         if (closeButton != null)
             closeButton.onClick.AddListener(CloseWindow);
+    }
+    protected override void DestroyInternal()
+    {
+        if (closeButton != null)
+            closeButton.onClick.RemoveListener(CloseWindow);
 
-        gameObject.SetActive(false);
+        base.DestroyInternal();
     }
     public void OpenWithSource(LootSource source)
     {
@@ -57,7 +60,6 @@ public class UISearchWindow : MonoBehaviour
 
         currentTitle = source != null ? source.displayName : "바닥"; 
 
-        gameObject.SetActive(true);
         RefreshWindow(true);
     }
     public void OpenWithSources(List<LootSource> sources, string title = "바닥")
@@ -75,7 +77,6 @@ public class UISearchWindow : MonoBehaviour
 
         currentTitle = string.IsNullOrEmpty(title) ? "바닥" : title;
 
-        gameObject.SetActive(true);
         RefreshWindow(true);
     }
     public void RefreshFromCurrentSources()
@@ -91,7 +92,8 @@ public class UISearchWindow : MonoBehaviour
         currentSources.Clear();
         selectedIndex = -1;
         currentTitle = "바닥";
-        gameObject.SetActive(false);
+
+        Close();
     }
     public void OnClickEntry(UISearchItemEntry entryUI) //한번 클릭시
     {
@@ -247,7 +249,7 @@ public class UISearchWindow : MonoBehaviour
     }
     private void ShowTooltip(UISearchItemEntry entryUI)
     {
-        if (tooltipManage == null || entryUI == null || entryUI.EntryData == null)
+        if (entryUI == null || entryUI.EntryData == null)
             return;
 
         SearchDisplayEntry entry = entryUI.EntryData;
@@ -256,11 +258,11 @@ public class UISearchWindow : MonoBehaviour
         int compareItemId = EquipmentQueryService.GetEquippedItemId(targetPlayerType, EquipSlotType.Weapon);
         ItemStack compareInstance = EquipmentQueryService.GetEquippedInstance(targetPlayerType, EquipSlotType.Weapon);
 
+        UITooltipManage tooltipManage = UIManager.Instance.GetUI<UITooltipManage>();
         tooltipManage.ShowInventoryTooltip(entryUI.Rect, entry.itemId, instance, compareItemId, compareInstance);
     }
     private void HideTooltip()
     {
-        if (tooltipManage != null)
-            tooltipManage.HideAll();
+        UIManager.Instance.GetUI<UITooltipManage>()?.HideAll();
     }
 }

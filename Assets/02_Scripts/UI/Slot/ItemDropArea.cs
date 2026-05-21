@@ -2,9 +2,8 @@
 using UnityEngine.EventSystems;
 using ItemEnum;
 
-public class ItemDropArea : MonoBehaviour, IDropHandler
+public class ItemDropArea : BaseUI, IDropHandler
 {
-    [SerializeField] private UIItemAmountPopup amountPopup;
     public void OnDrop(PointerEventData eventData)
     {
         if (DragContext.payload == null) return;
@@ -25,8 +24,8 @@ public class ItemDropArea : MonoBehaviour, IDropHandler
 
         if (fromSlot.IsStack)
         {
-            if (amountPopup != null)
-                amountPopup.OpenForDrop(from, fromSlot.amount);
+            UIItemAmountPopup popup = UIManager.Instance.OpenUI<UIItemAmountPopup>();
+            popup.OpenForDrop(from, fromSlot.amount);
 
             return;
         }

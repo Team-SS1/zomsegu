@@ -18,8 +18,6 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [Header("Click")]
     [SerializeField] private float doubleClick = 0.25f;
 
-    [SerializeField] private UITooltipManage toolTipManage;
-
     private float lastClickTime = -1f;
 
     private GameObject dragIcon;
@@ -168,13 +166,25 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         DestroyDragIcon();
 
-        if (rootCanvas == null || icon == null || icon.sprite == null) return;
+        if (icon == null || icon.sprite == null) return;
 
-        dragIcon = new GameObject("DragIcon");
-        dragIcon.transform.SetParent(rootCanvas.transform, false);
+        Transform parent = UIDragIconRoot.Root;
+
+        if(parent == null)
+        {
+            if(rootCanvas == null)
+                rootCanvas = GetComponentInParent<Canvas>();
+            if (rootCanvas == null)
+                return;
+            parent = rootCanvas.transform;
+        }
+
+
+        dragIcon = new GameObject("DragIcon", typeof(RectTransform), typeof(CanvasRenderer),typeof(Image));
+        dragIcon.transform.SetParent(parent, false);
         dragIcon.transform.SetAsLastSibling();
 
-        Image dragImage = dragIcon.AddComponent<Image>();
+        Image dragImage = dragIcon.GetComponent<Image>();
         dragImage.sprite = icon.sprite;
         dragImage.raycastTarget = false;
         dragImage.preserveAspect = true;
@@ -241,7 +251,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             }
             
         }
-
+        UITooltipManage toolTipManage = UIManager.Instance.GetUI<UITooltipManage>();
         toolTipManage?.ShowInventoryTooltip(
             transform as RectTransform,
             slot.itemId,
@@ -253,7 +263,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        toolTipManage?.HideAll();
+        UIManager.Instance.GetUI<UITooltipManage>()?.HideAll();
     }
     private bool TryGetCompareEquipSlot(ItemType itemType, out EquipSlotType equipSlotType)
     {

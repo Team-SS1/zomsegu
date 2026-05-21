@@ -3,26 +3,32 @@ using PlayerEnum;
 using EventEnum;
 
 
-public class UIQuickSlot : MonoBehaviour
+public class UIQuickSlot : BaseUI
 {
     [SerializeField] private UIActiveCharacterContext activeCharacterContext;
     [SerializeField] private UIQuickSlotSlot[] slotUIs;
 
-    private void OnEnable()
+    protected override void EnableInternal()
     {
+        base.EnableInternal();
+
         EventManager.Subscribe<PlayerType>(EventKey.QuickSlotChanged, OnQuickSlotChanged);
         EventManager.Subscribe<PlayerType>(EventKey.ActiveCharacterChanged, OnActiveCharacterChanged);
         EventManager.Subscribe<PlayerType>(EventKey.EquipmentChanged, OnEquipmentChanged);
         EventManager.Subscribe<PlayerType>(EventKey.InventoryChanged, OnInventoryChanged);
+        EventManager.Subscribe<PlayerType>(EventKey.EquipmentDurabilityChanged, OnEquipmentDurabilityChanged);
 
         Refresh(activeCharacterContext.CurrentActivePlayer);
     }
-    private void OnDisable()
+    protected override void DisableInternal()
     {
         EventManager.UnSubscribe<PlayerType>(EventKey.QuickSlotChanged, OnQuickSlotChanged);
         EventManager.UnSubscribe<PlayerType>(EventKey.ActiveCharacterChanged, OnActiveCharacterChanged);
         EventManager.UnSubscribe<PlayerType>(EventKey.EquipmentChanged, OnEquipmentChanged);
         EventManager.UnSubscribe<PlayerType>(EventKey.InventoryChanged, OnInventoryChanged);
+        EventManager.UnSubscribe<PlayerType>(EventKey.EquipmentDurabilityChanged, OnEquipmentDurabilityChanged);
+
+        base.DisableInternal();
     }
     private void OnQuickSlotChanged(PlayerType playerType)
     {
@@ -41,6 +47,11 @@ public class UIQuickSlot : MonoBehaviour
         Refresh(playerType);
     }
     private void OnEquipmentChanged(PlayerType playerType)
+    {
+        if (playerType != activeCharacterContext.CurrentActivePlayer) return;
+        Refresh(playerType);
+    }
+    private void OnEquipmentDurabilityChanged(PlayerType playerType)
     {
         if (playerType != activeCharacterContext.CurrentActivePlayer) return;
         Refresh(playerType);

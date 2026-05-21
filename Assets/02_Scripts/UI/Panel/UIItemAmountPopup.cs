@@ -4,11 +4,8 @@ using TMPro;
 using ItemEnum;
 using PlayerEnum;
 
-public class UIItemAmountPopup : MonoBehaviour
+public class UIItemAmountPopup : UIPopup
 {
-    [Header("Root")]
-    [SerializeField] private GameObject rootPanel;
-
     [Header("Text")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI currentAmountText;
@@ -24,9 +21,9 @@ public class UIItemAmountPopup : MonoBehaviour
     private SlotRef currentSlot;
     private PlayerType currentPlayerType;
     private int maxAmount;
-
-    private void Awake()
+    protected override void AwakeInternal()
     {
+        base.AwakeInternal();
         if (confirmButton != null)
             confirmButton.onClick.AddListener(OnClickConfirm);
 
@@ -35,10 +32,20 @@ public class UIItemAmountPopup : MonoBehaviour
 
         if (amountInputField != null)
             amountInputField.onValueChanged.AddListener(OnInputValueChanged);
-
-        Close();
     }
+    protected override void DestroyInternal()
+    {
+        if(confirmButton != null)
+            confirmButton.onClick.RemoveListener(OnClickConfirm);
 
+        if (cancelButton != null)
+            cancelButton.onClick.RemoveListener(Close);
+
+        if(amountInputField != null)
+            amountInputField.onValueChanged.RemoveListener(OnInputValueChanged);
+
+        base.DestroyInternal();
+    }
     public void OpenForGive(SlotRef from, PlayerType playerType, int currentAmount)
     {
         if (currentAmount <= 0) return;
@@ -60,14 +67,11 @@ public class UIItemAmountPopup : MonoBehaviour
             amountInputField.ActivateInputField();
             amountInputField.Select();
         }
-
-        if(rootPanel != null)
-            rootPanel.SetActive(true);
     }
 
     public void OpenForDrop(SlotRef from, int currentAmount)
     {
-        if(currentAmount <= 0) return;
+        if (currentAmount <= 0) return;
 
         currentMode = ItemAmountPopupMode.DropToWorld;
         currentSlot = from;
@@ -86,17 +90,15 @@ public class UIItemAmountPopup : MonoBehaviour
             amountInputField.ActivateInputField();
             amountInputField.Select();
         }
-
-        if(rootPanel != null)
-            rootPanel.SetActive(true);
     }
-    public void Close()
+    public override void Close()
     {
         currentMode = ItemAmountPopupMode.None;
+        currentSlot = default;
+        currentPlayerType = default;
         maxAmount = 0;
 
-        if(rootPanel != null)
-            rootPanel.SetActive(false);
+        base.Close();
     }
 
     private void OnInputValueChanged(string value)
@@ -119,18 +121,19 @@ public class UIItemAmountPopup : MonoBehaviour
             Debug.Log("보유 개수를 학인해주세요 팝업 (나중에 만들 예정)");
             return;
         }
-
+        bool success = false;
         switch (currentMode)
         {
             case ItemAmountPopupMode.GiveToOtherPlayer:
-                ItemTransferService.TryGiveToOtherPlayer(currentSlot, currentPlayerType, amount);
+                success = ItemTransferService.TryGiveToOtherPlayer(currentSlot, currentPlayerType, amount);
                 break;
 
             case ItemAmountPopupMode.DropToWorld:
-                ItemTransferService.TryDropOutside(currentSlot,amount);
+                success = ItemTransferService.TryDropOutside(currentSlot,amount);
                 break;
         }
-        Close();
+        if(success)
+            Close();
     }
     private int GetValidAmount()
     {
