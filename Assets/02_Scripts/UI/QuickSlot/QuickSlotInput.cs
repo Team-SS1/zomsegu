@@ -10,18 +10,15 @@ public class QuickSlotInput : MonoBehaviour
     private void Awake()
     {
         mg = InputManager.Instance;
-        Debug.Log("QuickSlotInput Awake");
     }
     private void Start()
     {
-        Debug.Log("QuickSlotInput Start");
         mg.BindInput(ActionMaps.Gameplay, Actions.QuickSlot1, OnQuickSlot1);
         Debug.Log($"Gameplay 활성화 여부: {mg.HasMaps(ActionMaps.Gameplay)}");
         mg.BindInput(ActionMaps.Gameplay, Actions.QuickSlot2, OnQuickSlot2);
         mg.BindInput(ActionMaps.Gameplay, Actions.QuickSlot3, OnQuickSlot3);
         mg.BindInput(ActionMaps.Gameplay, Actions.QuickSlot4, OnQuickSlot4);
         mg.BindInput(ActionMaps.Gameplay, Actions.QuickSlot5, OnQuickSlot5);
-        Debug.Log("QuickSlot 바인딩 완료");
     }
     private void OnQuickSlot1(InputAction.CallbackContext context)
     {

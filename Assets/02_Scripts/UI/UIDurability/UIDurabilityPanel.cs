@@ -15,6 +15,11 @@ public class UIDurabilityPanel : BaseUI
     [SerializeField] private UIDurabilitySlot bodySlot;
     [SerializeField] private UIDurabilitySlot legSlot;
 
+    private UIMainPanelFlowController flowController;
+    public void BindFlowController(UIMainPanelFlowController flowController)
+    {
+        this.flowController = flowController;
+    }
     protected override void AwakeInternal()
     {
         base.AwakeInternal();
@@ -22,7 +27,7 @@ public class UIDurabilityPanel : BaseUI
             openInventoryButton.onClick.AddListener(OnClickOpenInventory);
 
         if (closeButton != null)
-            closeButton.onClick.AddListener(Close);
+            closeButton.onClick.AddListener(OnClickClose);
     }
     protected override void DestroyInternal()
     {
@@ -30,7 +35,7 @@ public class UIDurabilityPanel : BaseUI
             openInventoryButton.onClick.RemoveListener(OnClickOpenInventory);
 
         if(closeButton != null)
-            closeButton.onClick.RemoveListener(Close);
+            closeButton.onClick.RemoveListener(OnClickClose);
 
         base.DestroyInternal();
     }
@@ -62,6 +67,12 @@ public class UIDurabilityPanel : BaseUI
 
         Refresh(playerType);
     }
+    public void RefreshByActivePlayer()
+    {
+        if (PlayerManager.Instance == null) return;
+
+        Refresh(PlayerManager.Instance.CurrentActivePlayer);
+    }
     private void Refresh(PlayerType playerType)
     {
         if (weaponSlot != null) weaponSlot.Refresh(playerType);
@@ -71,9 +82,17 @@ public class UIDurabilityPanel : BaseUI
     }
     private void OnClickOpenInventory()
     {
-        //이따가 만들 예정
+        if (flowController != null)
+            flowController.OnDurabilityPlusButtonClicked();
     }
-    private void Close()
+    private void OnClickClose()
+    {
+        if (flowController != null)
+            flowController.OnDurabilityCloseButtonClicked();
+        else
+            ClosePanel();
+    }
+    public void ClosePanel()
     {
         gameObject.SetActive(false);
     }
