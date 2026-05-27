@@ -75,6 +75,13 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
 
     private bool _bootstrapped;
 
+    [Header("Ranged Hit Reaction")]
+    [SerializeField] private float rangedHitWalkDuration = 3f;
+
+    private bool _isRangedHitWalking;
+    private float _rangedHitWalkTimer;
+    private Vector2 _rangedHitWalkDir;
+
     private void Awake()
     {
         StateMachine = GetComponent<ZombieStateMachine>();
@@ -177,6 +184,8 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         if (IsDead)
             return;
 
+        UpdateRangedHitWalk();
+
         if (MoveDirection.sqrMagnitude > 0.001f)
             FacingDirection = MoveDirection.normalized;
 
@@ -245,6 +254,38 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
     }
 
     //public bool WasSeenThisFrame => _seenThisFrame;
+
+    private void UpdateRangedHitWalk()
+    {
+        if (!_isRangedHitWalking)
+            return;
+
+        if (IsDead || IsAttacking || IsTakingDamage || IsWakeUp || IsFakeDie)
+        {
+            StopRangedHitWalk();
+            return;
+        }
+
+        // 중간에 어그로가 걸리면 즉시 중단
+        if (StateMachine.CurrentType == ZombieStateType.Aggro || HasValidTarget())
+        {
+            StopRangedHitWalk();
+            return;
+        }
+
+        _rangedHitWalkTimer -= Time.deltaTime;
+
+        if (_rangedHitWalkTimer <= 0f)
+        {
+            StopRangedHitWalk();
+            EnterIdle();
+            return;
+        }
+
+        IsWalking = true;
+        IsRunning = false;
+        MoveDirection = _rangedHitWalkDir;
+    }
 
     public void OnTargetSeen(Transform seenTarget)
     {
@@ -343,6 +384,47 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         MoveDirection = Vector2.zero;
     }
 
+    private void StartRangedHitWalk(Vector2 hitDir)
+    {
+        if (hitDir.sqrMagnitude < 0.0001f)
+            return;
+
+        // 어그로 상태면 이 반응은 사용하지 않음
+        if (StateMachine.CurrentType == ZombieStateType.Aggro || HasValidTarget())
+            return;
+
+        _isRangedHitWalking = true;
+        _rangedHitWalkTimer = rangedHitWalkDuration;
+        _rangedHitWalkDir = hitDir.normalized;
+
+        IsTakingDamage = false;
+        IsAttacking = false;
+        IsWalking = true;
+        IsRunning = false;
+
+        MoveDirection = _rangedHitWalkDir;
+        FacingDirection = _rangedHitWalkDir;
+
+        PathAgent?.ResetAll();
+
+        // Idle 상태 안에서 이동 플래그만 켜는 방식.
+        // 별도 State를 안 만들어서 수정 범위가 작음.
+        if (StateMachine.CurrentType != ZombieStateType.Idle)
+            StateMachine.ChangeState(_idle, ZombieStateType.Idle);
+    }
+
+    private void StopRangedHitWalk()
+    {
+        if (!_isRangedHitWalking)
+            return;
+
+        _isRangedHitWalking = false;
+        _rangedHitWalkTimer = 0f;
+        _rangedHitWalkDir = Vector2.zero;
+
+        StopMove();
+    }
+
     private void UpdateRunTimer()
     {
         if (IsRunning)
@@ -374,6 +456,8 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         if (_runTimer <= 0f) return false;
         return true;
     }
+
+
 
     public bool ShouldLoseAggro()
     {
@@ -469,10 +553,17 @@ public class Zombie : MonoBehaviour, IDamageable, IPoolable
         float finalDamage = Mathf.Max(0f, damage - stat.Defense);
         GetComponent<ZombieHealth>().ApplyDamage(finalDamage);
 
-        // Aggro/공격 중 맞았으면 path mode 강제 실행 + 지속시간 초기화
+        // Aggro/공격 중 맞았으면 기존처럼 path mode 강제 실행
         if (!IsDead && PathAgent != null && wasAggroLike)
         {
             PathAgent.ForcePathModeAfterHit();
+        }
+
+        // 비어그로 상태에서 방향 있는 공격을 맞으면, 공격 방향으로 3초 걷기
+        if (!IsDead && !wasAggroLike && !HasValidTarget() && !IsWakeUp)
+        {
+            StartRangedHitWalk(hitDir);
+            return;
         }
 
         if (HasValidTarget() && StateMachine.CurrentType != ZombieStateType.Aggro && !IsWakeUp)
