@@ -8,6 +8,7 @@ public class UIMainPanelFlowController : MonoBehaviour
 {
     private UIMainPanel mainPanel;
     private UIDurabilityPanel durabilityPanel;
+    private UITooltipManage tooltipManage;
 
     private UIMainPanelFlowState currentState = UIMainPanelFlowState.None;
 
@@ -25,6 +26,10 @@ public class UIMainPanelFlowController : MonoBehaviour
                 CloseDurabilityAndOpenMain();
                 break;
         }
+    }
+    public void BindTooltipmanager(UITooltipManage tooltipManage)
+    {
+        this.tooltipManage = tooltipManage;
     }
     public void OnCloseInput() // esc
     {
@@ -74,7 +79,8 @@ public class UIMainPanelFlowController : MonoBehaviour
     {
         if (mainPanel != null)
             mainPanel.Close();
-
+        if(tooltipManage != null)
+            tooltipManage.HideAll();
         OpenDurabilityPanel();
 
         currentState = UIMainPanelFlowState.DurabilityPanelOepn;
