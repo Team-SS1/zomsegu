@@ -81,23 +81,23 @@ public class ZombieAggroZone : MonoBehaviour
 
         if (!z.CanAggroTarget(targetRoot))
         {
-#if UNITY_EDITOR
-            Debug.Log($"[AggroZone] LayerMask 불일치: {targetRoot.name}, Layer:{LayerMask.LayerToName(targetRoot.gameObject.layer)}");
-#endif
-            return;
+//#if UNITY_EDITOR
+//            Debug.Log($"[AggroZone] LayerMask 불일치: {targetRoot.name}, Layer:{LayerMask.LayerToName(targetRoot.gameObject.layer)}");
+//#endif
+//            return;
+//        }
+
+//        if (!CanSeeTarget(targetRoot))
+//        {
+//#if UNITY_EDITOR
+//            Debug.Log($"[AggroZone] Trigger 안에는 있지만 시야 조건 실패: {targetRoot.name}");
+//#endif
+//            return;
         }
 
-        if (!CanSeeTarget(targetRoot))
-        {
-#if UNITY_EDITOR
-            Debug.Log($"[AggroZone] Trigger 안에는 있지만 시야 조건 실패: {targetRoot.name}");
-#endif
-            return;
-        }
-
-#if UNITY_EDITOR
-        Debug.Log($"[AggroZone] 타겟 감지 성공: {targetRoot.name}");
-#endif
+//#if UNITY_EDITOR
+//        Debug.Log($"[AggroZone] 타겟 감지 성공: {targetRoot.name}");
+//#endif
 
         if (z.Target == targetRoot)
             z.MarkTargetSeen();
