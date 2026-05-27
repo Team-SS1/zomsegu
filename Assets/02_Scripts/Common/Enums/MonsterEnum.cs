@@ -35,4 +35,33 @@ namespace MonsterEnum
         Body,
         Leg
     }
+
+    public enum WildDogType
+    {
+        Leader,
+        Grunt
+    }
+
+    public enum WildDogStateType
+    {
+        Idle,
+        Move,
+        Aggro,
+        Flee,
+        Dead
+    }
+
+    public enum WildDogAggroTargetKind
+    {
+        None,
+        Character,
+        Sound
+    }
+
+    public enum WildDogIdleActionType
+    {
+        WalkRandom,
+        RunRandom,
+        Howling
+    }
 }
