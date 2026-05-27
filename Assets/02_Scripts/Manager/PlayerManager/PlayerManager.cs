@@ -10,6 +10,9 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
         base.Awake();
     }
 
+    [Header("Current Active Player")]
+    private PlayerType currentActivePlayer;
+
     [Header("Attack Value")]
     private float equipWeaponAtk;
     private float consumeBuffAtk;
@@ -28,6 +31,7 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
     private float otherBuffMovement1;
     private float otherBuffMovement2 = 1f;
 
+    public PlayerType CurrentActivePlayer => currentActivePlayer;
     public void SetWeaponAttack(float atk) => equipWeaponAtk = atk;
     public void SetConsumeBuffAttack(float add) => consumeBuffAtk = add;
     public void SetOtherBuffAttackAdd(float add) => otherBuffAtk1 = add;

@@ -14,4 +14,10 @@
         FillAlert,
         BgAlert
     }
+    public enum UIMainPanelFlowState
+    {
+        None,
+        MainPanelOepn,
+        DurabilityPanelOepn
+    }
 }

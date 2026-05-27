@@ -77,7 +77,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6605624861062991171}
   - component: {fileID: 3067489796521633203}
-  - component: {fileID: 253183704704962073}
   - component: {fileID: 5197961303646083534}
   m_Layer: 0
   m_Name: QuickSlotPanel
@@ -119,25 +118,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   order: 10
-  activeCharacterContext: {fileID: 253183704704962073}
+  activeCharacterContext: {fileID: 0}
   slotUIs:
   - {fileID: 6817469805284439602}
   - {fileID: 7827907425485010828}
   - {fileID: 6161999198010964583}
   - {fileID: 3484701505752808834}
   - {fileID: 8413720647765320248}
---- !u!114 &253183704704962073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7686843561853340708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4903d504e09aa91429882670d646ef5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5197961303646083534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86bfb10f9a7237946bf1d8a9749b38dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeCharacterContext: {fileID: 253183704704962073}
+  activeCharacterContext: {fileID: 0}
 --- !u!1001 &2325810758470404895
 PrefabInstance:
   m_ObjectHideFlags: 0

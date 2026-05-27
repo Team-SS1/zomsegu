@@ -5,7 +5,6 @@ using EventEnum;
 
 public class UIQuickSlot : BaseUI
 {
-    [SerializeField] private UIActiveCharacterContext activeCharacterContext;
     [SerializeField] private UIQuickSlotSlot[] slotUIs;
 
     protected override void EnableInternal()
@@ -18,7 +17,7 @@ public class UIQuickSlot : BaseUI
         EventManager.Subscribe<PlayerType>(EventKey.InventoryChanged, OnInventoryChanged);
         EventManager.Subscribe<PlayerType>(EventKey.EquipmentDurabilityChanged, OnEquipmentDurabilityChanged);
 
-        Refresh(activeCharacterContext.CurrentActivePlayer);
+        Refresh(PlayerManager.Instance.CurrentActivePlayer);
     }
     protected override void DisableInternal()
     {
@@ -32,7 +31,7 @@ public class UIQuickSlot : BaseUI
     }
     private void OnQuickSlotChanged(PlayerType playerType)
     {
-        if (playerType != activeCharacterContext.CurrentActivePlayer) return;
+        if (playerType != PlayerManager.Instance.CurrentActivePlayer) return;
 
         Refresh(playerType);
     }
@@ -42,18 +41,18 @@ public class UIQuickSlot : BaseUI
     }
     private void OnInventoryChanged(PlayerType playerType)
     {
-        if (playerType != activeCharacterContext.CurrentActivePlayer) return;
+        if (playerType != PlayerManager.Instance.CurrentActivePlayer) return;
 
         Refresh(playerType);
     }
     private void OnEquipmentChanged(PlayerType playerType)
     {
-        if (playerType != activeCharacterContext.CurrentActivePlayer) return;
+        if (playerType != PlayerManager.Instance.CurrentActivePlayer) return;
         Refresh(playerType);
     }
     private void OnEquipmentDurabilityChanged(PlayerType playerType)
     {
-        if (playerType != activeCharacterContext.CurrentActivePlayer) return;
+        if (playerType != PlayerManager.Instance.CurrentActivePlayer) return;
         Refresh(playerType);
     }
     private void Refresh(PlayerType playerType)
