@@ -4,6 +4,8 @@ using Cinemachine;
 using SpawnEnum;
 using UnityEngine;
 using EventEnum;
+using PlayerEnum;
+using Unity.VisualScripting;
 
 [System.Serializable]
 public class FixedSpawnPointEntry
@@ -33,6 +35,13 @@ public class FixedSpawnPoint : MonoBehaviour
         Transform point = GetPoint(FixedSpawnPointKey.Chapcter1PlayerSpawnPoint);
         GameObject player = SpawnManager.Instance.Spawn(SpawnID.Player, point);
         cinemachine.Follow = player.transform;
+        Player activePlayer = player.GetComponent<Player>();
+
+        if (activePlayer != null)
+        {
+            activePlayer.Init();
+        }
+        PlayerManager.Instance.SetGamePlayType(GamePlayType.PlayBoth);
 
         EventManager.TriggerEvent<Transform>(EventKey.PlayerSpawned, player.transform);
     }

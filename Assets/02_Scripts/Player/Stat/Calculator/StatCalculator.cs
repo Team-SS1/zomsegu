@@ -39,6 +39,7 @@ public static class StatCalculator
 
     public static float CalculateMovement(MovementInput input)
     {
+        float moveSpeed = 4f;
         float playerBaseMovement =
             (input.baseMovement
             + input.equipMovement
@@ -54,7 +55,11 @@ public static class StatCalculator
 
         float finalMovement = playerBaseMovement * (1f - totalDebuff);
 
-        return Mathf.Max(input.minMovement, finalMovement);
+        finalMovement = Mathf.Max(input.minMovement, finalMovement);
+
+        float total = finalMovement *= moveSpeed / input.baseMovement;
+
+        return total;
     }
 
     public static float CalculateRunMovement(MovementInput input)

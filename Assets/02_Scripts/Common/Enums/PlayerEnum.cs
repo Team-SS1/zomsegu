@@ -13,7 +13,9 @@ namespace PlayerEnum
         Thirst,
         Shock,
         Tired,
-        Injury
+        Injury,
+        CriticalInjury, // 심한
+        Stun // 행불
     }
 
     public enum AbnormalDebuffType
@@ -31,5 +33,11 @@ namespace PlayerEnum
         Blunt,
         Hammer,
         Knife
+    }
+    public enum GamePlayType
+    {
+        PlayMain,
+        PlaySub,
+        PlayBoth
     }
 }
