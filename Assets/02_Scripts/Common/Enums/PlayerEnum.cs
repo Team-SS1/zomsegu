@@ -23,4 +23,13 @@ namespace PlayerEnum
         MoveSpeed,
         Stamina
     }
+
+    public enum SpriteType
+    {
+        Punch,
+        Bat,
+        Blunt,
+        Hammer,
+        Knife
+    }
 }
