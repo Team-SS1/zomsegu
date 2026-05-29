@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using ItemEnum;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
 
 public class UITooltipManage : BaseUI
 {
@@ -26,6 +29,12 @@ public class UITooltipManage : BaseUI
     [SerializeField] private float groupLeftNudge = 100f;
     [SerializeField] private float groupRightNudge = 120f;
 
+    [Header("Delay")]
+    [SerializeField] private float showDelay = 0.2f;
+
+    private Coroutine showDelayCoroutine;
+    private int tooltipRequestItemId;
+
     private RectTransform canvasRect;
     private Camera uiCamera;
 
@@ -47,8 +56,23 @@ public class UITooltipManage : BaseUI
 
         HideAll();
     }
+    public void RequestInventoryTooltip(RectTransform target, int itemId, ItemStack instance, int compareItemId = 0, ItemStack compareInstance = null)
+    {
+        CancelPendingTooltip();
 
-    public void ShowInventoryTooltip(RectTransform target, int itemId, ItemStack instance, int compareItemId = 0, ItemStack compareInstance = null)
+        int requestId = tooltipRequestItemId;
+        showDelayCoroutine = StartCoroutine(ShowInventoryTooltipAfterDelay(requestId,target, itemId, instance, compareItemId, compareInstance));
+    }
+    private IEnumerator ShowInventoryTooltipAfterDelay(int requestId, RectTransform target, int itemId, ItemStack instance, int compareItemId, ItemStack compareInstance)
+    {
+        yield return new WaitForSeconds(showDelay);
+
+        if (requestId != tooltipRequestItemId) yield break;
+
+        ShowInventoryTooltip(target, itemId, instance, compareItemId, compareInstance);
+        showDelayCoroutine = null;
+    }
+    private void ShowInventoryTooltip(RectTransform target, int itemId, ItemStack instance, int compareItemId = 0, ItemStack compareInstance = null)
     {
         if (target == null || itemId == 0) return;
 
@@ -80,8 +104,33 @@ public class UITooltipManage : BaseUI
 
         PlaceTooltips(target, false);
     }
+    public  void RequestEquipmentTooltipDelayed(RectTransform target, int itemId, ItemStack instance, bool isEquipped = true)
+    {
+        CancelPendingTooltip();
 
-    public void ShowEquipmentTooltip(RectTransform target, int itemId, ItemStack instance, bool isEquipped = true)
+        int requestId = tooltipRequestItemId;
+
+        showDelayCoroutine = StartCoroutine(ShowEquipmentTooltipAfterDelay(requestId,target, itemId, instance, isEquipped));
+    }
+    private IEnumerator ShowEquipmentTooltipAfterDelay(int requestId, RectTransform target, int itemId, ItemStack instance, bool isEquipped)
+    {
+        yield return new WaitForSeconds(showDelay);
+
+        if (requestId != tooltipRequestItemId) yield break;
+
+        ShowEquipmentTooltip(target, itemId, instance, isEquipped);
+        showDelayCoroutine = null;
+    }
+    private void CancelPendingTooltip()
+    {
+        tooltipRequestItemId++;
+        if (showDelayCoroutine != null)
+        {
+            StopCoroutine(showDelayCoroutine);
+            showDelayCoroutine = null;
+        }
+    }
+    private void ShowEquipmentTooltip(RectTransform target, int itemId, ItemStack instance, bool isEquipped = true)
     {
         if (target == null || itemId == 0) return;
 
@@ -96,6 +145,8 @@ public class UITooltipManage : BaseUI
 
     public void HideAll()
     {
+        CancelPendingTooltip();
+
         if (mainTooltip != null)
             mainTooltip.Hide();
 

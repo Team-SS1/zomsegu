@@ -613,6 +613,7 @@ MonoBehaviour:
   singleRightNudge: 50
   groupLeftNudge: 100
   groupRightNudge: 120
+  showDelay: 0.2
 --- !u!1 &1978094877717721671
 GameObject:
   m_ObjectHideFlags: 0

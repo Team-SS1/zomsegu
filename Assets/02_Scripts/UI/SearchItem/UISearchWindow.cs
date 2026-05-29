@@ -259,7 +259,7 @@ public class UISearchWindow : UIPopup
         ItemStack compareInstance = EquipmentQueryService.GetEquippedInstance(targetPlayerType, EquipSlotType.Weapon);
 
         UITooltipManage tooltipManage = UIManager.Instance.GetUI<UITooltipManage>();
-        tooltipManage.ShowInventoryTooltip(entryUI.Rect, entry.itemId, instance, compareItemId, compareInstance);
+        tooltipManage.RequestInventoryTooltip(entryUI.Rect, entry.itemId, instance, compareItemId, compareInstance);
     }
     private void HideTooltip()
     {
