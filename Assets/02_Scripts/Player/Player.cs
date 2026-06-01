@@ -17,17 +17,23 @@ public class Player : MonoBehaviour
     private float currentAttackSpeed;
     private float currentMovement;
     private float currentRunMovement;
+    private SpriteController spriteController;
 
     public float CurrentAttack => currentAttack;
     public float CurrentAttackSpeed => currentAttackSpeed;
     public float CurrentMovement => currentMovement;
     public float CurrentRunMovement => currentRunMovement;
+    public SpriteController SpriteController => spriteController;
 
     public PlayerType playerType;
 
     public PlayerData data;
 
     /*----- Initialize -----*/
+    private void Awake()
+    {
+        spriteController = GetComponentInChildren<SpriteController>();
+    }
     public void Init()
     {
         data = PlayerDataManager.Instance.GetPlayerData(playerType);
@@ -35,6 +41,9 @@ public class Player : MonoBehaviour
 
         MaxStamina = BaseStat.BaseMaxStamina; // 추후 최대 계산값 적용
         CurrentStamina = BaseStat.BaseStamina;
+        PlayerManager.Instance.UpdateAll(this);
+        spriteController.ChangeSprite(SpriteType.Bat);
+
     }
 
     public void SetDead(bool value)

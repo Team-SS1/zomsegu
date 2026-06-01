@@ -10,6 +10,7 @@ public class PlayerAttack : MonoBehaviour
 {
     public Player Player {  get; private set; }
     public PlayerAim Aim {  get; private set; }
+    public PlayerHub Hub { get; private set; }
     public bool IsAttacking {  get; private set; }
     public Vector2 AttackDirection { get; private set; }
     public int AttackRange {  get; private set; } = 5;
@@ -20,6 +21,7 @@ public class PlayerAttack : MonoBehaviour
     {
         Aim = GetComponent<PlayerAim>();
         Player = GetComponent<Player>();
+        Hub = GetComponent<PlayerHub>();
     }
 
     private void Start()
@@ -52,10 +54,11 @@ public class PlayerAttack : MonoBehaviour
             yield break;
         }
 
-
         IsAttacking = true;
 
         AttackDirection = Aim.Mousedir.GetLocalMouseDirection(transform.position);
+
+        Hub.AnimationHandler.PlayAttack();
 
         yield return new WaitForSeconds(HalfAttackDuration());
 

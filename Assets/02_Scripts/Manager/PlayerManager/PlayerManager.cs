@@ -10,6 +10,8 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
         base.Awake();
     }
 
+    private GamePlayType currentPlayType;
+
     [Header("Current Active Player")]
     private PlayerType currentActivePlayer;
 
@@ -31,6 +33,8 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
     private float otherBuffMovement1;
     private float otherBuffMovement2 = 1f;
 
+
+    public GamePlayType CurrentPlayType => currentPlayType;
     public PlayerType CurrentActivePlayer => currentActivePlayer;
     public void SetWeaponAttack(float atk) => equipWeaponAtk = atk;
     public void SetConsumeBuffAttack(float add) => consumeBuffAtk = add;
@@ -182,5 +186,10 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
     private float GetPainkillerBuff()
     {
         return 0f;
+    }
+
+    public void SetGamePlayType(GamePlayType gamePlayType)
+    {
+        this.currentPlayType = gamePlayType;
     }
 }
