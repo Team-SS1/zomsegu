@@ -609,9 +609,9 @@ MonoBehaviour:
   singleCenterRatio: 0.42
   groupCenterRatio: 0.42
   spacing: 0
-  singleLeftNudge: 130
-  singleRightNudge: 50
-  groupLeftNudge: 100
+  singleLeftNudge: 150
+  singleRightNudge: 40
+  groupLeftNudge: 115
   groupRightNudge: 120
   showDelay: 0.2
 --- !u!1 &1978094877717721671
