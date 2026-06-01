@@ -1,4 +1,5 @@
 ﻿using ItemEnum;
+using PlayerEnum;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -38,6 +39,14 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
             searchWindow.CloseWindow();
         else if (keyboard.fKey.wasPressedThisFrame && searchWindow.gameObject.activeSelf)
             searchWindow.TryPickupSelected();
+        else if(keyboard.numpad1Key.wasPressedThisFrame)
+            DamageItem(PlayerManager.Instance.CurrentActivePlayer, EquipSlotType.Head);
+        else if(keyboard.numpad2Key.wasPressedThisFrame)
+            DamageItem(PlayerManager.Instance.CurrentActivePlayer, EquipSlotType.Body);
+        else if(keyboard.numpad3Key.wasPressedThisFrame)
+            DamageItem(PlayerManager.Instance.CurrentActivePlayer, EquipSlotType.Leg);
+        else if(keyboard.numpad4Key.wasPressedThisFrame)
+            DamageItem(PlayerManager.Instance.CurrentActivePlayer, EquipSlotType.Weapon);
     }
 
     private void OpenMergedGroundScan() // 스택형 합쳐서 보이는 탐색창
@@ -128,5 +137,16 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
 
         ItemStack instance = new ItemStack(itemId, currentDurability, maxDurability);
         source.AddItem(new LootItem(instance));
+    }
+    private void DamageItem(PlayerType playerType, EquipSlotType equipSlotType, int damage = 1)
+    {
+        ItemStack instance = EquipmentQueryService.GetEquippedInstance(playerType, equipSlotType);
+
+        if(instance == null || !instance.HasDurability || instance.maxDurability <= 0)
+            return;
+
+        instance.durability = Mathf.Max(0, instance.durability - damage);
+
+        EventManager.TriggerEvent(EventEnum.EventKey.EquipmentDurabilityChanged, playerType);
     }
 }
