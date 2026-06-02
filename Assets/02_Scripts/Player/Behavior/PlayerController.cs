@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour
     public Player player;
     public Vector2 InputVec { get; private set; }
     public float Movement {  get; private set; }
-    public bool isRunning { get; private set; }
-    public bool isCrouching { get; private set; }
+    public bool IsRunning { get; private set; }
+    public bool IsCrouching { get; private set; }
     public Rigidbody2D Rb { get; private set; }
     public Collider2D Co { get; private set; }
 
@@ -43,10 +43,10 @@ public class PlayerController : MonoBehaviour
     {
         Movement = player.CurrentMovement; // float speed; 이동속도의 계산값을 받아 사용
         
-        if (isRunning)
+        if (IsRunning)
             Movement *= 1.5f;
 
-        if (isCrouching)
+        if (IsCrouching)
             Movement *= 0.5f;
 
         Vector2 dir = InputVec; // Vector2 dir; // Input의 Vector2 값을 받아 사용
@@ -68,11 +68,11 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            isRunning = true;
+            IsRunning = true;
         }
         else if (context.canceled)
         {
-            isRunning = false;
+            IsRunning = false;
         }
     }
 
@@ -80,11 +80,11 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            isCrouching = true;
+            IsCrouching = true;
         }
         else if (context.canceled)
         {
-            isCrouching = false;
+            IsCrouching = false;
         }
     }
 }
