@@ -292,9 +292,9 @@ public class ZombiePathAgent : MonoBehaviour
         pathCount = count;
         pathIndex = 0;
 
-#if UNITY_EDITOR
-        Debug.Log($"[ZombiePathAgent] PlanPath result count:{count}");
-#endif
+//#if UNITY_EDITOR
+//        Debug.Log($"[ZombiePathAgent] PlanPath result count:{count}");
+//#endif
 
         if (pathCount <= 1)
         {
