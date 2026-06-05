@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4468ffbaa7997e4ead50f83e95cb704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zombieID: 20000
+  zombieID: 20101
   stat:
     MonsterID: 0
     MonsterCategory: 0
@@ -271,6 +271,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   knockback: {fileID: 0}
+  rangedHitWalkDuration: 3
 --- !u!114 &8943402241155627280
 MonoBehaviour:
   m_ObjectHideFlags: 0
