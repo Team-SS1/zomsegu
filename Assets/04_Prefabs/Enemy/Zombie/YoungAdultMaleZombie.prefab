@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: -7379065659827630558}
   - component: {fileID: 2969673584234476536}
   m_Layer: 7
-  m_Name: AdultFemaleZombie
+  m_Name: YoungAdultMaleZombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ Transform:
   m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2790580223423763141}
+  - {fileID: 2690972779452625749}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &605662087054625790
@@ -86,7 +86,7 @@ SpriteRenderer:
   m_SortingLayerID: -73495777
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: fab73e3e9367ced4a85b8f839c330cde, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ba18bd93ab0ac274daa08cc0a14c13ec, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -107,7 +107,7 @@ Animator:
   m_GameObject: {fileID: 286670953049713548}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: bf216368942a7fc4b88ec273fc5c9e27, type: 2}
+  m_Controller: {fileID: 9100000, guid: 9b3fc5fe34cee5b4785b7e268db0171d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4468ffbaa7997e4ead50f83e95cb704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zombieID: 20101
+  zombieID: 20200
   stat:
     MonsterID: 0
     MonsterCategory: 0
@@ -257,7 +257,7 @@ MonoBehaviour:
     VisionFOVAngle: 0
     LoseAggroDistance: 0
     LoseAggroTimeSec: 0
-  zombieType: 2
+  zombieType: 4
   target: {fileID: 826630714547771683, guid: 884ab13af91f7f349bca6a562ea87152, type: 3}
   lastHeardSoundPos: {x: 0, y: 0}
   lastSoundSource: {fileID: 0}
@@ -371,7 +371,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.83}
   m_EdgeRadius: 0
---- !u!1 &5143102536583028748
+--- !u!1 &8157327142752202069
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -379,9 +379,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2790580223423763141}
-  - component: {fileID: 3333837420155379708}
-  - component: {fileID: 2920277253237204511}
+  - component: {fileID: 2690972779452625749}
+  - component: {fileID: 2290869692745434224}
+  - component: {fileID: 8212371593826565957}
   m_Layer: 7
   m_Name: AggroZone
   m_TagString: Untagged
@@ -389,28 +389,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2790580223423763141
+--- !u!4 &2690972779452625749
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5143102536583028748}
+  m_GameObject: {fileID: 8157327142752202069}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.82, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.81999993, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2770733038921856778}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &3333837420155379708
+--- !u!58 &2290869692745434224
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5143102536583028748}
+  m_GameObject: {fileID: 8157327142752202069}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -439,13 +439,13 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 3
---- !u!114 &2920277253237204511
+--- !u!114 &8212371593826565957
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5143102536583028748}
+  m_GameObject: {fileID: 8157327142752202069}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21b4b6be5818f5048a64dec5ad6bd550, type: 3}
