@@ -36,15 +36,18 @@ public class FixedSpawnPoint : MonoBehaviour
         GameObject player = SpawnManager.Instance.Spawn(SpawnID.Player, point);
         cinemachine.Follow = player.transform;
         Player activePlayer = player.GetComponent<Player>();
+        PlayerCondition activePlayerCondition = player.GetComponent<PlayerCondition>();
 
         if (activePlayer != null)
         {
             activePlayer.Init();
+            activePlayerCondition.Init();
 
-            PlayerManager.Instance.RegisterPlayer(PlayerType.Player_SHIN, activePlayer);
+            PlayerManager.Instance.RegisterPlayer(activePlayer.playerType, activePlayer);
             PlayerManager.Instance.SetActivePlayer(PlayerType.Player_SHIN);
         }
         PlayerManager.Instance.SetGamePlayType(GamePlayType.PlayBoth);
+        PlayerManager.Instance.UpdateAll(activePlayer);
 
         EventManager.TriggerEvent<Transform>(EventKey.PlayerSpawned, player.transform);
     }

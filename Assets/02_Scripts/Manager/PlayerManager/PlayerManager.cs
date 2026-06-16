@@ -7,6 +7,9 @@ using EventEnum;
 public class PlayerManager : GlobalSingleton<PlayerManager>
 {
     private readonly Dictionary<PlayerType, Player> runtimePlayers = new(); // 런타임에 플레이어를 저장하는 딕셔너리
+
+    public Player ActivePlayer;
+
     protected override void Awake()
     {
         base.Awake();
@@ -185,6 +188,7 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
 
     private float GetAttackConditionDebuff(PlayerCondition condition)
     {
+        Debug.Log($"[PlayerManager Condition] condition={condition.GetInstanceID()}");
         return condition.GetDebuff(AbnormalType.Hunger, AbnormalDebuffType.Attack);
     }
 
