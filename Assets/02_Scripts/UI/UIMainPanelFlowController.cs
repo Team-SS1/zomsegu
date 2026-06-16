@@ -3,6 +3,7 @@ using PlayerEnum;
 using EventEnum;
 using UIEnum;
 using Unity.VisualScripting;
+using UnityEngine.EventSystems;
 
 public class UIMainPanelFlowController : MonoBehaviour
 {
@@ -66,9 +67,12 @@ public class UIMainPanelFlowController : MonoBehaviour
     {
         PlayerType playerType = PlayerManager.Instance.CurrentActivePlayer;
 
-        SyncInspectPlayerToActivePlayer(playerType);
+        mainPanel = UIManager.Instance.GetUI<UIMainPanel>();
+        UISelectedCharacterContext uISelectedCharacter = mainPanel.GetComponent<UISelectedCharacterContext>();
+        if(uISelectedCharacter != null)
+            uISelectedCharacter.SetInspectPlayer(playerType);
 
-        mainPanel = UIManager.Instance.OpenUI<UIMainPanel>();
+        UIManager.Instance.OpenUI<UIMainPanel>();
 
         if (mainPanel != null)
             mainPanel.BindFlowController(this);
@@ -110,10 +114,5 @@ public class UIMainPanelFlowController : MonoBehaviour
             durabilityPanel.ClosePanel();
 
         currentState = UIMainPanelFlowState.None;
-    }
-    private void SyncInspectPlayerToActivePlayer(PlayerType activePlayer)
-    {
-        EventManager.TriggerEvent<PlayerType>(EventKey.InspectCharacterChanged, activePlayer);
-
     }
 }
