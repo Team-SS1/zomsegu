@@ -40,6 +40,9 @@ public class FixedSpawnPoint : MonoBehaviour
         if (activePlayer != null)
         {
             activePlayer.Init();
+
+            PlayerManager.Instance.RegisterPlayer(PlayerType.Player_SHIN, activePlayer);
+            PlayerManager.Instance.SetActivePlayer(PlayerType.Player_SHIN);
         }
         PlayerManager.Instance.SetGamePlayType(GamePlayType.PlayBoth);
 
