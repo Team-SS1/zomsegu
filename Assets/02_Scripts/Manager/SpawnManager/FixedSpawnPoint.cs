@@ -46,7 +46,7 @@ public class FixedSpawnPoint : MonoBehaviour
             PlayerManager.Instance.RegisterPlayer(activePlayer.playerType, activePlayer);
             PlayerManager.Instance.SetActivePlayer(PlayerType.Player_SHIN);
         }
-        PlayerManager.Instance.SetGamePlayType(GamePlayType.PlayBoth);
+        PlayerManager.Instance.SetGamePlayType(GamePlayType.PlayBOTH);
         PlayerManager.Instance.UpdateAll(activePlayer);
 
         EventManager.TriggerEvent<Transform>(EventKey.PlayerSpawned, player.transform);

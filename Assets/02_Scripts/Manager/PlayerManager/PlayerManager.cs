@@ -230,6 +230,9 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
 
     public void SetGamePlayType(GamePlayType gamePlayType)
     {
+        if(gamePlayType == currentPlayType) return; // 이미 설정된 게임 플레이 타입인 경우 무시
+
         this.currentPlayType = gamePlayType;
+        EventManager.TriggerEvent(EventKey.GamePlayTypeChanged, gamePlayType);
     }
 }
