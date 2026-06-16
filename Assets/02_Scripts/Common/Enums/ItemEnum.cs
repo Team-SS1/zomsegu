@@ -56,4 +56,10 @@ namespace ItemEnum
         GroundScan,
         Container,
     }
+    public enum DurabilityDamageResult
+    {
+        None,
+        Damaged,
+        Broken
+    }
 }

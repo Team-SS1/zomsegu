@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using PlayerEnum;
 using UnityEngine;
+using EventEnum;
 
 public class PlayerManager : GlobalSingleton<PlayerManager>
 {
+    private readonly Dictionary<PlayerType, Player> runtimePlayers = new(); // 런타임에 플레이어를 저장하는 딕셔너리
     protected override void Awake()
     {
         base.Awake();
@@ -13,7 +15,7 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
     private GamePlayType currentPlayType;
 
     [Header("Current Active Player")]
-    private PlayerType currentActivePlayer;
+    private PlayerType currentActivePlayer = PlayerType.Player_SHIN;
 
     [Header("Attack Value")]
     private float equipWeaponAtk;
@@ -36,6 +38,40 @@ public class PlayerManager : GlobalSingleton<PlayerManager>
 
     public GamePlayType CurrentPlayType => currentPlayType;
     public PlayerType CurrentActivePlayer => currentActivePlayer;
+
+    public void RegisterPlayer(PlayerType type, Player player) // 플레이어 등록 메서드
+    {
+        if (player == null) return;
+
+        runtimePlayers[type] = player;
+
+#if UNITY_EDITOR
+        Debug.Log($"Registered Player: {type}");
+#endif
+    }
+    public Player GetPlayer(PlayerType type) // 플레이어 조회 메서드
+    {
+        runtimePlayers.TryGetValue(type, out Player player);
+        return player;
+    }
+    public Player GetCurrentPlayer() // 현재 활성 플레이어 조회 메서드
+    {
+        return GetPlayer(currentActivePlayer);
+    }
+    public PlayerCondition GetCurrentPlayerCondition(PlayerType playerType) // 현재 활성 플레이어의 상태 조회 메서드
+    {
+        Player player = GetPlayer(playerType);
+        if (player == null) return null;
+
+        return player.GetComponent<PlayerCondition>();
+    }
+    public void SetActivePlayer(PlayerType type) // 활성 플레이어 설정 메서드
+    {
+        if(currentActivePlayer == type) return; // 이미 활성화된 플레이어인 경우 무시
+
+        currentActivePlayer = type;
+        EventManager.TriggerEvent(EventKey.ActiveCharacterChanged, type);
+    }
     public void SetWeaponAttack(float atk) => equipWeaponAtk = atk;
     public void SetConsumeBuffAttack(float add) => consumeBuffAtk = add;
     public void SetOtherBuffAttackAdd(float add) => otherBuffAtk1 = add;

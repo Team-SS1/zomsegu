@@ -2,6 +2,7 @@
 using PlayerEnum;
 using EventEnum;
 using ItemEnum;
+using UnityEngine;
 
 public class Equipment
 {
@@ -92,6 +93,38 @@ public class Equipment
         slot.SetRangedItem(newRangedItem);
         NotifyChanged();
         return true;
+    }
+    public DurabilityDamageResult TryDamageDurability(EquipSlotType slotType, int damage)
+    {
+        if (damage <= 0) return DurabilityDamageResult.None;
+
+        if (!slots.TryGetValue(slotType, out EquipmentSlot slot)) return DurabilityDamageResult.None;
+        if(slot == null || slot.isEmpty) return DurabilityDamageResult.None;
+
+        if(!slot.HasInstance || slot.equippedItem == null)
+            return DurabilityDamageResult.None;
+
+        ItemStack item = slot.equippedItem;
+
+        if(!item.HasDurability || item.durability <= 0)
+            return DurabilityDamageResult.None;
+
+        item.durability = Mathf.Max(0, item.durability - damage);
+
+        NotifyDurabilityChanged();
+
+        if(item.durability <= 0)
+        {
+            slot.Clear();
+            NotifyChanged();
+            return DurabilityDamageResult.Broken;
+        }
+
+        return DurabilityDamageResult.Damaged;
+    }
+    private void NotifyDurabilityChanged()
+    {
+        EventManager.TriggerEvent(EventKey.EquipmentDurabilityChanged, playerType);
     }
     private void NotifyChanged()
     {
