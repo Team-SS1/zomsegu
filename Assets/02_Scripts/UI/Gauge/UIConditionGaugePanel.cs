@@ -12,9 +12,6 @@ public class UIConditionGaugePanel : MonoBehaviour
     [SerializeField] private UICircleConditionGauge thirstGauge;
     [SerializeField] private UICircleConditionGauge tiredGauge;
 
-    [Header("Condition Reference")]
-    [SerializeField] private PlayerCondition playerCondition; // 임시로 넣어둔 참조, 나중에 PlayerManager 또는 PlayerDataManager에서 가져오는 식으로 바꿔야 할듯
-
     private void OnEnable()
     {
         EventManager.Subscribe<PlayerCondition>(EventKey.OnHungerChanged, OnHungerChanged);
@@ -31,21 +28,21 @@ public class UIConditionGaugePanel : MonoBehaviour
     }
     private void OnHungerChanged(PlayerCondition condition)
     {
-        if (condition != playerCondition)
+        if (!IsCurrentInspectPlayer(condition))
             return;
 
         RefreshGauge(AbnormalType.Hunger, hungerGauge);
     }
     private void OnThirstChanged(PlayerCondition condition)
     {
-        if (condition != playerCondition)
+        if (!IsCurrentInspectPlayer(condition))
             return;
 
         RefreshGauge(AbnormalType.Thirst, thirstGauge);
     }
     private void OnTiredChanged(PlayerCondition condition)
     {
-        if (condition != playerCondition)
+        if (!IsCurrentInspectPlayer(condition))
             return;
 
         RefreshGauge(AbnormalType.Tired, tiredGauge);
@@ -60,6 +57,8 @@ public class UIConditionGaugePanel : MonoBehaviour
     {
         if (gauge == null) return;
 
+        PlayerCondition playerCondition = GetCurrentInspectCondition();
+
         if (playerCondition == null)
         {
             gauge.SetValue(0, 0);
@@ -69,5 +68,29 @@ public class UIConditionGaugePanel : MonoBehaviour
         int maxValue = Mathf.RoundToInt(playerCondition.GetMaxValue(abnormalType));
 
         gauge.SetValue(currentValue, maxValue);
+    }
+    private PlayerCondition GetCurrentInspectCondition()
+    {
+        if(PlayerManager.Instance == null) return null;
+
+        PlayerType playerType = GetCurrentInspectPlayer();
+        return PlayerManager.Instance.GetCurrentPlayerCondition(playerType);
+    }
+    private PlayerType GetCurrentInspectPlayer()
+    {
+        if(selectedCharacterContext != null)
+            return selectedCharacterContext.CurrentInspectPlayer;
+
+        if(PlayerManager.Instance != null)
+            return PlayerManager.Instance.CurrentActivePlayer;
+
+        return PlayerType.Player_SHIN; // 기본값
+    }
+    private bool IsCurrentInspectPlayer(PlayerCondition playerCondition)
+    {
+        if(playerCondition == null) return false;
+
+        PlayerType playerType = GetCurrentInspectPlayer();
+        return PlayerManager.Instance.GetCurrentPlayerCondition(playerType);
     }
 }

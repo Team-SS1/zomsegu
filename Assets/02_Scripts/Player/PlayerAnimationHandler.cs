@@ -34,10 +34,7 @@ public class PlayerAnimationHandler : MonoBehaviour
 
         UpdateDirection();
 
-        if (!hub.Attack.IsAttacking)
-        {
-            UpdateMoveState();
-        }
+        UpdateMoveState();
     }
     private void UpdateDirection() // Direction
     {
@@ -61,10 +58,13 @@ public class PlayerAnimationHandler : MonoBehaviour
     }
     private void UpdateMoveState() // Move Animation Start
     {
+        if (hub.Attack.IsAttacking)
+            return;
+
         Vector2 move = hub.Controller.InputVec;
 
         isMoving = move.sqrMagnitude > 0.01f;
-        isRunning = isMoving /* && player.InputHandler.IsRun && player.StaminaController.IsRunning*/;
+        isRunning = isRunning = isMoving && hub.Controller.IsRunning;
 
         foreach (var animator in animators)
         {
@@ -77,11 +77,6 @@ public class PlayerAnimationHandler : MonoBehaviour
     }
     public void PlayAttack() // Attack Animation Start
     {
-        Debug.Log(hub);
-        Debug.Log(hub.Player);
-        Debug.Log(hub.SpriteController);
-        Debug.Log(hub.SpriteController.CurrentAnimator);
-        Debug.Log(animators);
         var animator = hub.SpriteController.CurrentAnimator;
 
         if (animator == null || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null)

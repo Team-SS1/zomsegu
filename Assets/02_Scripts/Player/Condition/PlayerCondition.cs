@@ -33,6 +33,7 @@ public class PlayerCondition : MonoBehaviour
             return;
         }
 
+
         InitAbnormal();
         CalculateAllDebuffs();
     }
@@ -107,6 +108,8 @@ public class PlayerCondition : MonoBehaviour
     /// <returns></returns>
     public Abnormal GetAbnormal(AbnormalType type)
     {
+        Debug.Log($"[GetAbnormal] this={GetInstanceID()}, Count={abnormalDict.Count}, Type={type}");
+
         if (abnormalDict.TryGetValue(type, out Abnormal abnormal))
         {
             return abnormal;

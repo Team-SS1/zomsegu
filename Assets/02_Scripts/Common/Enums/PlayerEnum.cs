@@ -36,8 +36,8 @@ namespace PlayerEnum
     }
     public enum GamePlayType
     {
-        PlayMain,
-        PlaySub,
-        PlayBoth
+        PlaySHIN,
+        PlayHAN,
+        PlayBOTH
     }
 }

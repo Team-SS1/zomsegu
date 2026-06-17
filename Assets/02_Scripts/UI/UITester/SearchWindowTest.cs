@@ -1,4 +1,5 @@
 ﻿using ItemEnum;
+using PlayerEnum;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -38,6 +39,14 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
             searchWindow.CloseWindow();
         else if (keyboard.fKey.wasPressedThisFrame && searchWindow.gameObject.activeSelf)
             searchWindow.TryPickupSelected();
+        else if(keyboard.numpad1Key.wasPressedThisFrame)
+            EquipmentDurabilityService.DamageArmor(PlayerManager.Instance.CurrentActivePlayer, EquipSlotType.Head);
+        else if(keyboard.numpad2Key.wasPressedThisFrame)
+            EquipmentDurabilityService.DamageArmor(PlayerManager.Instance.CurrentActivePlayer, EquipSlotType.Body);
+        else if(keyboard.numpad3Key.wasPressedThisFrame)
+            EquipmentDurabilityService.DamageArmor(PlayerManager.Instance.CurrentActivePlayer, EquipSlotType.Leg);
+        else if(keyboard.numpad4Key.wasPressedThisFrame)
+            EquipmentDurabilityService.DamageWeapon(PlayerManager.Instance.CurrentActivePlayer);
     }
 
     private void OpenMergedGroundScan() // 스택형 합쳐서 보이는 탐색창
@@ -129,4 +138,5 @@ public class SearchWindowTest : MonoBehaviour //임시 테스트용임 input도 
         ItemStack instance = new ItemStack(itemId, currentDurability, maxDurability);
         source.AddItem(new LootItem(instance));
     }
+    
 }

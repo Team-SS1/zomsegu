@@ -22,6 +22,8 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
     [Header("Click")]
     [SerializeField] private float doubleClick = 0.25f;
 
+    [SerializeField] private UIDurabilityDamageFill damageFill;
+
     private float lastClickTime = -1f;
 
     private GameObject dragIcon;
@@ -70,7 +72,12 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         }
 
         if (slot.HasInstance && slot.equippedItem != null && slot.equippedItem.HasDurability)
+        {
             amountTXT.text = $"{slot.equippedItem.durability}/{slot.equippedItem.maxDurability}";
+
+            if (damageFill != null)
+                damageFill.SetDurability(slot.equippedItem);
+        }
         else if (slot.HasRangedWeapon)
         {
             PlayerData data = PlayerDataManager.Instance.GetPlayerData(playerType);
@@ -79,9 +86,17 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
                 int amount = data.Inventory.GetStackAmount(slot.rangedWeaponItem);
                 amountTXT.text = amount > 0 ? amount.ToString() : "";
             }
+            if (damageFill != null)
+                damageFill.Hide();
         }
         else
+        {
             amountTXT.text = "";
+
+            if (damageFill != null)
+                damageFill.Hide();
+        }
+            
         SetBG(true);
     }
     private void SetBG(bool equipped)
@@ -96,8 +111,12 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
             icon.sprite = null;
             icon.enabled = false;
         }
+
         if (amountTXT != null)
             amountTXT.text = "";
+
+        if(damageFill != null)
+            damageFill.Hide();
 
         SetBG(false);
     }
@@ -256,7 +275,7 @@ public class UIEquipmentSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, I
         ItemStack instance = EquipmentQueryService.GetEquippedInstance(slotRef.playerType, slotRef.equipSlot);
 
         UITooltipManage toolTipManage = UIManager.Instance.GetUI<UITooltipManage>();
-        toolTipManage?.ShowEquipmentTooltip(transform as RectTransform, itemId, instance, true);
+        toolTipManage?.RequestEquipmentTooltipDelayed(transform as RectTransform, itemId, instance, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)

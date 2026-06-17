@@ -252,7 +252,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             
         }
         UITooltipManage toolTipManage = UIManager.Instance.GetUI<UITooltipManage>();
-        toolTipManage?.ShowInventoryTooltip(
+        toolTipManage?.RequestInventoryTooltip(
             transform as RectTransform,
             slot.itemId,
             slot.instance,

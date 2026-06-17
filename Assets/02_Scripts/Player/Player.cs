@@ -37,13 +37,12 @@ public class Player : MonoBehaviour
     public void Init()
     {
         data = PlayerDataManager.Instance.GetPlayerData(playerType);
+        
         var BaseStat = data.Stat;
 
         MaxStamina = BaseStat.BaseMaxStamina; // 추후 최대 계산값 적용
         CurrentStamina = BaseStat.BaseStamina;
-        PlayerManager.Instance.UpdateAll(this);
         spriteController.ChangeSprite(SpriteType.Bat);
-
     }
 
     public void SetDead(bool value)
