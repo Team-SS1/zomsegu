@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc7f7848d3ff1347a298eccbe98efbd, type: 3}
+  m_Name: SUV
+  m_EditorClassIdentifier: 
+  lowSpeedLimit: 50
+  maxSpeed: 150
+  rotationSpeedMultiplier: 1
+  zeroToLowSpeedTime: 1.5
+  startAccelCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lowToMaxSpeedTime: 5
+  brakeToZeroTime: 5
+  zeroHoldBeforeReverse: 1
+  maxSteerAngle: 90
+  steerFullTime: 1.5
+  highSpeedSteerThreshold: 80
+  highSpeedSteerMultiplier: 0.5
+  steerLimitSmooth: 6
+  maxFuel: 100
+  engineFuelPer10Sec: 0.1
+  driveFuelPer3Sec: 0.1
+  engineStartSoundRadius: 5
+  driveSoundRadiusLow: 7
+  driveSoundRadiusHigh: 10
