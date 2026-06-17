@@ -1,4 +1,5 @@
 using UnityEngine;
+using VehicleEnum;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class VehicleController2D : MonoBehaviour
@@ -33,6 +34,8 @@ public class VehicleController2D : MonoBehaviour
     private int curveMoveDir;
 
     private const float KmhToMps = 1000f / 3600f;
+
+    public VehicleSpriteState SpriteState { get; private set; } = VehicleSpriteState.Drive;
 
     private void Awake()
     {
@@ -129,11 +132,16 @@ public class VehicleController2D : MonoBehaviour
 
     private void UpdateSpeed(float inputDir, bool canDrive)
     {
+        bool w = Input.GetKey(KeyCode.W);
+        bool s = Input.GetKey(KeyCode.S);
+
         bool brakeInput =
             Input.GetKey(KeyCode.Space) ||
             (inputDir > 0f && currentSpeedKmh < -0.01f) ||
             (inputDir < 0f && currentSpeedKmh > 0.01f) ||
-            (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S));
+            (w && s);
+
+        UpdateSpriteState(inputDir, brakeInput);
 
         if (!canDrive)
         {
@@ -382,5 +390,23 @@ public class VehicleController2D : MonoBehaviour
     public void SetEngine(bool value)
     {
         engineOn = value;
+    }
+
+    private void UpdateSpriteState(float inputDir, bool brakeInput)
+    {
+        if (brakeInput)
+        {
+            SpriteState = VehicleSpriteState.Brake;
+            return;
+        }
+
+        // 실제 후진 중이면 Reverse
+        if (currentSpeedKmh < -0.01f)
+        {
+            SpriteState = VehicleSpriteState.Reverse;
+            return;
+        }
+
+        SpriteState = VehicleSpriteState.Drive;
     }
 }
