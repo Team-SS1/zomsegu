@@ -1,86 +1,115 @@
 using UnityEngine;
+using VehicleEnum;
 
 public class VehicleSprite4Dir : MonoBehaviour
 {
+    [System.Serializable]
+    public class SpriteSet4Dir
+    {
+        public Sprite up;
+        public Sprite right;
+        public Sprite down;
+        public Sprite left;
+    }
+
     [Header("References")]
+    [SerializeField] private VehicleController2D controller;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
-    [Header("4 Direction Sprites")]
-    [SerializeField] private Sprite upSprite;
-    [SerializeField] private Sprite rightSprite;
-    [SerializeField] private Sprite downSprite;
-    [SerializeField] private Sprite leftSprite;
+    [Header("Drive Sprites")]
+    [SerializeField] private SpriteSet4Dir driveSprites;
 
-    [Header("Options")]
-    [SerializeField] private bool flipRightFromLeft = false;
+    [Header("Brake Sprites")]
+    [SerializeField] private SpriteSet4Dir brakeSprites;
+
+    [Header("Reverse Sprites")]
+    [SerializeField] private SpriteSet4Dir reverseSprites;
 
     private int currentDirIndex = -1;
+    private VehicleSpriteState currentState;
 
     private void Awake()
     {
+        if (controller == null)
+            controller = GetComponentInParent<VehicleController2D>();
+
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void LateUpdate()
     {
-        UpdateSpriteByRotation();
-
-        if (spriteRenderer != null)
-        {
-            float z = NormalizeAngle(transform.eulerAngles.z);
-            float baseAngle = GetBaseAngleByDir(currentDirIndex);
-            float visualAngle = Mathf.DeltaAngle(baseAngle, z);
-
-            spriteRenderer.transform.rotation = Quaternion.Euler(0f, 0f, visualAngle);
-        }
+        UpdateSprite();
+        UpdateVisualRotation();
     }
 
-    private void UpdateSpriteByRotation()
+    private void UpdateSprite()
     {
-        float z = transform.eulerAngles.z;
+        if (spriteRenderer == null || controller == null)
+            return;
 
+        float z = NormalizeAngle(controller.transform.eulerAngles.z);
         int dirIndex = Get4DirIndex(z);
+        VehicleSpriteState state = controller.SpriteState;
 
-        if (dirIndex == currentDirIndex)
+        if (dirIndex == currentDirIndex && state == currentState)
             return;
 
         currentDirIndex = dirIndex;
+        currentState = state;
+
+        SpriteSet4Dir set = GetSpriteSet(state);
+        Sprite sprite = GetSpriteFromSet(set, dirIndex);
+
+        if (sprite != null)
+            spriteRenderer.sprite = sprite;
+    }
+
+    private void UpdateVisualRotation()
+    {
+        if (spriteRenderer == null || controller == null)
+            return;
+
+        float z = NormalizeAngle(controller.transform.eulerAngles.z);
+        float baseAngle = GetBaseAngleByDir(currentDirIndex);
+        float visualAngle = Mathf.DeltaAngle(baseAngle, z);
+
+        spriteRenderer.transform.rotation = Quaternion.Euler(0f, 0f, visualAngle);
+    }
+
+    private SpriteSet4Dir GetSpriteSet(VehicleSpriteState state)
+    {
+        switch (state)
+        {
+            case VehicleSpriteState.Brake:
+                return brakeSprites;
+
+            case VehicleSpriteState.Reverse:
+                return reverseSprites;
+
+            default:
+                return driveSprites;
+        }
+    }
+
+    private Sprite GetSpriteFromSet(SpriteSet4Dir set, int dirIndex)
+    {
+        if (set == null)
+            return null;
 
         switch (dirIndex)
         {
-            case 0: // Up
-                SetSprite(upSprite, false);
-                break;
-
-            case 1: // Right
-                if (flipRightFromLeft)
-                    SetSprite(leftSprite, true);
-                else
-                    SetSprite(rightSprite, false);
-                break;
-
-            case 2: // Down
-                SetSprite(downSprite, false);
-                break;
-
-            case 3: // Left
-                SetSprite(leftSprite, false);
-                break;
+            case 0: return set.up;
+            case 1: return set.right;
+            case 2: return set.down;
+            case 3: return set.left;
+            default: return set.up;
         }
     }
 
     private int Get4DirIndex(float z)
     {
         z = NormalizeAngle(z);
-
-        // 45도 기준으로 방향 전환
-        // 315~45 = Up
-        // Unity 2D에서 transform.up 기준:
-        // z = 0   -> Up
-        // z = 90  -> Left
-        // z = 180 -> Down
-        // z = 270 -> Right
 
         if (z >= 315f || z < 45f)
             return 0; // Up
@@ -94,23 +123,6 @@ public class VehicleSprite4Dir : MonoBehaviour
         return 1; // Right
     }
 
-    private float NormalizeAngle(float angle)
-    {
-        angle %= 360f;
-        if (angle < 0f)
-            angle += 360f;
-        return angle;
-    }
-
-    private void SetSprite(Sprite sprite, bool flipX)
-    {
-        if (spriteRenderer == null || sprite == null)
-            return;
-
-        spriteRenderer.sprite = sprite;
-        spriteRenderer.flipX = flipX;
-    }
-
     private float GetBaseAngleByDir(int dirIndex)
     {
         switch (dirIndex)
@@ -121,5 +133,13 @@ public class VehicleSprite4Dir : MonoBehaviour
             case 3: return 90f;   // Left
             default: return 0f;
         }
+    }
+
+    private float NormalizeAngle(float angle)
+    {
+        angle %= 360f;
+        if (angle < 0f)
+            angle += 360f;
+        return angle;
     }
 }
