@@ -239,9 +239,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef7176149a6b534cbca583edea9ba5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controller: {fileID: 0}
   spriteRenderer: {fileID: 1850762827844613692}
-  upSprite: {fileID: 21300000, guid: 7728612026e5b9243b1899decee95990, type: 3}
-  rightSprite: {fileID: 21300000, guid: ad5b3f7e013f83445befeeece1995255, type: 3}
-  downSprite: {fileID: 21300000, guid: e3cf0b7de90ebaa43ad02f9aebb1d4ab, type: 3}
-  leftSprite: {fileID: 21300000, guid: 4f48e3f6970df1b41ae0baecdf9e84a3, type: 3}
-  flipRightFromLeft: 0
+  driveSprites:
+    up: {fileID: 21300000, guid: 7728612026e5b9243b1899decee95990, type: 3}
+    right: {fileID: 21300000, guid: ad5b3f7e013f83445befeeece1995255, type: 3}
+    down: {fileID: 21300000, guid: e3cf0b7de90ebaa43ad02f9aebb1d4ab, type: 3}
+    left: {fileID: 21300000, guid: 4f48e3f6970df1b41ae0baecdf9e84a3, type: 3}
+  brakeSprites:
+    up: {fileID: 21300000, guid: 1c60c0ca587afa84197a18e9c42d2447, type: 3}
+    right: {fileID: 21300000, guid: d4e2ab3108124d34688291b5d6cb8eef, type: 3}
+    down: {fileID: 21300000, guid: a569bad100692134dbb28d8c9002b35e, type: 3}
+    left: {fileID: 21300000, guid: 150dead6c7a459946931483e431475f5, type: 3}
+  reverseSprites:
+    up: {fileID: 21300000, guid: cd9f62d422b463640bea7f7b2b721fe0, type: 3}
+    right: {fileID: 21300000, guid: 8724b0e2de485d3439ed5b34bea6175c, type: 3}
+    down: {fileID: 21300000, guid: 2da86aef110192546a9214b41bd66c4b, type: 3}
+    left: {fileID: 21300000, guid: 6b81a83dbcbfb2c42899616cd29ac43b, type: 3}
