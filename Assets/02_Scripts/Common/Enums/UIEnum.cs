@@ -20,4 +20,10 @@
         MainPanelOepn,
         DurabilityPanelOepn
     }
+    public enum UIStatViewState
+    {
+        Normal,
+        Up,
+        Down
+    }
 }
