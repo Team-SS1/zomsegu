@@ -231,35 +231,28 @@ public class VehicleController2D : MonoBehaviour
         if (speedAbs <= 0.01f)
         {
             currentSpeedKmh = 0f;
-            lowSpeedCurveT = 0f;
             return;
         }
 
-        if (speedAbs < stats.lowSpeedLimit)
-        {
-            if (lowSpeedCurveT <= 0f || curveMoveDir == 0)
-                lowSpeedCurveT = GetCurveTFromSpeed01(speedAbs / stats.lowSpeedLimit);
+        float decelPerSec =
+            stats.maxSpeed / stats.naturalDecelTime;
 
-            lowSpeedCurveT -= Time.deltaTime / Mathf.Max(0.01f, stats.zeroToLowSpeedTime);
-            lowSpeedCurveT = Mathf.Clamp01(lowSpeedCurveT);
+        float ratio =
+            Mathf.Clamp01(speedAbs / stats.rollingThreshold);
 
-            float curveValue = Mathf.Clamp01(stats.startAccelCurve.Evaluate(lowSpeedCurveT));
-            speedAbs = curveValue * stats.lowSpeedLimit;
-        }
-        else
-        {
-            lowSpeedCurveT = 1f;
+        float rollingFactor =
+            Mathf.Lerp(
+                stats.rollingDecelMultiplier,
+                1f,
+                ratio
+            );
 
-            float decelPerSec = (stats.maxSpeed - stats.lowSpeedLimit) / Mathf.Max(0.01f, stats.lowToMaxSpeedTime);
-            speedAbs -= decelPerSec * Time.deltaTime;
-        }
+        decelPerSec *= rollingFactor;
+
+        speedAbs -= decelPerSec * Time.deltaTime;
 
         if (speedAbs <= 0.05f)
-        {
             speedAbs = 0f;
-            lowSpeedCurveT = 0f;
-            curveMoveDir = 0;
-        }
 
         currentSpeedKmh = speedAbs * Mathf.Sign(currentSpeedKmh);
     }
