@@ -42,6 +42,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lowToMaxSpeedTime: 5
   brakeToZeroTime: 5
+  naturalDecelTime: 15
+  rollingThreshold: 5
+  rollingDecelMultiplier: 0.25
   zeroHoldBeforeReverse: 1
   maxSteerAngle: 90
   steerFullTime: 1.5

@@ -277,14 +277,18 @@ public class VehicleController2D : MonoBehaviour
 
     private void UpdateSteering(float horizontal)
     {
-        float steerSpeed = stats.maxSteerAngle / stats.steerFullTime;
+        // 입력 없거나 A/D 동시 입력이면 즉시 직진
+        if (Mathf.Abs(horizontal) < 0.01f)
+        {
+            steerAngle = 0f;
+        }
+        else
+        {
+            // 입력 방향으로 즉시 조향각 설정
+            steerAngle = horizontal * stats.maxSteerAngle;
+        }
 
-        float target = horizontal * stats.maxSteerAngle;
-        steerAngle = Mathf.MoveTowards(steerAngle, target, steerSpeed * Time.deltaTime);
-
-        float targetBlend = Mathf.Abs(currentSpeedKmh) >= stats.highSpeedSteerThreshold
-            ? stats.highSpeedSteerMultiplier
-            : 1f;
+        float targetBlend = Mathf.Abs(currentSpeedKmh) >= stats.highSpeedSteerThreshold ? stats.highSpeedSteerMultiplier : 1f;
 
         steerLimitBlend = Mathf.MoveTowards(
             steerLimitBlend,
