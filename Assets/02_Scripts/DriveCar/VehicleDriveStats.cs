@@ -17,6 +17,11 @@ public class VehicleDriveStats : ScriptableObject
 
     [Header("Deceleration")]
     public float brakeToZeroTime = 5f;
+    public float naturalDecelTime = 15f;
+
+    [Header("Rolling")]
+    public float rollingThreshold = 5f;
+    public float rollingDecelMultiplier = 0.25f;
 
     [Header("Direction Switch")]
     public float zeroHoldBeforeReverse = 1f;
