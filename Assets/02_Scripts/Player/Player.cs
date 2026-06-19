@@ -48,6 +48,11 @@ public class Player : MonoBehaviour
     public void SetDead(bool value)
     {
         IsDead = value;
+
+        //컨디션 UI 쪽 이벤트
+
+        PlayerCondition condition = GetComponent<PlayerCondition>();    
+        EventManager.TriggerEvent<PlayerCondition>(EventKey.OnInjuryChanged, condition);
     }
 
     public void AddStamina(float value)
