@@ -26,4 +26,12 @@
         Up,
         Down
     }
+    public enum UIStatusTagState
+    {
+        Inactive, // 어두운 이미지
+        Active, // 일반 이미지
+        Danger, // 기아, 탈수 같은 위험한 상태
+        Severe, // 심한 부상
+        Dead // 사망
+    }
 }
