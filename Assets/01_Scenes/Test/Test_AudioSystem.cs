@@ -19,12 +19,13 @@ public class Test_AudioSystem : MonoBehaviour
 
     [Header("SFX Request 예제")]
     [SerializeField] Transform sfxPoint;
-    [SerializeField] Transform followTarget;
     [SerializeField] float customMinDistance = 2f;
     [SerializeField] float customMaxDistance = 12f;
 
     AudioManager mg;
     CancellationTokenSource loopSfxCts;
+    Transform loopFollowTarget;
+    Tween loopFollowTween;
 
     #region Unity API
     private void OnEnable()
@@ -97,12 +98,9 @@ public class Test_AudioSystem : MonoBehaviour
 
     public void Example_PlayTestSfx3D_Transform()
     {
-        mg.PlaySfxFollow(AudioName.Test_Sfx, GetFollowTarget());
-    }
-
-    public void Example_PlayTestSfx3D_Transform(Transform target)
-    {
+        Transform target = CreateMoveTarget();
         mg.PlaySfxFollow(AudioName.Test_Sfx, target);
+        MoveTarget(target).OnComplete(() => Destroy(target.gameObject));
     }
 
     public void Example_PlayTestSfx3D_CustomDistance()
@@ -126,7 +124,14 @@ public class Test_AudioSystem : MonoBehaviour
 
     public void Example_PlayLoopSfx3D_Follow()
     {
-        PlayLoop(SfxPlayRequest.LoopFollow(GetFollowTarget()));
+        StopLoopSfx(loopSfxCts);
+        DestroyLoopFollowTarget();
+
+        loopSfxCts = new CancellationTokenSource();
+        loopFollowTarget = CreateMoveTarget();
+        loopFollowTween = MoveTarget(loopFollowTarget).SetLoops(-1, LoopType.Yoyo);
+
+        _ = mg.PlaySfxAsync(AudioName.Test_Sfx, SfxPlayRequest.LoopFollow(loopFollowTarget), loopSfxCts.Token);
     }
 
     public void Example_PlayLoopSfx3D_CustomDistance()
@@ -142,11 +147,13 @@ public class Test_AudioSystem : MonoBehaviour
     {
         StopLoopSfx(loopSfxCts);
         loopSfxCts = null;
+        DestroyLoopFollowTarget();
     }
 
     private void PlayLoop(SfxPlayRequest request)
     {
         StopLoopSfx(loopSfxCts);
+        DestroyLoopFollowTarget();
         loopSfxCts = new CancellationTokenSource();
 
         // Loop SFX는 token이 취소될 때까지 재생된다.
@@ -164,11 +171,6 @@ public class Test_AudioSystem : MonoBehaviour
     private Vector3 GetSfxPosition()
     {
         return sfxPoint != null ? sfxPoint.position : transform.position;
-    }
-
-    private Transform GetFollowTarget()
-    {
-        return followTarget != null ? followTarget : transform;
     }
 
     public void Example_Pause()
@@ -225,10 +227,9 @@ public class Test_AudioSystem : MonoBehaviour
 
     public void Example_Movable3DSFX()
     {
-        Transform target = Instantiate(prefab).transform;
-        target.position = (Vector3)new Vector2(startPos, 0);
+        Transform target = CreateMoveTarget();
         Coroutine coroutine = StartCoroutine(Repeat3DSfx(target));
-        target.DOMoveX(-startPos, duration).OnComplete(() =>
+        MoveTarget(target).OnComplete(() =>
         {
             StopCoroutine(coroutine);
             Destroy(target.gameObject);
@@ -241,6 +242,30 @@ public class Test_AudioSystem : MonoBehaviour
         {
             mg.PlaySfxFollow(AudioName.Test_Sfx, target);
             yield return new WaitForSeconds(repeatingTime);
+        }
+    }
+
+    private Transform CreateMoveTarget()
+    {
+        Transform target = Instantiate(prefab).transform;
+        target.position = (Vector3)new Vector2(startPos, 0);
+        return target;
+    }
+
+    private Tween MoveTarget(Transform target)
+    {
+        return target.DOMoveX(-startPos, duration);
+    }
+
+    private void DestroyLoopFollowTarget()
+    {
+        loopFollowTween?.Kill();
+        loopFollowTween = null;
+
+        if (loopFollowTarget != null)
+        {
+            Destroy(loopFollowTarget.gameObject);
+            loopFollowTarget = null;
         }
     }
     #endregion

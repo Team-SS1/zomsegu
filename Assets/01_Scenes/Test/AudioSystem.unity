@@ -1573,8 +1573,7 @@ MonoBehaviour:
   bgmSlider: {fileID: 2017902109}
   sfxSlider: {fileID: 1081118515}
   lockUpdate: 1
-  sfxPoint: {fileID: 0}
-  followTarget: {fileID: 0}
+  sfxPoint: {fileID: 208563208}
   customMinDistance: 2
   customMaxDistance: 12
   prefab: {fileID: 1539388219}
