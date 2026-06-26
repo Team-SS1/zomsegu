@@ -1,5 +1,4 @@
-﻿using AudioEnum;
-using System;
+using AudioEnum;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -7,6 +6,7 @@ public class AudioPoolObject : MonoBehaviour
 {
     private AudioSource source;
     private Transform poolRoot;
+    private Transform followTarget;
 
     private AudioPriority priority;
     private int playId;
@@ -21,20 +21,16 @@ public class AudioPoolObject : MonoBehaviour
     public int PlayId => playId;
     public bool IsPaused => isPaused;
 
-    public event Action<AudioPoolObject> OnEnd;
-
     private void OnDisable()
     {
-        isPaused = false;
-        source.Stop();
-        source.clip = null;
-        transform.SetParent(poolRoot, false);
-        OnEnd?.Invoke(this);
+        ResetForPool();
     }
 
-    private void OnDestroy()
+    private void LateUpdate()
     {
-        OnEnd = null;
+        if (followTarget == null) return;
+
+        transform.position = followTarget.position;
     }
 
     public void Create(AudioSource source)
@@ -43,24 +39,32 @@ public class AudioPoolObject : MonoBehaviour
         poolRoot = transform.parent;
     }
 
+    public void ResetForPool()
+    {
+        if (source == null) return;
+
+        isPaused = false;
+        followTarget = null;
+        source.Stop();
+        source.clip = null;
+        transform.SetParent(poolRoot, false);
+        transform.localPosition = Vector3.zero;
+    }
+
     public void Play(AudioPriority priority)
     {
         StartPlay(priority);
     }
 
     /// <summary>
-    /// Loop SFX를 지정 Transform의 child로 붙인다. parent는 재생 중 파괴되지 않는 오브젝트여야 한다.
+    /// Loop SFX가 지정 Transform의 world position을 따라가게 한다.
     /// </summary>
     public void PlayLoop(AudioPriority priority, Transform parent)
     {
-        if (parent == null)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
+        if (parent == null) return;
 
-        transform.SetParent(parent, false);
-        transform.localPosition = Vector3.zero;
+        followTarget = parent;
+        transform.position = parent.position;
         StartPlay(priority);
     }
 

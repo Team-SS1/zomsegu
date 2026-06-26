@@ -48,7 +48,15 @@ public class AudioSourcePool
 
     public void Release(AudioPoolObject po)
     {
-        if (po == null || !po.gameObject.activeSelf) return;
+        if (po == null) return;
+        if (!activePool.Remove(po)) return;
+
+        if (!deactivePool.Contains(po))
+        {
+            deactivePool.Add(po);
+        }
+
+        po.ResetForPool();
         po.gameObject.SetActive(false);
     }
 
@@ -95,18 +103,8 @@ public class AudioSourcePool
 
         AudioPoolObject po = newAudioSource.GetComponent<AudioPoolObject>();
         po.Create(newAudioSource);
-        po.OnEnd += OnEnd;
         po.gameObject.SetActive(false);
         deactivePool.Add(po);
-    }
-
-    private void OnEnd(AudioPoolObject po)
-    {
-        if (!activePool.Remove(po)) return;
-        if (!deactivePool.Contains(po))
-        {
-            deactivePool.Add(po);
-        }
     }
 
     private AudioPoolObject LowestPriorityInstance()
