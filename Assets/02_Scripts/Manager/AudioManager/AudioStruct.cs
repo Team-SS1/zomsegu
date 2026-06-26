@@ -1,4 +1,4 @@
-using AudioEnum;
+﻿using AudioEnum;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -42,41 +42,49 @@ public readonly struct SfxPlayRequest
     ///<summary>true면 AudioData cooldown 검사를 적용한다.</summary>
     public bool UsesCooldown => !IsLoop;
 
+    ///<summary>2D one-shot SFX request를 만든다.</summary>
     public static SfxPlayRequest OneShot(int clipIndex = -1)
     {
         return new SfxPlayRequest(clipIndex, isLoop: false, Vector3.zero, null, AudioSpatialSettings.None);
     }
 
+    ///<summary>기본 spatial 설정을 쓰는 3D one-shot SFX request를 만든다.</summary>
     public static SfxPlayRequest At(Vector3 position, int clipIndex = -1)
     {
         return At(position, AudioSpatialSettings.Default3D, clipIndex);
     }
 
+    ///<summary>커스텀 spatial 설정을 쓰는 3D one-shot SFX request를 만든다.</summary>
     public static SfxPlayRequest At(Vector3 position, AudioSpatialSettings spatialSettings, int clipIndex = -1)
     {
         return new SfxPlayRequest(clipIndex, isLoop: false, position, null, spatialSettings);
     }
 
+    ///<summary>2D loop SFX request를 만든다.</summary>
     public static SfxPlayRequest Loop(int clipIndex = -1)
     {
         return new SfxPlayRequest(clipIndex, isLoop: true, Vector3.zero, null, AudioSpatialSettings.None);
     }
 
+    ///<summary>기본 spatial 설정을 쓰는 3D loop SFX request를 만든다.</summary>
     public static SfxPlayRequest LoopAt(Vector3 position, int clipIndex = -1)
     {
         return LoopAt(position, AudioSpatialSettings.Default3D, clipIndex);
     }
 
+    ///<summary>커스텀 spatial 설정을 쓰는 3D loop SFX request를 만든다.</summary>
     public static SfxPlayRequest LoopAt(Vector3 position, AudioSpatialSettings spatialSettings, int clipIndex = -1)
     {
         return new SfxPlayRequest(clipIndex, isLoop: true, position, null, spatialSettings);
     }
 
+    ///<summary>기본 spatial 설정으로 Transform을 따라가는 3D loop SFX request를 만든다.</summary>
     public static SfxPlayRequest LoopFollow(Transform parent, int clipIndex = -1)
     {
         return LoopFollow(parent, AudioSpatialSettings.Default3D, clipIndex);
     }
 
+    ///<summary>커스텀 spatial 설정으로 Transform을 따라가는 3D loop SFX request를 만든다.</summary>
     public static SfxPlayRequest LoopFollow(Transform parent, AudioSpatialSettings spatialSettings, int clipIndex = -1)
     {
         return new SfxPlayRequest(clipIndex, isLoop: true, Vector3.zero, parent, spatialSettings);
