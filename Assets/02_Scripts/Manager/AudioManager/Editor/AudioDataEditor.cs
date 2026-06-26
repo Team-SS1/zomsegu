@@ -39,9 +39,6 @@ public class AudioDataEditor : Editor
     #region 오디오 세팅
     private void DrawAudioSettings()
     {
-        SerializedProperty loop = serializedObject.FindProperty("loop");
-        SerializedProperty spatial = serializedObject.FindProperty("spatial");
-
         SerializedProperty randomPitch = serializedObject.FindProperty("randomPitch");
         SerializedProperty randomVolume = serializedObject.FindProperty("randomVolume");
         SerializedProperty cooldown = serializedObject.FindProperty("cooldown");
@@ -51,8 +48,6 @@ public class AudioDataEditor : Editor
         EditorGUILayout.LabelField("Play Settings", EditorStyles.boldLabel);
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-        EditorGUILayout.PropertyField(loop);
-        EditorGUILayout.PropertyField(spatial);
         EditorGUILayout.PropertyField(randomPitch);
         EditorGUILayout.PropertyField(randomVolume);
         EditorGUILayout.PropertyField(cooldown);
