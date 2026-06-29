@@ -1,83 +1,131 @@
 using AudioEnum;
-using System;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class AudioPoolObject : MonoBehaviour
 {
-    private IAudioInstance instance;
-    private Transform target;
+    private AudioSource source;
+    private Transform poolRoot;
+    private Transform followTarget;
+
     private AudioPriority priority;
-    private bool useSpatial;
+    private int playId;
+    private bool isPaused;
 
-    public IAudioInstance Instance => instance;
+    public AudioSource Source => source;
     public AudioPriority Priority => priority;
-
-    public event Action<AudioPoolObject> OnEnd;
-
-    #region Unity API
-    private void OnEnable()
-    {
-        EnableInteral();
-    }
-
-    private void Update()
-    {
-        if (instance == null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        // 플레이 완료
-        if (!instance.IsPaused && !instance.IsPlaying)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
-        // 거리 기반
-        if (useSpatial)
-        {
-            if (target == null)
-            {
-                gameObject.SetActive(false);
-                return;
-            }
-
-            instance.SetPosition(target.position);
-        }
-    }
+    /// <summary>
+    /// Pool이 꽉 차면 priority가 낮은 object를 반환하고 다시 쓸 수 있다.
+    /// 이때 이전 WaitAsync가 새로 재생 중인 sound를 반환하지 않도록 재생마다 값이 바뀐다.
+    /// </summary>
+    public int PlayId => playId;
+    public bool IsPaused => isPaused;
 
     private void OnDisable()
     {
-        DisableInteral();
+        ResetForPool();
     }
 
-    private void OnDestroy()
+    private void LateUpdate()
     {
-        OnEnd = null;
-    }
-    #endregion
+        if (followTarget == null) return;
 
-    public void Create(IAudioInstance instance)
-    {
-        this.instance = instance;
+        transform.position = followTarget.position;
     }
 
-    public void Init(AudioPriority priority, Transform target = null)
+    public void Create(AudioSource source)
     {
-        useSpatial = target != null;
+        this.source = source;
+        poolRoot = transform.parent;
+    }
+
+    public void ResetForPool()
+    {
+        if (source == null) return;
+
+        isPaused = false;
+        followTarget = null;
+        source.Stop();
+        source.clip = null;
+        transform.SetParent(poolRoot, false);
+        transform.localPosition = Vector3.zero;
+    }
+
+    public void Play(AudioPriority priority)
+    {
+        StartPlay(priority);
+    }
+
+    /// <summary>
+    /// Loop SFX가 지정 Transform의 world position을 따라가게 한다.
+    /// </summary>
+    public void PlayLoop(AudioPriority priority, Transform parent)
+    {
+        if (parent == null) return;
+
+        followTarget = parent;
+        transform.position = parent.position;
+        StartPlay(priority);
+    }
+
+    private void StartPlay(AudioPriority priority)
+    {
         this.priority = priority;
-        this.target = target;
+        playId++;
+        isPaused = false;
+        source.Play();
     }
 
-    private void EnableInteral()
+    public void Pause()
     {
+        if (isPaused) return;
+
+        isPaused = true;
+        if (source.isPlaying)
+        {
+            source.Pause();
+        }
     }
 
-    private void DisableInteral()
+    public void Resume()
     {
-        instance?.Stop();
-        OnEnd?.Invoke(this);
+        if (!isPaused) return;
+
+        isPaused = false;
+        source.UnPause();
     }
+
+    public float GetDuration()
+    {
+        float clipLength = source.clip != null ? source.clip.length : 0f;
+        return clipLength / Mathf.Max(Mathf.Abs(source.pitch), 0.0001f);
+    }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        AudioManager audioManager = FindAnyObjectByType<AudioManager>();
+        if (audioManager == null || !audioManager.AlwaysDrawSpatialGizmo) return;
+
+        DrawSpatialGizmo(audioManager);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        DrawSpatialGizmo(FindAnyObjectByType<AudioManager>());
+    }
+
+    private void DrawSpatialGizmo(AudioManager audioManager)
+    {
+        if (audioManager == null) return;
+
+        AudioSource audioSource = GetComponent<AudioSource>();
+        if (audioSource == null || audioSource.spatialBlend <= 0f) return;
+
+        Gizmos.color = audioManager.SpatialMinDistanceGizmoColor;
+        Gizmos.DrawWireSphere(transform.position, audioSource.minDistance);
+        Gizmos.color = audioManager.SpatialMaxDistanceGizmoColor;
+        Gizmos.DrawWireSphere(transform.position, audioSource.maxDistance);
+    }
+#endif
 }

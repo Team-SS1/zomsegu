@@ -1,5 +1,7 @@
+﻿using AudioEnum;
 using DG.Tweening;
 using System.Collections;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,24 +17,33 @@ public class Test_AudioSystem : MonoBehaviour
     [Header("Cooldown")]
     [SerializeField] bool lockUpdate = true;
 
+    [Header("SFX Request 예제")]
+    [SerializeField] Transform sfxPoint;
+    [SerializeField] float customMinDistance = 2f;
+    [SerializeField] float customMaxDistance = 12f;
+
     AudioManager mg;
+    CancellationTokenSource loopSfxCts;
+    Transform loopFollowTarget;
+    Tween loopFollowTween;
+
     #region Unity API
     private void OnEnable()
     {
         if (mg == null) return;
 
-        masterSlider.SetValueWithoutNotify(mg.GetVolume(AudioEnum.AudioMixerGroupType.Master));
-        bgmSlider.SetValueWithoutNotify(mg.GetVolume(AudioEnum.AudioMixerGroupType.Bgm));
-        sfxSlider.SetValueWithoutNotify(mg.GetVolume(AudioEnum.AudioMixerGroupType.Sfx));
+        masterSlider.SetValueWithoutNotify(mg.GetVolume(AudioMixerGroupType.Master));
+        bgmSlider.SetValueWithoutNotify(mg.GetVolume(AudioMixerGroupType.Bgm));
+        sfxSlider.SetValueWithoutNotify(mg.GetVolume(AudioMixerGroupType.Sfx));
     }
 
     private void Start()
     {
         mg = AudioManager.Instance;
 
-        masterSlider.value = mg.GetVolume(AudioEnum.AudioMixerGroupType.Master);
-        bgmSlider.value = mg.GetVolume(AudioEnum.AudioMixerGroupType.Bgm);
-        sfxSlider.value = mg.GetVolume(AudioEnum.AudioMixerGroupType.Sfx);
+        masterSlider.value = mg.GetVolume(AudioMixerGroupType.Master);
+        bgmSlider.value = mg.GetVolume(AudioMixerGroupType.Bgm);
+        sfxSlider.value = mg.GetVolume(AudioMixerGroupType.Sfx);
 
         AddSliderListener();
     }
@@ -47,6 +58,8 @@ public class Test_AudioSystem : MonoBehaviour
 
     private void OnDestroy()
     {
+        Example_StopLoopSfxByCancellationToken();
+
         if (deleteMove)
         {
             PlayerPrefs.DeleteAll();
@@ -58,31 +71,106 @@ public class Test_AudioSystem : MonoBehaviour
     public void Example_PlayBgm()
     {
         mg.PlayBgm(
-            AudioEnum.AudioName.Test_Bgm,   // AudioData SO 이름
-            clipIndex: 0                    // AudioData의 리스트 index, -1일 경우 random(기본값)
+            AudioName.Test_Bgm, // AudioData SO 이름
+            clipIndex: 0        // AudioData의 variation index. -1이면 random.
             );
     }
 
     public void Example_PlayBgm_Fade()
     {
-        mg.PlayBgm(AudioEnum.AudioName.Test_Bgm, fadeDuration: 1f);
+        mg.PlayBgm(AudioName.Test_Bgm, fadeDuration: 1f);
     }
 
     public void Example_PlayTestSfx2D()
     {
-        mg.PlaySfx(AudioEnum.AudioName.Test_Sfx);
+        mg.PlaySfx(AudioName.Test_Sfx);
+    }
+
+    public void Example_PlayTestSfx2D_ClipIndex()
+    {
+        mg.PlaySfx(AudioName.Test_Sfx, clipIndex: 0);
     }
 
     public void Example_PlayTestSfx3D_Position()
     {
-        // 특정 위치에서 작동하는 sfx
-        mg.PlaySfxAt(AudioEnum.AudioName.Test_Sfx, Vector3.zero);
+        mg.PlaySfxAt(AudioName.Test_Sfx, GetSfxPosition());
     }
 
-    public void Example_PlayTestSfx3D_Transform(Transform target)
+    public void Example_PlayTestSfx3D_Transform()
     {
-        // 특정 대상을 따라가는 sfx
-        mg.PlaySfxFollow(AudioEnum.AudioName.Test_Sfx, target);
+        Transform target = CreateMoveTarget();
+        mg.PlaySfxFollow(AudioName.Test_Sfx, target);
+        MoveTarget(target).OnComplete(() => Destroy(target.gameObject));
+    }
+
+    public void Example_PlayTestSfx3D_CustomDistance()
+    {
+        SfxPlayRequest request = SfxPlayRequest.At(
+            GetSfxPosition(),
+            AudioSpatialSettings.Custom(customMinDistance, customMaxDistance));
+
+        mg.PlaySfx(AudioName.Test_Sfx, request);
+    }
+
+    public void Example_PlayLoopSfxByCancellationToken()
+    {
+        PlayLoop(SfxPlayRequest.Loop());
+    }
+
+    public void Example_PlayLoopSfx3D_Position()
+    {
+        PlayLoop(SfxPlayRequest.LoopAt(GetSfxPosition()));
+    }
+
+    public void Example_PlayLoopSfx3D_Follow()
+    {
+        StopLoopSfx(loopSfxCts);
+        DestroyLoopFollowTarget();
+
+        loopSfxCts = new CancellationTokenSource();
+        loopFollowTarget = CreateMoveTarget();
+        loopFollowTween = MoveTarget(loopFollowTarget).SetLoops(-1, LoopType.Yoyo);
+
+        _ = mg.PlaySfxAsync(AudioName.Test_Sfx, SfxPlayRequest.LoopFollow(loopFollowTarget), loopSfxCts.Token);
+    }
+
+    public void Example_PlayLoopSfx3D_CustomDistance()
+    {
+        SfxPlayRequest request = SfxPlayRequest.LoopAt(
+            GetSfxPosition(),
+            AudioSpatialSettings.Custom(customMinDistance, customMaxDistance));
+
+        PlayLoop(request);
+    }
+
+    public void Example_StopLoopSfxByCancellationToken()
+    {
+        StopLoopSfx(loopSfxCts);
+        loopSfxCts = null;
+        DestroyLoopFollowTarget();
+    }
+
+    private void PlayLoop(SfxPlayRequest request)
+    {
+        StopLoopSfx(loopSfxCts);
+        DestroyLoopFollowTarget();
+        loopSfxCts = new CancellationTokenSource();
+
+        // Loop SFX는 token이 취소될 때까지 재생된다.
+        _ = mg.PlaySfxAsync(AudioName.Test_Sfx, request, loopSfxCts.Token);
+    }
+
+    private void StopLoopSfx(CancellationTokenSource cts)
+    {
+        if (cts == null) return;
+
+        cts.Cancel();
+        cts.Dispose();
+    }
+
+    private Vector3 GetSfxPosition()
+    {
+        return sfxPoint != null ? sfxPoint.position : transform.position;
     }
 
     public void Example_Pause()
@@ -116,17 +204,17 @@ public class Test_AudioSystem : MonoBehaviour
 
     private void Example_OnMasterValueChanged(float value)
     {
-        mg.SetVolume(AudioEnum.AudioMixerGroupType.Master, value);
+        mg.SetVolume(AudioMixerGroupType.Master, value);
     }
 
     private void Example_OnBgmValueChanged(float value)
     {
-        mg.SetVolume(AudioEnum.AudioMixerGroupType.Bgm, value);
+        mg.SetVolume(AudioMixerGroupType.Bgm, value);
     }
 
     private void Example_OnSfxValueChanged(float value)
     {
-        mg.SetVolume(AudioEnum.AudioMixerGroupType.Sfx, value);
+        mg.SetVolume(AudioMixerGroupType.Sfx, value);
     }
     #endregion
 
@@ -139,10 +227,9 @@ public class Test_AudioSystem : MonoBehaviour
 
     public void Example_Movable3DSFX()
     {
-        Transform target = Instantiate(prefab).transform;
-        target.position = (Vector3)new Vector2(startPos, 0);
+        Transform target = CreateMoveTarget();
         Coroutine coroutine = StartCoroutine(Repeat3DSfx(target));
-        target.DOMoveX(-startPos, duration).OnComplete(() =>
+        MoveTarget(target).OnComplete(() =>
         {
             StopCoroutine(coroutine);
             Destroy(target.gameObject);
@@ -153,8 +240,32 @@ public class Test_AudioSystem : MonoBehaviour
     {
         while (true)
         {
-            Example_PlayTestSfx3D_Transform(target);
+            mg.PlaySfxFollow(AudioName.Test_Sfx, target);
             yield return new WaitForSeconds(repeatingTime);
+        }
+    }
+
+    private Transform CreateMoveTarget()
+    {
+        Transform target = Instantiate(prefab).transform;
+        target.position = (Vector3)new Vector2(startPos, 0);
+        return target;
+    }
+
+    private Tween MoveTarget(Transform target)
+    {
+        return target.DOMoveX(-startPos, duration);
+    }
+
+    private void DestroyLoopFollowTarget()
+    {
+        loopFollowTween?.Kill();
+        loopFollowTween = null;
+
+        if (loopFollowTarget != null)
+        {
+            Destroy(loopFollowTarget.gameObject);
+            loopFollowTarget = null;
         }
     }
     #endregion

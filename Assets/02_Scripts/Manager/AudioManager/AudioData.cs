@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using AudioEnum;
 
@@ -11,21 +11,13 @@ using System.IO;
 public class AudioData : ScriptableObject
 {
     [SerializeField] private AudioCategory audioCategory;
-
-    [SerializeField] private bool loop;
-    [SerializeField] private bool spatial;
-
     [SerializeField] private AudioPriority priority;
-
     [SerializeField] private Vector2 randomPitch = new(1f, 1f);
     [SerializeField] private Vector2 randomVolume = new(1f, 1f);
     [SerializeField] private float cooldown = 0.05f;
-
     [SerializeField] private List<AudioVariation> audioVariations;
 
     public AudioCategory AudioCategory => audioCategory;
-    public bool Loop => loop;
-    public bool Spatial => spatial;
     public AudioPriority Priority => priority;
     public float RandomPitch => Random.Range(randomPitch.x, randomPitch.y);
     public float RandomVolume => Random.Range(randomVolume.x, randomVolume.y);
@@ -57,7 +49,7 @@ public class AudioData : ScriptableObject
     private void OnEnable()
     {
         EditorApplication.delayCall += SetAudioType;
-        EditorApplication.delayCall += SetAudioSettings;
+        EditorApplication.delayCall += SetAudioPriority;
     }
 
     /// <summary>
@@ -82,20 +74,12 @@ public class AudioData : ScriptableObject
         }
     }
 
-    private void SetAudioSettings()
+    private void SetAudioPriority()
     {
-        EditorApplication.delayCall -= SetAudioSettings;
+        EditorApplication.delayCall -= SetAudioPriority;
 
-        switch (audioCategory)
-        {
-            case AudioCategory.Bgm:
-                loop = true;
-                priority = AudioPriority.Music;
-                break;
-            case AudioCategory.Gameplay:
-                spatial = true;
-                break;
-        }
+        if (audioCategory != AudioCategory.Bgm) return;
+        priority = AudioPriority.Music;
     }
 #endif
     #endregion

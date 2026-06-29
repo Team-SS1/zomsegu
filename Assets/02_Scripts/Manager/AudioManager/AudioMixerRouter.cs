@@ -1,10 +1,14 @@
-using AudioEnum;
+﻿using AudioEnum;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioMixerRouter : IAudioRouter
+/// <summary>
+/// AudioMixer와 AudioMixerGroup 간의 라우팅을 관리하는 클래스
+/// AudioMixerGroup은 
+/// </summary>
+public class AudioMixerRouter
 {
     private readonly AudioMixer mixer;
     private readonly Dictionary<AudioMixerGroupType, AudioMixerGroup> mixerGroups = new();
@@ -24,6 +28,16 @@ public class AudioMixerRouter : IAudioRouter
     }
 
     public AudioMixerGroup GetMixerGroup(AudioMixerGroupType type) => mixerGroups[type];
+
+    public AudioMixerGroup GetMixerGroup(AudioCategory category)
+    {
+        if (Enum.TryParse(category.ToString(), out AudioMixerGroupType mixerGroupType))
+        {
+            return GetMixerGroup(mixerGroupType);
+        }
+
+        return GetMixerGroup(AudioMixerGroupType.Gameplay);
+    }
 
     public void SetVolume(AudioMixerGroupType type, float normalized)
     {
