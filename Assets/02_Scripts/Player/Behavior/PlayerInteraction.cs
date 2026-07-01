@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,10 +12,18 @@ public class PlayerInteraction : MonoBehaviour
     public bool IsInteractable { get; private set; }
     public float InteractionRange { get; private set; } = 3;
 
+    [Header("Vehicle")]
+    [SerializeField] private LayerMask vehicleLayer;
+    [SerializeField] private float vehicleEnterHoldTime = 0.7f;
+
+    private Coroutine vehicleHoldRoutine;
+    private VehicleSeatController currentVehicle;
+
 
     void Start()
     {
         InputManager.Instance.BindInput(InputEnum.ActionMaps.Gameplay, InputEnum.Actions.Interact, OnInteraction);
+        InputManager.Instance.BindInput(InputEnum.ActionMaps.Gameplay, InputEnum.Actions.ExtraInteract, OnVehicleInteraction);
     }
     public void Interaction()
     {
@@ -76,5 +84,85 @@ public class PlayerInteraction : MonoBehaviour
         {
             InteractionTrigger = false;
         }
+    }
+
+    public void OnVehicleInteraction(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if (vehicleHoldRoutine != null)
+                StopCoroutine(vehicleHoldRoutine);
+
+            vehicleHoldRoutine = StartCoroutine(VehicleHoldRoutine());
+        }
+        else if (context.canceled)
+        {
+            if (vehicleHoldRoutine != null)
+            {
+                StopCoroutine(vehicleHoldRoutine);
+                vehicleHoldRoutine = null;
+
+                // 짧게 누른 경우
+                if (currentVehicle != null)
+                {
+                    currentVehicle.ToggleEngine();
+                }
+            }
+        }
+    }
+
+    private IEnumerator VehicleHoldRoutine()
+    {
+        yield return new WaitForSeconds(vehicleEnterHoldTime);
+
+        // 탑승 중이면 E 꾹으로 시동 끄고 하차
+        if (currentVehicle != null)
+        {
+            currentVehicle.ExitVehicleWithEngineOff();
+            currentVehicle = null;
+            vehicleHoldRoutine = null;
+            yield break;
+        }
+
+        // 탑승 전이면 E 꾹으로 탑승
+        VehicleSeatController vehicle = FindNearestVehicle();
+
+        if (vehicle != null)
+        {
+            Player player = GetComponent<Player>();
+
+            if (vehicle.TryEnter(player))
+                currentVehicle = vehicle;
+        }
+
+        vehicleHoldRoutine = null;
+    }
+
+    private VehicleSeatController FindNearestVehicle()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
+            transform.position,
+            InteractionRange,
+            vehicleLayer
+        );
+
+        VehicleSeatController nearest = null;
+        float best = float.MaxValue;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            VehicleSeatController v = hits[i].GetComponentInParent<VehicleSeatController>();
+            if (v == null)
+                continue;
+
+            float sqr = ((Vector2)v.transform.position - (Vector2)transform.position).sqrMagnitude;
+            if (sqr < best)
+            {
+                best = sqr;
+                nearest = v;
+            }
+        }
+
+        return nearest;
     }
 }
