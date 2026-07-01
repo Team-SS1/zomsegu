@@ -37,6 +37,8 @@ public class VehicleController2D : MonoBehaviour
 
     public VehicleSpriteState SpriteState { get; private set; } = VehicleSpriteState.Drive;
 
+    public bool HasDriver { get; private set; }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -54,6 +56,12 @@ public class VehicleController2D : MonoBehaviour
         if (stats == null)
             return;
 
+        if (!HasDriver)
+        {
+            UpdateSpriteState(0f, false);
+            return;
+        }
+
         bool broken = damage != null && damage.IsBroken;
         bool canDrive = engineOn && fuel > 0f && !broken;
 
@@ -68,6 +76,12 @@ public class VehicleController2D : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (stats == null || !HasDriver)
+        {
+            rb.velocity = Vector2.zero;
+            return;
+        }
+
         Debug.Log($"Speed:{currentSpeedKmh} " + $"Velocity:{rb.velocity} " + $"MoveDir:{transform.up}");
 
         if (stats == null)
@@ -391,19 +405,66 @@ public class VehicleController2D : MonoBehaviour
 
     private void UpdateSpriteState(float inputDir, bool brakeInput)
     {
+        if (!engineOn)
+        {
+            SpriteState = VehicleSpriteState.EngineOff;
+            return;
+        }
+
         if (brakeInput)
         {
             SpriteState = VehicleSpriteState.Brake;
             return;
         }
 
-        // 실제 후진 중이면 Reverse
         if (currentSpeedKmh < -0.01f)
         {
             SpriteState = VehicleSpriteState.Reverse;
             return;
         }
 
-        SpriteState = VehicleSpriteState.Drive;
+        if (Mathf.Abs(currentSpeedKmh) > 0.01f)
+        {
+            SpriteState = VehicleSpriteState.Drive;
+            return;
+        }
+
+        if (engineOn)
+        {
+            SpriteState = VehicleSpriteState.Drive;
+            return;
+        }
+    }
+
+    public void SetDriverMounted(bool mounted)
+    {
+        HasDriver = mounted;
+
+        if (!mounted)
+        {
+            engineOn = false;
+            ForceStop();
+        }
+    }
+
+    public void ToggleEngine()
+    {
+        if (!HasDriver)
+            return;
+
+        if (fuel <= 0f)
+            return;
+
+        if (damage != null && damage.IsBroken)
+            return;
+
+        engineOn = !engineOn;
+        UpdateSpriteState(0f, false);
+    }
+
+    public void TurnOffEngine()
+    {
+        engineOn = false;
+        UpdateSpriteState(0f, false);
     }
 }
