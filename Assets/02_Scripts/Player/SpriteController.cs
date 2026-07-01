@@ -1,4 +1,4 @@
-﻿using PlayerEnum;
+using PlayerEnum;
 using UnityEngine;
 
 public class SpriteController : MonoBehaviour
@@ -76,5 +76,26 @@ public class SpriteController : MonoBehaviour
                 CurrentSprite = knifeSprite;
                 break;
         }
+    }
+
+    public void SetVisible(bool visible)
+    {
+        if (!visible)
+        {
+            HideAllSprites();
+            return;
+        }
+
+        if (CurrentSprite != null)
+            SetAlpha(CurrentSprite, 1f);
+    }
+
+    public void HideAllSprites()
+    {
+        SetAlpha(punchSprite, 0f);
+        SetAlpha(batSprite, 0f);
+        SetAlpha(bluntSprite, 0f);
+        SetAlpha(hammerSprite, 0f);
+        SetAlpha(knifeSprite, 0f);
     }
 }
