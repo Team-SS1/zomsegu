@@ -570,6 +570,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   interactionDelay: 0.3
+  vehicleLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  vehicleEnterHoldTime: 0.7
 --- !u!114 &6175678769849988395
 MonoBehaviour:
   m_ObjectHideFlags: 0
