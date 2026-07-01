@@ -16,6 +16,9 @@ public class VehicleSprite4Dir : MonoBehaviour
     [SerializeField] private VehicleController2D controller;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    [Header("Engine Off Sprites")]
+    [SerializeField] private SpriteSet4Dir engineOffSprites;
+
     [Header("Drive Sprites")]
     [SerializeField] private SpriteSet4Dir driveSprites;
 
@@ -81,6 +84,9 @@ public class VehicleSprite4Dir : MonoBehaviour
     {
         switch (state)
         {
+            case VehicleSpriteState.EngineOff:
+                return engineOffSprites;
+
             case VehicleSpriteState.Brake:
                 return brakeSprites;
 
